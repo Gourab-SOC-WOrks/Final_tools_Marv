@@ -7,7 +7,7 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
   "mp4-to-gif": [
     {
       q: "Does my MP4 video upload to any remote server during conversion?",
-      a: "No. The entire conversion process runs 100% locally in your web browser using client-side WebAssembly (Wasm) and HTML5 Canvas. Your video frames never touch an external cloud server, guaranteeing total privacy for proprietary screen recordings and confidential clips.",
+      a: "No. The entire conversion process runs locally in your web browser using HTML5 Canvas and the gifenc library. Your video frames never leave your device, ensuring privacy for proprietary screen recordings and confidential clips.",
     },
     {
       q: "What frame rate (FPS) should I select for my GIF?",
@@ -18,8 +18,8 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
       a: "MP4 uses modern temporal compression algorithms (H.264/H.265) that only store changes between frames. The legacy GIF format stores 256-color uncompressed or LZW-compressed raster frames. Trimming down to the exact 2 to 5 seconds needed and reducing the resolution width to 600px–800px ensures compact GIF sizes.",
     },
     {
-      q: "Can I trim precise in and out points of the video?",
-      a: "Yes. Use the visual dual-handle scrubber to set exact millisecond start and end timestamps so you only convert the critical product moment rather than entire recordings.",
+      q: "Can I trim precise start and end points of the video?",
+      a: "Yes. Enter exact numeric Start and End seconds (with 0.1-second precision) next to the preview player to convert only the specific section you need (up to 20 seconds).",
     },
     {
       q: "How does color palette quantization work?",
@@ -136,7 +136,7 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
   "video-compressor": [
     {
       q: "How does in-browser video compression work without servers?",
-      a: "The tool utilizes modern WebCodecs and WebAssembly hardware-accelerated video decoders inside your browser. It trans採用 the video frames locally to lower bitrates or resolutions without network latency.",
+      a: "The tool uses your browser's hardware-accelerated MediaRecorder and HTML5 Canvas pipeline. It re-encodes the video frames locally to lower bitrates or target resolutions without downloading heavy external libraries or uploading files to a server.",
     },
     {
       q: "What is target-size guidance?",
@@ -437,7 +437,7 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
   "link-shortener": [
     {
       q: "How does this link shortener work?",
-      a: "It generates clean, memorable short links (such as `mrv.edge/launch`) that redirect visitors to your destination URL while keeping long tracking parameters tidy.",
+      a: "It generates clean short links under marvedge.com/go/[slug] that redirect visitors to your destination URL while keeping long tracking parameters tidy.",
     },
     {
       q: "How does the link expiration feature work?",
@@ -456,20 +456,20 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
       a: "Yes. You can choose a custom branded slug (e.g. `demo-tour` or `summer-sale`) rather than random gibberish characters.",
     },
     {
-      q: "Are the redirects fast?",
-      a: "Redirects execute with single-digit millisecond latency at the edge for maximum visitor retention.",
+      q: "How do short link redirects work?",
+      a: "Redirects forward visitors directly to the destination URL with no interstitial ads, countdown timers, or splash screens.",
     },
     {
       q: "Can I generate a QR code for my shortened link?",
       a: "Yes. Every short link includes a one-click button to generate a matching scannable QR code for print and offline marketing.",
     },
     {
-      q: "Can I disable or delete a link before its expiration date?",
-      a: "Yes. You can revoke or deactivate active links at any time from your session dashboard.",
+      q: "Can I edit a link after creating it?",
+      a: "No. To maintain security and prevent link hijacking, destination targets are locked upon creation. You can set an automatic expiration window (such as 1 hour, 24 hours, 7 days, 30 days, or a custom date) or create a new short link whenever your destination URL changes.",
     },
     {
-      q: "Are short links safe from spam bots?",
-      a: "Yes. All redirect endpoints include automated rate limiting and heuristic bot defenses.",
+      q: "Are short links protected against abuse?",
+      a: "Yes. Destination links must use valid web protocols (HTTP/HTTPS) and redirect endpoints enforce rate limits to guard against automated abuse.",
     },
     {
       q: "Is there a limit on how many links I can create?",
@@ -523,7 +523,7 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
   "subtitle-generator": [
     {
       q: "How does automated speech transcription work?",
-      a: "Our neural speech model listens to audio waveforms and accurately decodes speech into text, automatically inserting punctuation, capitalization, and accurate millisecond timecodes.",
+      a: "Audio is sent securely to an AI transcription provider, which converts speech into text with punctuation and capitalization. Marvedge then maps the transcript into timed subtitle cues that you can review and adjust in the editor.",
     },
     {
       q: "Can I export subtitles in both SRT and VTT formats?",
@@ -531,7 +531,7 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
     },
     {
       q: "Can I manually edit words and timestamps in the editor?",
-      a: "Yes. The interactive caption timeline lets you tweak any misheard brand name, split long sentences, or adjust start/end timestamps with instant visual preview.",
+      a: "Yes. Because cue timestamps are estimated proportionally across media duration, the interactive editor lets you nudge start and end times with 0.1-second precision and edit any misheard words before exporting.",
     },
     {
       q: "Why are subtitles essential for social video engagement?",
@@ -543,11 +543,11 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
     },
     {
       q: "Can I adjust character length per subtitle line?",
-      a: "Yes. You can constrain subtitle chunking to 32–42 characters per line to ensure text remains comfortable to read on small mobile screens without blocking key visuals.",
+      a: "Subtitle lines are automatically grouped into concise, readable phrases of approximately 9 words. You can edit any cue's text or adjust timing directly in the editor before exporting.",
     },
     {
       q: "Can I burn hardcoded subtitles directly into my video?",
-      a: "Yes. You can export a hardcoded version with subtitles rendered directly onto the video frames using custom font styling, high-contrast outlines, and background pill highlights.",
+      a: "No. The tool exports standard sidecar `.srt` and `.vtt` caption files rather than re-encoding burned-in pixels onto your video. You can import these caption files into YouTube, LinkedIn, Premiere, or HTML5 video tags.",
     },
     {
       q: "How do I upload the generated SRT to YouTube?",
@@ -555,7 +555,7 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
     },
     {
       q: "Is speech transcription processed securely?",
-      a: "Yes. Audio streams are processed via encrypted zero-retention API channels and deleted immediately upon completion.",
+      a: "Yes. Audio is transmitted via encrypted channels to our transcription provider, processed ephemerally without persistent storage, and never used to train public models.",
     },
     {
       q: "How long does it take to transcribe a 2-minute video?",
@@ -742,7 +742,7 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
     },
     {
       q: "What voice personas and regional accents are available?",
-      a: "We offer diverse studio-quality voice personas spanning Neutral American, British RP, Australian, Canadian, and European accents in both masculine and feminine vocal ranges.",
+      a: "Six distinct voices are available: Kore (Firm & clear), Puck (Upbeat), Charon (Informative), Aoede (Breezy), Fenrir (Excitable), and Leda (Youthful), built on Gemini neural speech synthesis.",
     },
     {
       q: "Can I preview voiceover audio instantly before downloading?",
@@ -750,11 +750,11 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
     },
     {
       q: "In what audio formats can I download my voiceover?",
-      a: "You can download studio-grade 48kHz audio in clean MP3 format or uncompressed WAV format for professional editing in Final Cut or Premiere.",
+      a: "You can download your generated voiceover as a clean, uncompressed `.wav` audio file ready to import into Premiere, CapCut, DaVinci Resolve, or presentation decks.",
     },
     {
       q: "Can I adjust speech pacing, speed, and pauses?",
-      a: "Yes. Use the speed slider (0.75x to 1.5x) or insert ellipsis (`...`) and punctuation marks to create natural pauses and emphasis.",
+      a: "Yes. You can guide tone and tempo using the optional Delivery field (for example, 'warmly, steady pace' or 'energetic product intro') and use commas, periods, and ellipses to shape pauses and cadence.",
     },
     {
       q: "Can I use generated voiceovers for commercial advertising and YouTube monetization?",
@@ -766,7 +766,7 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
     },
     {
       q: "Is there a script length limit per generation?",
-      a: "Standard generations accommodate scripts up to 2,500 characters (approximately 2.5 minutes of continuous voiceover) at a time.",
+      a: "You can enter scripts up to 4,000 characters (approximately 4 to 5 minutes of speech) per generation, with a live character counter visible as you type.",
     },
     {
       q: "Can I pair this voiceover with the Marvedge Demo Script Generator?",
@@ -774,7 +774,7 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
     },
     {
       q: "Is my script text stored or shared?",
-      a: "No. Your script is processed through an encrypted, zero-retention voice synthesis pipeline and never retained.",
+      a: "No. Your script is sent securely to the speech provider solely to synthesize audio. It is processed ephemerally and never stored or used to train models.",
     },
   ],
 
@@ -821,4 +821,3 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
     },
   ],
 };
-

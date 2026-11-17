@@ -359,10 +359,10 @@ export const aiToolSeo: Record<string, ToolSeoData> = {
       ],
     },
     privacy: {
-      heading: "Uploaded solely to extract timed text cues",
+      heading: "Audio sent securely to transcription provider",
       paragraphs: [
-        "Media bytes buffer in your client tab and pass securely through encrypted transcription only when dropped. Your video or audio scrubber runs off a temporary local browser URL.",
-        "Edit typos and trim confidential cues directly in your browser prior to downloading SRT/VTT.",
+        "Media preview runs locally in your browser. When you drop a file to transcribe, the audio is sent securely to an AI transcription provider solely to extract text. It is processed ephemerally and never retained or used for training.",
+        "Edit typos and trim confidential cues directly in your browser prior to downloading SRT/VTT files.",
       ],
     },
   },
