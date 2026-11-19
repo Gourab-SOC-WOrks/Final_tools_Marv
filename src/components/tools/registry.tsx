@@ -1,25 +1,54 @@
-import type { ReactNode } from "react";
-import { FaviconGenerator, FormatConverter, ImageCompressor, ImageResizer, PdfTool, QrGenerator } from "./ImageTools";
-import { AspectRatio, GifCompressor, Mp4ToGif, VideoCompressor } from "./VideoTools";
-import { LinkShortener } from "./LinkShortener";
-import { AiTextTool, ScreenshotGuide, SubtitleGenerator, VoiceoverGenerator } from "./AiTools";
+import { type ReactNode, lazy, Suspense } from "react";
+
+// --- Lazy wrappers for named exports ---
+const Mp4ToGif = lazy(() => import("./VideoTools").then((m) => ({ default: m.Mp4ToGif })));
+const VideoCompressor = lazy(() => import("./VideoTools").then((m) => ({ default: m.VideoCompressor })));
+const AspectRatio = lazy(() => import("./VideoTools").then((m) => ({ default: m.AspectRatio })));
+const GifCompressor = lazy(() => import("./VideoTools").then((m) => ({ default: m.GifCompressor })));
+
+const ImageCompressor = lazy(() => import("./ImageTools").then((m) => ({ default: m.ImageCompressor })));
+const ImageResizer = lazy(() => import("./ImageTools").then((m) => ({ default: m.ImageResizer })));
+const FormatConverter = lazy(() => import("./ImageTools").then((m) => ({ default: m.FormatConverter })));
+const QrGenerator = lazy(() => import("./ImageTools").then((m) => ({ default: m.QrGenerator })));
+const FaviconGenerator = lazy(() => import("./ImageTools").then((m) => ({ default: m.FaviconGenerator })));
+const PdfTool = lazy(() => import("./ImageTools").then((m) => ({ default: m.PdfTool })));
+
+const LinkShortener = lazy(() => import("./LinkShortener").then((m) => ({ default: m.LinkShortener })));
+
+const AiTextTool = lazy(() => import("./AiTools").then((m) => ({ default: m.AiTextTool })));
+const ScreenshotGuide = lazy(() => import("./AiTools").then((m) => ({ default: m.ScreenshotGuide })));
+const SubtitleGenerator = lazy(() => import("./AiTools").then((m) => ({ default: m.SubtitleGenerator })));
+const VoiceoverGenerator = lazy(() => import("./AiTools").then((m) => ({ default: m.VoiceoverGenerator })));
+
+// Loading spinner shown while a tool chunk loads
+function ToolFallback() {
+  return (
+    <div className="flex min-h-[200px] items-center justify-center">
+      <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#000] border-t-transparent" />
+    </div>
+  );
+}
 
 export function ToolWorkspace({ slug }: { slug: string }): ReactNode {
-  switch (slug) {
-    case "mp4-to-gif": return <Mp4ToGif />;
-    case "image-compressor": return <ImageCompressor />;
-    case "qr-code-generator": return <QrGenerator />;
-    case "video-compressor": return <VideoCompressor />;
-    case "gif-compressor": return <GifCompressor />;
-    case "image-resizer": return <ImageResizer />;
-    case "image-format-converter": return <FormatConverter />;
-    case "pdf-merger": return <PdfTool />;
-    case "favicon-generator": return <FaviconGenerator />;
-    case "link-shortener": return <LinkShortener />;
-    case "video-aspect-ratio": return <AspectRatio />;
-    case "screenshot-to-guide": return <ScreenshotGuide />;
-    case "subtitle-generator": return <SubtitleGenerator />;
-    case "voiceover-generator": return <VoiceoverGenerator />;
-    default: return <AiTextTool slug={slug} />;
-  }
+  const inner = (() => {
+    switch (slug) {
+      case "mp4-to-gif":           return <Mp4ToGif />;
+      case "image-compressor":     return <ImageCompressor />;
+      case "qr-code-generator":    return <QrGenerator />;
+      case "video-compressor":     return <VideoCompressor />;
+      case "gif-compressor":       return <GifCompressor />;
+      case "image-resizer":        return <ImageResizer />;
+      case "image-format-converter": return <FormatConverter />;
+      case "pdf-merger":           return <PdfTool />;
+      case "favicon-generator":    return <FaviconGenerator />;
+      case "link-shortener":       return <LinkShortener />;
+      case "video-aspect-ratio":   return <AspectRatio />;
+      case "screenshot-to-guide":  return <ScreenshotGuide />;
+      case "subtitle-generator":   return <SubtitleGenerator />;
+      case "voiceover-generator":  return <VoiceoverGenerator />;
+      default:                     return <AiTextTool slug={slug} />;
+    }
+  })();
+
+  return <Suspense fallback={<ToolFallback />}>{inner}</Suspense>;
 }

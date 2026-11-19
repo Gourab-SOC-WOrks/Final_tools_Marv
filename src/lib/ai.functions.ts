@@ -17,7 +17,7 @@ const PROMPTS: Record<string, string> = {
 };
 
 export const runAiTool = createServerFn({ method: "POST" })
-  .inputValidator((d) =>
+  .validator((d) =>
     z
       .object({
         tool: z.string(),
@@ -39,14 +39,14 @@ export const runAiTool = createServerFn({ method: "POST" })
   });
 
 export const runVoiceover = createServerFn({ method: "POST" })
-  .inputValidator((d) => z.object({ text: z.string().min(1).max(4000), voice: z.string().max(30) }).parse(d))
+  .validator((d) => z.object({ text: z.string().min(1).max(4000), voice: z.string().max(30) }).parse(d))
   .handler(async ({ data }) => {
     const { speak } = await import("./ai.server");
     return speak(data.text, data.voice);
   });
 
 export const runTranscribe = createServerFn({ method: "POST" })
-  .inputValidator((d) =>
+  .validator((d) =>
     z.object({ audio: z.string().max(34_000_000), mime: z.string().max(100), name: z.string().max(200) }).parse(d),
   )
   .handler(async ({ data }) => {

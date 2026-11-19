@@ -14,7 +14,7 @@ async function hashPassword(pw: string, saltHex?: string) {
 const admin = async () => (await import("@/integrations/supabase/client.server")).supabaseAdmin;
 
 export const createShortLink = createServerFn({ method: "POST" })
-  .inputValidator((d) =>
+  .validator((d) =>
     z.object({
       url: z.string().url().max(2000).refine((u) => /^https?:\/\//i.test(u), "Use an http(s) link"),
       code: z.string().regex(/^[A-Za-z0-9_-]{3,40}$/, "3–40 letters, numbers, - or _").optional(),
@@ -38,7 +38,7 @@ export const createShortLink = createServerFn({ method: "POST" })
 type Resolve = { status: "ok"; url: string } | { status: "password" } | { status: "expired" } | { status: "missing" } | { status: "wrong" };
 
 export const resolveShortLink = createServerFn({ method: "POST" })
-  .inputValidator((d) => z.object({ code: z.string().max(40), password: z.string().max(100).optional() }).parse(d))
+  .validator((d) => z.object({ code: z.string().max(40), password: z.string().max(100).optional() }).parse(d))
   .handler(async ({ data }): Promise<Resolve> => {
     const db = await admin();
     const { data: row } = await db.from("short_links").select("*").eq("code", data.code).maybeSingle();
