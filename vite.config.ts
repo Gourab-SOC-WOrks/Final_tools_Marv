@@ -14,39 +14,8 @@ export default defineConfig({
   },
   vite: {
     build: {
-      // Increase chunk size warning limit (our tool bundles are intentionally large)
+      // Increase chunk size warning limit (tool bundles are intentionally large)
       chunkSizeWarningLimit: 1000,
-      rolldownOptions: {
-        output: {
-          // Code-split vendor libs into separate cacheable chunks
-          manualChunks: (id: string) => {
-            if (id.includes("node_modules/react-dom") || id.includes("node_modules/react/")) {
-              return "vendor-react";
-            }
-            if (id.includes("node_modules/@tanstack/")) {
-              return "vendor-tanstack";
-            }
-            if (id.includes("node_modules/lucide-react")) {
-              return "vendor-ui";
-            }
-            if (id.includes("node_modules/pdf-lib")) {
-              return "vendor-pdf";
-            }
-            if (id.includes("node_modules/gifenc") || id.includes("node_modules/gifuct-js")) {
-              return "vendor-media";
-            }
-            if (id.includes("node_modules/qrcode")) {
-              return "vendor-qr";
-            }
-            if (id.includes("node_modules/@radix-ui/")) {
-              return "vendor-radix";
-            }
-            if (id.includes("node_modules/@supabase/")) {
-              return "vendor-supabase";
-            }
-          },
-        },
-      },
     },
   },
 });

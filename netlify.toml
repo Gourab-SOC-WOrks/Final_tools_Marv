@@ -1,20 +1,9 @@
 [build]
   command = "npm run build"
-  publish = ".output/public"
-  functions = ".output/server"
+  publish = "dist"
 
 [build.environment]
   NODE_VERSION = "20"
-
-# TanStack Start SSR via Netlify Functions
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
-
-# Redirect all requests to the SSR function
-[[redirects]]
-  from = "/*"
-  to = "/.netlify/functions/server"
-  status = 200
 
 # Cache static assets aggressively
 [[headers]]
