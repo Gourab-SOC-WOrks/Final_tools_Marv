@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Sparkles, X } from "lucide-react";
+import { Sparkles, X, FileText, Upload, AlignLeft } from "lucide-react";
 import { runAiTool, runTranscribe, runVoiceover } from "@/lib/ai.functions";
 import { loadSample, loadScreens } from "@/lib/samples";
 import { Btn, CopyBtn, DownloadBtn, Dropzone, ErrorNote, Field, Panel, download, inputCls, loadImage } from "./ui";
@@ -71,6 +71,184 @@ const CONFIG: Record<string, ToolCfg> = {
     },
   },
 };
+
+/* ---------- AI Video Summarizer ---------- */
+type InputMode = "transcript" | "audio";
+
+export function VideoSummarizer() {
+  const [mode, setMode] = useState<InputMode>("transcript");
+  const [transcript, setTranscript] = useState("");
+  const [length, setLength] = useState("Medium");
+  const [audioFile, setAudioFile] = useState<File | null>(null);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [transcribing, setTranscribing] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [out, setOut] = useState("");
+  const [err, setErr] = useState<string | null>(null);
+  const [sampling, setSampling] = useState(false);
+
+  const runAi = useServerFn(runAiTool);
+  const runTx = useServerFn(runTranscribe);
+
+  const pickAudio = (f: File) => {
+    setAudioFile(f);
+    setAudioUrl(URL.createObjectURL(f));
+    setErr(null);
+  };
+
+  const transcribeAudio = async () => {
+    if (!audioFile) return;
+    setTranscribing(true); setErr(null);
+    try {
+      const ab = await audioFile.arrayBuffer();
+      const b64 = btoa(String.fromCharCode(...new Uint8Array(ab)));
+      const r = await runTx({ data: { audio: b64, mime: audioFile.type, name: audioFile.name } });
+      setTranscript(r.text);
+      setMode("transcript");
+    } catch (e) { setErr(errMsg(e)); }
+    setTranscribing(false);
+  };
+
+  const summarize = async () => {
+    if (!transcript.trim()) return;
+    setBusy(true); setErr(null);
+    try {
+      const input = `Transcript:\n${transcript}\n\nLength: ${length}`;
+      setOut((await runAi({ data: { tool: "video-summarizer", input } })).text);
+    } catch (e) { setErr(errMsg(e)); }
+    setBusy(false);
+  };
+
+  const loadDemo = () => {
+    setTranscript(
+      "00:00 Welcome back. Today I'm showing how a plain product walkthrough becomes an interactive demo.\n00:24 First, upload your recording — the tool runs in your browser, so the file never leaves your machine.\n01:02 Next, pick the steps your buyer actually cares about and hide the setup screens.\n01:41 Then put a call to action on the last step so viewers click straight through to pricing.\n02:10 Teams using these demos say sales conversations start with fewer, sharper questions.\n02:48 That's the loop: record once, publish everywhere, and see which step sells.",
+    );
+    setMode("transcript");
+  };
+
+  return (
+    <Panel>
+      {/* Mode toggle */}
+      <div className="flex gap-2 rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-1">
+        <button
+          type="button"
+          onClick={() => setMode("transcript")}
+          className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
+            mode === "transcript"
+              ? "bg-[#000000] text-white"
+              : "text-[#000000]/60 hover:text-[#000000]"
+          }`}
+        >
+          <span>📝</span> Paste Transcript
+        </button>
+        <button
+          type="button"
+          onClick={() => setMode("audio")}
+          className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
+            mode === "audio"
+              ? "bg-[#000000] text-white"
+              : "text-[#000000]/60 hover:text-[#000000]"
+          }`}
+        >
+          <span>🎙️</span> Upload Audio / Video
+        </button>
+      </div>
+
+      {/* Transcript mode */}
+      {mode === "transcript" && (
+        <>
+          <Field label={`Transcript (${transcript.length} / 40,000 chars)`}>
+            <textarea
+              rows={8}
+              maxLength={40000}
+              className={inputCls}
+              placeholder="Paste your video transcript here (with timestamps if available)…"
+              value={transcript}
+              onChange={(e) => setTranscript(e.target.value)}
+            />
+          </Field>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={loadDemo}
+              className="rounded-xl border border-[#D6CCB5] bg-[#FAF7F0] px-3 py-1.5 text-xs font-semibold text-[#000000]/70 transition-colors hover:border-[#7895B2] hover:text-[#000000]"
+            >
+              Try a demo transcript
+            </button>
+            {transcript && (
+              <button
+                type="button"
+                onClick={() => { setTranscript(""); setOut(""); }}
+                className="rounded-xl border border-[#D6CCB5] bg-[#FAF7F0] px-3 py-1.5 text-xs font-semibold text-[#000000]/70 transition-colors hover:border-[#7895B2] hover:text-[#000000]"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </>
+      )}
+
+      {/* Audio/Video upload mode */}
+      {mode === "audio" && (
+        <>
+          <Dropzone
+            accept="audio/*,video/*"
+            label="Drop an audio or video file (MP3, MP4, WAV, WebM — under 24 MB)"
+            onFiles={([f]) => pickAudio(f!)}
+            sample={{
+              label: "Try a sample narration",
+              busy: sampling,
+              onPick: async () => {
+                setSampling(true);
+                await pickAudio(await loadSample("narration"));
+                setSampling(false);
+              },
+              note: "A dummy 15-second narration — we'll transcribe then summarize it.",
+            }}
+          />
+          {audioUrl && (
+            <div className="rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-4">
+              <p className="mb-2 text-xs font-semibold text-[#4A4740]">{audioFile?.name}</p>
+              <audio src={audioUrl} controls className="w-full" />
+              <div className="mt-3">
+                <Btn busy={transcribing} disabled={!audioFile} onClick={transcribeAudio}>
+                  <Sparkles className="h-4 w-4" aria-hidden="true" />
+                  {transcribing ? "Transcribing…" : "Transcribe & continue"}
+                </Btn>
+              </div>
+            </div>
+          )}
+          {transcript && (
+            <div className="rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-4">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-[#537190]">Transcript extracted ✓</p>
+              <p className="whitespace-pre-wrap text-sm leading-relaxed text-[#000000]">{transcript}</p>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Summary length + submit — shown once transcript is available */}
+      {transcript.trim().length > 2 && (
+        <>
+          <Field label="Summary length">
+            <select className={inputCls} value={length} onChange={(e) => setLength(e.target.value)}>
+              {["Short", "Medium", "Detailed"].map((o) => <option key={o}>{o}</option>)}
+            </select>
+          </Field>
+          <div>
+            <Btn busy={busy} onClick={summarize}>
+              <Sparkles className="h-4 w-4" aria-hidden="true" />
+              {busy ? "Summarizing…" : "Summarize"}
+            </Btn>
+          </div>
+        </>
+      )}
+
+      <ErrorNote msg={err} />
+      <Output text={out} />
+    </Panel>
+  );
+}
 
 export function AiTextTool({ slug }: { slug: string }) {
   const cfg = CONFIG[slug]!;

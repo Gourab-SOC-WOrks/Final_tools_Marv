@@ -19,6 +19,7 @@ const AiTextTool = lazy(() => import("./AiTools").then((m) => ({ default: m.AiTe
 const ScreenshotGuide = lazy(() => import("./AiTools").then((m) => ({ default: m.ScreenshotGuide })));
 const SubtitleGenerator = lazy(() => import("./AiTools").then((m) => ({ default: m.SubtitleGenerator })));
 const VoiceoverGenerator = lazy(() => import("./AiTools").then((m) => ({ default: m.VoiceoverGenerator })));
+const VideoSummarizer = lazy(() => import("./AiTools").then((m) => ({ default: m.VideoSummarizer })));
 
 // Loading spinner shown while a tool chunk loads
 function ToolFallback() {
@@ -46,8 +47,8 @@ export function ToolWorkspace({ slug }: { slug: string }): ReactNode {
       case "screenshot-to-guide":  return <ScreenshotGuide />;
       case "subtitle-generator":   return <SubtitleGenerator />;
       case "voiceover-generator":  return <VoiceoverGenerator />;
-      default:                     return <AiTextTool slug={slug} />;
-    }
+      case "video-summarizer":     return <VideoSummarizer />;
+      default:                     return <AiTextTool slug={slug} />;    }
   })();
 
   return <Suspense fallback={<ToolFallback />}>{inner}</Suspense>;
