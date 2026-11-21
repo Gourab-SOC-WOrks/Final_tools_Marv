@@ -18,7 +18,7 @@
 
 ## AI Media & Content Tools
 
-- [Video Summarizer](https://marvedge.com/video-summarizer): Turn video transcripts up to 40,000 characters into a 2-sentence TL;DR, 5-8 key bullets, and verified chapters.
+- [AI Video and Media Summarizer](https://marvedge.com/video-summarizer): Turn video transcripts up to 40,000 characters into a 2-sentence TL;DR, 5-8 key bullets, and verified chapters.
 - [Subtitle Generator](https://marvedge.com/subtitle-generator): Transcribe audio and video under 24 MB into editable timed captions with SRT and WebVTT export.
 - [YouTube Title Generator](https://marvedge.com/youtube-title-generator): Generate 8 titles under 70 characters, 3 opening hooks, a 150-250 word SEO description, and 15 tags.
 - [Content Repurposer](https://marvedge.com/content-repurposer): Convert longform blogs or transcripts into a LinkedIn post, 5-post X thread, Instagram caption, and newsletter draft.

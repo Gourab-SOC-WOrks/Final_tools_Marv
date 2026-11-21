@@ -479,8 +479,8 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
 
   "video-summarizer": [
     {
-      q: "How does the AI Video Summarizer work?",
-      a: "Our neural model analyzes video transcripts or spoken dialogue, isolates primary thesis arguments, filters out conversational filler, and formats key takeaways into structured, scannable bullet points.",
+      q: "How does the AI Video and Media Summarizer work?",
+      a: "Our neural model analyzes video and media audio, transcripts, or spoken dialogue, isolates primary thesis arguments, filters out conversational filler, and formats key takeaways into structured, scannable bullet points.",
     },
     {
       q: "Can I paste a transcript from YouTube, Zoom, or Google Meet?",

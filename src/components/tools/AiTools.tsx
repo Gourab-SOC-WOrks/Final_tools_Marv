@@ -1,4 +1,4 @@
-﻿import { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import {
   Sparkles,
@@ -144,7 +144,7 @@ const CONFIG: Record<string, ToolCfg> = {
   },
 };
 
-/* ---------- AI Video Summarizer ---------- */
+/* ---------- AI Video and Media Summarizer ---------- */
 type InputMode = "youtube" | "video" | "audio" | "pdf" | "webpage" | "longtext";
 type YoutubeSubMode = "video" | "playlist";
 
@@ -375,7 +375,7 @@ export function VideoSummarizer() {
       {/* ─── HEADER CONTROLS (Quality + Separate Speaker) ─── */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#D6CCB5]/80 pb-4">
         <div>
-          <h2 className="text-base font-bold text-[#000000]">AI Video & Media Summarizer</h2>
+          <h2 className="text-base font-bold text-[#000000]">AI Video and Media Summarizer</h2>
           <p className="text-xs text-[#4A4740]">Turn long videos, meetings, and recordings into structured takeaways.</p>
         </div>
 

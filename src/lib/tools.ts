@@ -61,7 +61,7 @@ export const tools: Tool[] = [
     headline: ["Long link in,", "short link out."], sub: "Create short links with a custom name, an expiry date and optional password protection.",
     story: ["Your link is 240 characters of tracking codes and nobody trusts it.", "Pick a custom name, set when it expires, and lock it with a password if it's private.", "A clean link people actually click — and it disappears exactly when you want."],
     features: ["Custom links", "Expiration", "Password protection", "Instant copy"], audience: "Marketers, creators, teams", related: ["qr-code-generator", "content-repurposer"] }),
-  t({ slug: "video-summarizer", name: "AI Video Summarizer", category: "AI tool", tagline: "An hour of video, in a minute.",
+  t({ slug: "video-summarizer", name: "AI Video and Media Summarizer", category: "AI tool", tagline: "An hour of video or audio, in a minute.",
     headline: ["Watch less.", "Know more."], sub: "Summarize transcripts or supported video into key points and chapters, when the source supports timestamps.",
     story: ["The webinar is 74 minutes. You have the time it takes coffee to cool.", "AI distills it into key points and chapters you can actually skim.", "You walk into the meeting knowing everything that mattered."],
     features: ["Key points", "Chapters & timestamps", "Transcript input", "Copy-ready output"], audience: "Students, professionals, creators", related: ["content-repurposer", "subtitle-generator"] }),

@@ -2,13 +2,13 @@ import type { ToolSeoData } from "./tool-seo-types";
 
 export const aiToolSeo: Record<string, ToolSeoData> = {
   "video-summarizer": {
-    seoTitle: "AI Video Transcript Summarizer & Chapters | Marvedge",
+    seoTitle: "AI Video and Media Summarizer | Marvedge",
     metaDescription:
-      "Condense video transcripts up to 40,000 characters into a 2-sentence TL;DR, 5-8 key bullets, and verified chapters whenever timestamps are provided.",
-    primaryKeyword: "ai video summarizer",
+      "Condense video recordings, audio, and transcripts into a 2-sentence TL;DR, 5-8 key bullets, action items, and verified chapters.",
+    primaryKeyword: "ai video and media summarizer",
     applicationCategory: "BusinessApplication",
     definitionLead:
-      "Marvedge Video Summarizer condenses long webinar, Loom, podcast, and YouTube transcripts into scannable takeaways in seconds. Paste up to 40,000 characters, choose Short, Medium, or Detailed length, and receive a two-sentence TL;DR, five to eight key points, and timestamped chapters derived from your source timestamps.",
+      "Marvedge AI Video and Media Summarizer condenses long video, audio, podcast, and YouTube recordings into structured, scannable takeaways in seconds. Ingest media files, YouTube links, or paste transcripts up to 40,000 characters to receive a tight TL;DR, key takeaways, and timestamped chapters.",
     lastUpdated: "November 2026",
     lastUpdatedIso: "2026-11-12",
     capabilities: [
@@ -246,7 +246,7 @@ export const aiToolSeo: Record<string, ToolSeoData> = {
           title: "Instant Transcript Recycling",
           steps: [
             "Click Copy in the toolbar to grab clean concatenated text with timestamps removed.",
-            "Paste into Video Summarizer or Content Repurposer for instant blog drafts.",
+            "Paste into AI Video and Media Summarizer or Content Repurposer for instant blog drafts.",
             "Preview uploaded video or audio right inside the tool panel while checking timing.",
           ],
         },
@@ -680,7 +680,7 @@ export const aiToolSeo: Record<string, ToolSeoData> = {
         {
           target: "Video & podcast transcripts",
           status: "Yes",
-          detail: "Pair with Video Summarizer first if the raw recording is very noisy.",
+          detail: "Pair with AI Video and Media Summarizer first if the raw recording is very noisy.",
         },
         {
           target: "Product changelog & release memos",
