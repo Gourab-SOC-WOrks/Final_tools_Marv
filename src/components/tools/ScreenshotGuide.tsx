@@ -12,9 +12,15 @@ import {
   ChevronRight,
   BookOpen,
   CheckCircle2,
-  Image as ImageIcon,
+  Trash2,
+  Plus,
+  ShieldCheck,
   Layers,
   ArrowRight,
+  Crosshair,
+  Download,
+  Info,
+  Edit3,
 } from "lucide-react";
 import screen1 from "@/assets/samples/screen-1.png";
 import screen2 from "@/assets/samples/screen-2.png";
@@ -22,11 +28,21 @@ import screen3 from "@/assets/samples/screen-3.png";
 import { runAiTool } from "@/lib/ai.functions";
 import { useServerFn } from "@tanstack/react-start";
 
+type OutputStyle = "sop" | "help-center" | "checklist";
+
+interface StepAnnotation {
+  x: number; // percentage 0 - 100
+  y: number; // percentage 0 - 100
+  label?: string;
+}
+
 interface GuideStep {
+  id: string;
   stepNumber: number;
   heading: string;
   instruction: string;
   imageUrl?: string;
+  annotation?: StepAnnotation;
 }
 
 interface GeneratedGuide {
@@ -36,30 +52,33 @@ interface GeneratedGuide {
 }
 
 const DEFAULT_SAMPLE_GUIDE: GeneratedGuide = {
-  title: "How to perform a field visit documentation",
+  title: "How to connect a custom domain",
   summary:
-    "This guide outlines the steps to document a home visit, starting from the application interface and capturing the necessary field data with verified timestamps and GPS coordinates.",
+    "Follow this quick 3-step guide to configure DNS records, route traffic, and issue automatic SSL certificates for your custom domain.",
   steps: [
     {
+      id: "step-1",
       stepNumber: 1,
-      heading: "Start the documentation",
-      instruction:
-        "Open the application on your device to begin the record. The timestamp, location details, and GPS coordinates for the visit will be automatically populated on the screen.",
+      heading: "Navigate to Domain Settings",
+      instruction: "Click on Settings in the left sidebar and select the Custom Domains tab.",
       imageUrl: screen1,
+      annotation: { x: 82, y: 22, label: "Settings" },
     },
     {
+      id: "step-2",
       stepNumber: 2,
-      heading: "Confirm record details",
-      instruction:
-        "Verify that the date, time, and location data in the overlay match the current visit details. Once confirmed, you can proceed with the remaining data entry for the session.",
+      heading: "Enter CNAME and TXT verification records",
+      instruction: "Copy the provided DNS records into your DNS provider (Cloudflare, GoDaddy, or Namecheap).",
       imageUrl: screen2,
+      annotation: { x: 50, y: 48, label: "Verify DNS" },
     },
     {
+      id: "step-3",
       stepNumber: 3,
-      heading: "Complete inspection and sync",
-      instruction:
-        "Review the captured observations and signatures. Tap the primary action button to finalize the report and automatically sync the completed documentation to the secure portal.",
+      heading: "Confirm and activate SSL certification",
+      instruction: "Click Verify Domain to activate automated TLS certificate provisioning.",
       imageUrl: screen3,
+      annotation: { x: 78, y: 76, label: "Verify Domain" },
     },
   ],
 };
@@ -74,21 +93,24 @@ async function fileToDataUrl(file: File): Promise<string> {
 }
 
 export function ScreenshotGuide() {
-  const [shots, setShots] = useState<{ url: string; name: string }[]>([
-    { url: screen1, name: "step-1.png" },
-    { url: screen2, name: "step-2.png" },
-    { url: screen3, name: "step-3.png" },
+  const [shots, setShots] = useState<{ id: string; url: string; name: string }[]>([
+    { id: "s1", url: screen1, name: "domain-settings.png" },
+    { id: "s2", url: screen2, name: "dns-records.png" },
+    { id: "s3", url: screen3, name: "activate-ssl.png" },
   ]);
-  const [contextNote, setContextNote] = useState("product tour");
+  const [goalContext, setGoalContext] = useState("How to connect a custom domain");
+  const [outputStyle, setOutputStyle] = useState<OutputStyle>("sop");
   const [busy, setBusy] = useState(false);
   const [guide, setGuide] = useState<GeneratedGuide>(DEFAULT_SAMPLE_GUIDE);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [draggedShotIdx, setDraggedShotIdx] = useState<number | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const printContainerRef = useRef<HTMLDivElement>(null);
+  const dropzoneRef = useRef<HTMLDivElement>(null);
   const runAi = useServerFn(runAiTool);
 
+  // Toast timer
   useEffect(() => {
     if (!toastMessage) return;
     const t = setTimeout(() => setToastMessage(null), 2500);
@@ -96,6 +118,28 @@ export function ScreenshotGuide() {
   }, [toastMessage]);
 
   const showToast = (msg: string) => setToastMessage(msg);
+
+  // Clipboard Paste Support (Ctrl+V)
+  useEffect(() => {
+    const handlePaste = async (e: ClipboardEvent) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+      const files: File[] = [];
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.startsWith("image/")) {
+          const file = items[i].getAsFile();
+          if (file) files.push(file);
+        }
+      }
+      if (files.length > 0) {
+        e.preventDefault();
+        await handleFiles(files);
+        showToast(`Pasted ${files.length} screenshot(s) from clipboard!`);
+      }
+    };
+    window.addEventListener("paste", handlePaste);
+    return () => window.removeEventListener("paste", handlePaste);
+  }, [shots]);
 
   const handleFiles = async (files: FileList | File[]) => {
     const fileArray = Array.from(files).filter((f) => f.type.startsWith("image/"));
@@ -105,13 +149,14 @@ export function ScreenshotGuide() {
     }
     const remainingSlots = 10 - shots.length;
     if (remainingSlots <= 0) {
-      showToast("Maximum of 10 screenshots reached.");
+      showToast("Maximum limit of 10 screenshots reached.");
       return;
     }
 
     const filesToAdd = fileArray.slice(0, remainingSlots);
     const newShots = await Promise.all(
-      filesToAdd.map(async (file) => ({
+      filesToAdd.map(async (file, idx) => ({
+        id: `shot-${Date.now()}-${idx}`,
         url: await fileToDataUrl(file),
         name: file.name,
       }))
@@ -133,29 +178,75 @@ export function ScreenshotGuide() {
     setShots((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const moveShot = (index: number, direction: "left" | "right") => {
-    const targetIndex = direction === "left" ? index - 1 : index + 1;
-    if (targetIndex < 0 || targetIndex >= shots.length) return;
+  // Reordering thumbnails
+  const handleThumbnailDragStart = (idx: number) => {
+    setDraggedShotIdx(idx);
+  };
+
+  const handleThumbnailDrop = (dropIdx: number) => {
+    if (draggedShotIdx === null || draggedShotIdx === dropIdx) return;
     setShots((prev) => {
       const copy = [...prev];
-      const temp = copy[index];
-      copy[index] = copy[targetIndex];
-      copy[targetIndex] = temp;
+      const [dragged] = copy.splice(draggedShotIdx, 1);
+      copy.splice(dropIdx, 0, dragged);
       return copy;
     });
+    setDraggedShotIdx(null);
   };
 
-  const loadSampleData = () => {
-    setShots([
-      { url: screen1, name: "step-1.png" },
-      { url: screen2, name: "step-2.png" },
-      { url: screen3, name: "step-3.png" },
-    ]);
-    setContextNote("Mobile field inspection walkthrough");
-    setGuide(DEFAULT_SAMPLE_GUIDE);
-    showToast("Loaded 3 sample screenshots!");
+  // Click on image to move / set highlight pin
+  const handleImagePinClick = (stepIndex: number, e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = Math.round(((e.clientX - rect.left) / rect.width) * 100);
+    const y = Math.round(((e.clientY - rect.top) / rect.height) * 100);
+
+    setGuide((prev) => {
+      const copy = { ...prev };
+      const updatedSteps = [...copy.steps];
+      if (updatedSteps[stepIndex]) {
+        updatedSteps[stepIndex] = {
+          ...updatedSteps[stepIndex],
+          annotation: { x, y, label: `Action ${stepIndex + 1}` },
+        };
+      }
+      return { ...copy, steps: updatedSteps };
+    });
+    showToast(`Highlight pin moved to (${x}%, ${y}%)`);
   };
 
+  // Add / Delete step controls
+  const deleteStep = (stepIdx: number) => {
+    if (guide.steps.length <= 1) {
+      showToast("A guide requires at least one step.");
+      return;
+    }
+    setGuide((prev) => {
+      const filtered = prev.steps.filter((_, i) => i !== stepIdx);
+      const renumbered = filtered.map((s, idx) => ({ ...s, stepNumber: idx + 1 }));
+      return { ...prev, steps: renumbered };
+    });
+    showToast(`Removed step ${stepIdx + 1}`);
+  };
+
+  const addStepAfter = (stepIdx: number) => {
+    setGuide((prev) => {
+      const newStep: GuideStep = {
+        id: `step-${Date.now()}`,
+        stepNumber: stepIdx + 2,
+        heading: "Next action step",
+        instruction: "Click on the designated button to proceed with configuration.",
+        imageUrl: shots[stepIdx + 1]?.url || shots[shots.length - 1]?.url || screen1,
+        annotation: { x: 50, y: 50, label: "Action" },
+      };
+      const copy = [...prev.steps];
+      copy.splice(stepIdx + 1, 0, newStep);
+      const renumbered = copy.map((s, idx) => ({ ...s, stepNumber: idx + 1 }));
+      return { ...prev, steps: renumbered };
+    });
+    showToast(`Added new step after step ${stepIdx + 1}`);
+  };
+
+  // Generate with AI
   const handleGenerate = async () => {
     if (!shots.length) {
       showToast("Please upload at least 1 screenshot.");
@@ -163,20 +254,27 @@ export function ScreenshotGuide() {
     }
 
     setBusy(true);
+    const styleDescriptions = {
+      sop: "SOP / Internal Documentation: clear, direct, operational steps with exact UI terms",
+      "help-center": "Help Center Article: friendly, user-facing, conversational clarity",
+      checklist: "Quick Checklist: concise, imperative action verbs and punchy checkboxes",
+    };
+
     try {
       const promptText = `
-Screenshots Count: ${shots.length}
-Context / What they show: ${contextNote || "App walkthrough"}
+Guide Goal / Context: ${goalContext || "Follow the step sequence depicted in the screenshots"}
+Output Style: ${styleDescriptions[outputStyle]}
+Screenshot Count: ${shots.length}
 
-Write a clean step-by-step SOP / user guide based on these screenshots.
-Structure your reply strictly as follows:
-Title: [A concise, professional title starting with "How to..."]
-Summary: [A 1-2 sentence overview explaining the objective of this workflow]
+Generate a clear step-by-step user guide for this workflow.
+Structure your reply strictly:
+Title: [Actionable title starting with "How to..."]
+Summary: [1-sentence overview of the goal]
 Steps:
-Step 1: [Action-oriented Heading]
-Instruction: [Clear 1-2 sentence instruction explaining what to click or see]
-Step 2: [Action-oriented Heading]
-Instruction: [Clear 1-2 sentence instruction explaining what to click or see]
+Step 1: [Bold action verb + UI element name, e.g. "Click Export in the top-right corner"]
+Instruction: [1-2 sentences of specific instructions]
+Step 2: [Bold action verb + UI element name]
+Instruction: [1-2 sentences of specific instructions]
 (continue for each screenshot up to ${shots.length})
 `;
 
@@ -188,47 +286,39 @@ Instruction: [Clear 1-2 sentence instruction explaining what to click or see]
         },
       });
 
-      // Parse output
       const titleMatch = raw.match(/Title:\s*(.*)/i);
       const summaryMatch = raw.match(/Summary:\s*([\s\S]*?)(?=Steps:|$)/i);
 
-      const parsedTitle = titleMatch ? titleMatch[1].trim() : `How to complete ${contextNote || "workflow"}`;
-      const parsedSummary = summaryMatch ? summaryMatch[1].trim() : "Follow the numbered steps below to complete this process accurately.";
+      const parsedTitle = titleMatch ? titleMatch[1].trim() : (goalContext || "How to complete this workflow");
+      const parsedSummary = summaryMatch ? summaryMatch[1].trim() : "Follow the numbered steps below to execute this process.";
 
-      // Parse steps
       const stepsRegex = /Step\s*(\d+)[:\.]\s*([^\n]+)\s*\n+(?:Instruction:\s*)?([^\n]+(?:\n[^\n]+)?)/gi;
       const parsedSteps: GuideStep[] = [];
       let match;
       let count = 0;
       while ((match = stepsRegex.exec(raw)) !== null && count < shots.length) {
         parsedSteps.push({
+          id: `step-${count + 1}`,
           stepNumber: count + 1,
           heading: match[2].trim(),
           instruction: match[3].replace(/^Instruction:\s*/i, "").trim(),
           imageUrl: shots[count]?.url,
+          annotation: { x: 50 + (count % 3) * 15, y: 35 + (count % 3) * 20, label: `Step ${count + 1}` },
         });
         count++;
       }
 
-      // If regex missed some steps, map remaining shots
       if (!parsedSteps.length) {
         shots.forEach((shot, i) => {
           parsedSteps.push({
+            id: `step-${i + 1}`,
             stepNumber: i + 1,
-            heading: `Step ${i + 1}: ${contextNote ? contextNote.slice(0, 30) : "Action point"}`,
-            instruction: "Verify the screen contents and proceed to the highlighted action item.",
+            heading: `Click ${goalContext ? goalContext.slice(0, 25) : "Button"} to proceed`,
+            instruction: "Verify the onscreen parameters and select the highlighted element to continue.",
             imageUrl: shot.url,
+            annotation: { x: 50, y: 45, label: `Step ${i + 1}` },
           });
         });
-      } else if (parsedSteps.length < shots.length) {
-        for (let i = parsedSteps.length; i < shots.length; i++) {
-          parsedSteps.push({
-            stepNumber: i + 1,
-            heading: `Step ${i + 1}: Proceed to next stage`,
-            instruction: "Confirm details and finalize this action.",
-            imageUrl: shots[i].url,
-          });
-        }
       }
 
       setGuide({
@@ -236,34 +326,32 @@ Instruction: [Clear 1-2 sentence instruction explaining what to click or see]
         summary: parsedSummary,
         steps: parsedSteps,
       });
-      showToast("Step-by-step guide generated successfully!");
+      showToast("Guide generated successfully!");
     } catch {
-      // Fallback with tailored steps
-      const steps: GuideStep[] = shots.map((shot, i) => ({
+      // Offline fallback
+      const fallbackSteps: GuideStep[] = shots.map((shot, i) => ({
+        id: `step-${i + 1}`,
         stepNumber: i + 1,
         heading:
           i === 0
-            ? "Initiate the workflow"
+            ? "Open target dashboard"
             : i === 1
-            ? "Verify screen parameters"
+            ? "Configure field options"
             : i === 2
-            ? "Confirm and save record"
-            : `Step ${i + 1}: Execute next action`,
+            ? "Confirm and save changes"
+            : `Execute step ${i + 1}`,
         instruction:
-          i === 0
-            ? "Launch the screen and ensure all required identifiers and input fields are initialized."
-            : i === 1
-            ? "Check all overlay coordinates, timestamps, and input values against the source specification."
-            : i === 2
-            ? "Tap the confirmation action to finalize the procedure and sync data."
-            : "Review the interface prompt and proceed with the designated task.",
+          outputStyle === "checklist"
+            ? `Select the verified element and ensure status turns active.`
+            : `Navigate to the designated control panel and verify that all inputs conform to requirements.`,
         imageUrl: shot.url,
+        annotation: { x: 75 - i * 15, y: 30 + i * 20, label: `Step ${i + 1}` },
       }));
 
       setGuide({
-        title: `How to perform ${contextNote || "field documentation"}`,
-        summary: "This guide outlines the complete operational sequence captured from the submitted workflow screenshots.",
-        steps,
+        title: goalContext || "How to complete this workflow",
+        summary: "This guide provides step-by-step instructions compiled from your sequenced screenshots.",
+        steps: fallbackSteps,
       });
       showToast("Guide generated!");
     } finally {
@@ -271,76 +359,104 @@ Instruction: [Clear 1-2 sentence instruction explaining what to click or see]
     }
   };
 
-  // EXPORT 1: COPY TO CLIPBOARD
-  const exportCopy = () => {
+  // EXPORT 1: COPY AS MARKDOWN
+  const exportCopyMarkdown = () => {
     const text = `# ${guide.title}\n\n${guide.summary}\n\n` +
-      guide.steps.map((s) => `### ${s.stepNumber}. ${s.heading}\n${s.instruction}\n`).join("\n");
+      guide.steps
+        .map((s) => `### ${s.stepNumber}. ${s.heading}\n${s.instruction}\n`)
+        .join("\n");
     navigator.clipboard.writeText(text);
-    showToast("Guide copied to clipboard in Markdown format!");
+    showToast("Copied Markdown for Notion, GitHub & Confluence!");
   };
 
-  // EXPORT 2: MARKDOWN DOWNLOAD (.md)
-  const exportMarkdown = () => {
-    const text = `# ${guide.title}\n\n> ${guide.summary}\n\n` +
-      guide.steps.map((s) => `## Step ${s.stepNumber}: ${s.heading}\n\n${s.instruction}\n`).join("\n\n---\n\n");
-    const blob = new Blob([text], { type: "text/markdown;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${guide.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 45)}.md`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showToast("Downloaded guide as Markdown (.md)!");
-  };
-
-  // EXPORT 3: WORD (.doc)
-  const exportWord = () => {
-    const htmlContent = `
-      <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-      <head>
-        <meta charset='utf-8'>
-        <title>${guide.title}</title>
-        <style>
-          body { font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #1e1e1e; margin: 40px; }
-          h1 { color: #0f172a; font-size: 24pt; border-bottom: 2px solid #2563eb; padding-bottom: 8px; margin-bottom: 16px; }
-          p.summary { font-size: 13pt; color: #475569; font-style: italic; margin-bottom: 24px; background: #f8fafc; padding: 12px; border-left: 4px solid #2563eb; }
-          .step { margin-bottom: 30px; }
-          h2 { color: #1e40af; font-size: 16pt; margin-top: 20px; }
-          p.instruction { font-size: 12pt; color: #334155; }
-        </style>
-      </head>
-      <body>
-        <h1>${guide.title}</h1>
-        <p class="summary">${guide.summary}</p>
+  // EXPORT 2: COPY RICH TEXT (HTML with styling for Google Docs / Word)
+  const exportCopyRichText = async () => {
+    const html = `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #1e1e1e;">
+        <h1 style="color: #0f172a; font-size: 24px; border-bottom: 2px solid #2563eb; padding-bottom: 8px;">${guide.title}</h1>
+        <p style="font-size: 15px; color: #475569; font-style: italic; background: #f8fafc; padding: 10px; border-left: 4px solid #2563eb;">${guide.summary}</p>
         ${guide.steps
           .map(
             (s) => `
-          <div class="step">
-            <h2>Step ${s.stepNumber}: ${s.heading}</h2>
-            <p class="instruction">${s.instruction}</p>
+          <div style="margin-top: 24px; margin-bottom: 16px;">
+            <h2 style="color: #1e40af; font-size: 18px;">Step ${s.stepNumber}: ${s.heading}</h2>
+            <p style="font-size: 14px; color: #334155;">${s.instruction}</p>
           </div>
         `
           )
           .join("")}
-      </body>
-      </html>
+      </div>
     `;
-    const blob = new Blob(["\ufeff", htmlContent], { type: "application/msword" });
+    const plainText = `# ${guide.title}\n\n${guide.summary}\n\n` +
+      guide.steps.map((s) => `Step ${s.stepNumber}: ${s.heading}\n${s.instruction}\n`).join("\n");
+
+    try {
+      const blobHtml = new Blob([html], { type: "text/html" });
+      const blobText = new Blob([plainText], { type: "text/plain" });
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          "text/html": blobHtml,
+          "text/plain": blobText,
+        }),
+      ]);
+      showToast("Copied Rich Text! Ready to paste into Google Docs or Word.");
+    } catch {
+      navigator.clipboard.writeText(plainText);
+      showToast("Copied text to clipboard!");
+    }
+  };
+
+  // EXPORT 3: DOWNLOAD PDF / HTML
+  const exportDownloadHtml = () => {
+    const fullHtml = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>${guide.title}</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; max-width: 800px; margin: 40px auto; padding: 0 20px; color: #111; }
+    h1 { font-size: 28px; margin-bottom: 8px; color: #000; }
+    .summary { font-size: 16px; color: #4b5563; margin-bottom: 32px; border-left: 3px solid #2563eb; padding-left: 12px; }
+    .step { margin-bottom: 40px; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; }
+    .step-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .step-badge { background: #2563eb; color: #fff; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; }
+    .step-title { font-size: 18px; font-weight: 700; margin: 0; }
+    .step-instruction { font-size: 15px; color: #374151; margin-bottom: 16px; }
+    img { max-width: 100%; border-radius: 8px; border: 1px solid #d1d5db; }
+  </style>
+</head>
+<body>
+  <h1>${guide.title}</h1>
+  <p class="summary">${guide.summary}</p>
+  ${guide.steps
+    .map(
+      (s) => `
+    <div class="step">
+      <div class="step-header">
+        <div class="step-badge">${s.stepNumber}</div>
+        <h2 class="step-title">${s.heading}</h2>
+      </div>
+      <p class="step-instruction">${s.instruction}</p>
+      ${s.imageUrl ? `<img src="${s.imageUrl}" alt="Step ${s.stepNumber}">` : ""}
+    </div>
+  `
+    )
+    .join("")}
+</body>
+</html>`;
+    const blob = new Blob([fullHtml], { type: "text/html;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${guide.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 45)}.doc`;
+    a.download = `${guide.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 45)}.html`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    showToast("Downloaded guide for Microsoft Word (.doc)!");
+    showToast("Downloaded standalone HTML guide!");
   };
 
-  // EXPORT 4: PDF EXPORT (PRINT READY)
-  const exportPdf = () => {
+  const exportPrintPdf = () => {
     window.print();
   };
 
@@ -366,7 +482,7 @@ Instruction: [Clear 1-2 sentence instruction explaining what to click or see]
         }}
       />
 
-      {/* Header Bar matching image */}
+      {/* Header Bar */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-[#D6CCB5] bg-white p-4 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100">
@@ -374,15 +490,15 @@ Instruction: [Clear 1-2 sentence instruction explaining what to click or see]
           </div>
           <div>
             <h1 className="text-base font-extrabold text-[#1A1917] tracking-tight">
-              Screenshot to guide
+              Screenshot to step-by-step guide
             </h1>
             <p className="text-xs text-[#78716C]">
-              Transform sequence screenshots into polished visual step-by-step SOPs
+              Transform sequential screen grabs into polished, annotated visual SOPs
             </p>
           </div>
         </div>
 
-        {/* Badges on right matching reference */}
+        {/* Badges on right */}
         <div className="flex items-center gap-2 text-xs font-semibold text-[#78716C]">
           <span className="rounded-full bg-[#FAF7F0] border border-[#D6CCB5] px-2.5 py-1 text-[#1A1917]">
             Free
@@ -392,7 +508,7 @@ Instruction: [Clear 1-2 sentence instruction explaining what to click or see]
             No sign-up
           </span>
           <span>•</span>
-          <span className="rounded-full bg-blue-50 border border-blue-200 px-2.5 py-1 text-blue-700">
+          <span className="rounded-full bg-blue-50 border border-blue-200 px-2.5 py-1 text-blue-700 font-bold">
             5 runs a day
           </span>
         </div>
@@ -400,15 +516,23 @@ Instruction: [Clear 1-2 sentence instruction explaining what to click or see]
 
       {/* Main 2-Column Split Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* LEFT COLUMN: Inputs (Screenshots & Context) */}
+        {/* 1. INPUT BOX (Left Column - approx 5 cols) */}
         <div className="lg:col-span-5 space-y-5">
           <div className="rounded-3xl border border-[#D6CCB5] bg-white p-6 shadow-sm">
-            <label className="block text-xs font-bold text-[#1A1917] uppercase tracking-wider mb-2">
-              Screenshots
-            </label>
+            {/* Header + Privacy Badge */}
+            <div className="flex items-center justify-between mb-3">
+              <label className="text-xs font-bold text-[#1A1917] uppercase tracking-wider">
+                Screenshots ({shots.length}/10)
+              </label>
+              <div className="flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5">
+                <ShieldCheck className="h-3 w-3" />
+                <span>Processed temporarily & never stored</span>
+              </div>
+            </div>
 
-            {/* Drag & Drop Upload Zone */}
+            {/* Multi-Image Dropzone with Ctrl+V Support */}
             <div
+              ref={dropzoneRef}
               onDragOver={(e) => {
                 e.preventDefault();
                 setIsDragging(true);
@@ -428,7 +552,7 @@ Instruction: [Clear 1-2 sentence instruction explaining what to click or see]
                 <Upload className="h-5 w-5" />
               </div>
               <p className="text-xs md:text-sm font-medium text-[#1A1917]">
-                Drop files here or{" "}
+                Drop screenshots here, or{" "}
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
@@ -438,16 +562,16 @@ Instruction: [Clear 1-2 sentence instruction explaining what to click or see]
                 </button>
               </p>
               <p className="mt-1 text-[11px] text-[#78716C]">
-                PNG, JPG or WebP, in the order of the steps • up to 10
+                PNG, JPG or WebP in step order • <kbd className="rounded bg-white px-1.5 py-0.5 text-[10px] font-mono border border-[#D6CCB5]">Ctrl+V</kbd> paste supported
               </p>
             </div>
 
-            {/* Thumbnails Ordered Strip */}
+            {/* Sortable Thumbnail Strip */}
             {shots.length > 0 && (
               <div className="mt-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-semibold text-[#78716C]">
-                    Ordered steps ({shots.length}/10):
+                  <span className="text-[11px] font-semibold text-[#78716C]">
+                    Drag to reorder sequence:
                   </span>
                   <button
                     type="button"
@@ -460,8 +584,15 @@ Instruction: [Clear 1-2 sentence instruction explaining what to click or see]
                 <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
                   {shots.map((shot, idx) => (
                     <div
-                      key={idx}
-                      className="group relative aspect-video overflow-hidden rounded-xl border border-[#D6CCB5] bg-black shadow-xs"
+                      key={shot.id}
+                      draggable
+                      onDragStart={() => handleThumbnailDragStart(idx)}
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={() => handleThumbnailDrop(idx)}
+                      className={`group relative aspect-video cursor-grab overflow-hidden rounded-xl border bg-black shadow-xs transition active:cursor-grabbing ${
+                        draggedShotIdx === idx ? "opacity-40 border-blue-500" : "border-[#D6CCB5]"
+                      }`}
+                      title="Drag to reorder"
                     >
                       <img
                         src={shot.url}
@@ -476,8 +607,8 @@ Instruction: [Clear 1-2 sentence instruction explaining what to click or see]
                       <button
                         type="button"
                         onClick={() => removeShot(idx)}
-                        className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-black/70 text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                        title="Remove step"
+                        className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-black/75 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                        title="Remove screenshot"
                       >
                         <X className="h-2.5 w-2.5" />
                       </button>
@@ -487,151 +618,307 @@ Instruction: [Clear 1-2 sentence instruction explaining what to click or see]
               </div>
             )}
 
-            {/* Context Textarea */}
+            {/* Guide Goal / Context (Optional) Single Line */}
             <div className="mt-5">
               <label className="block text-xs font-bold text-[#1A1917] mb-1.5">
-                What do the screenshots show? <span className="font-normal text-[#78716C]">(Optional)</span>
+                Guide Goal / Context <span className="font-normal text-[#78716C]">(Optional)</span>
               </label>
-              <div className="relative rounded-xl border border-[#D6CCB5] bg-white transition-all focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600">
-                <textarea
-                  rows={3}
-                  maxLength={1000}
-                  value={contextNote}
-                  onChange={(e) => setContextNote(e.target.value)}
-                  placeholder="product tour, how to invite a teammate..."
-                  className="w-full resize-none rounded-xl bg-transparent p-3 text-xs md:text-sm text-[#1A1917] placeholder:text-[#9E988D] focus:outline-none"
-                />
-                <div className="flex justify-end p-2 text-[11px] font-mono text-[#9E988D]">
-                  {contextNote.length} / 1,000
-                </div>
+              <input
+                type="text"
+                value={goalContext}
+                onChange={(e) => setGoalContext(e.target.value)}
+                placeholder="e.g. How to export a CSV report in Stripe"
+                className="w-full rounded-xl border border-[#D6CCB5] bg-white px-3.5 py-2.5 text-xs md:text-sm text-[#1A1917] placeholder:text-[#9E988D] focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600"
+              />
+            </div>
+
+            {/* Output Style Pills (3 quick toggles) */}
+            <div className="mt-5">
+              <label className="block text-xs font-bold text-[#1A1917] mb-2 uppercase tracking-wider">
+                Output Style
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {/* SOP */}
+                <button
+                  type="button"
+                  onClick={() => setOutputStyle("sop")}
+                  className={`flex flex-col items-center justify-center rounded-xl border p-2.5 text-center transition ${
+                    outputStyle === "sop"
+                      ? "border-blue-600 bg-blue-50/50 text-blue-950 font-bold ring-1 ring-blue-600"
+                      : "border-[#D6CCB5] bg-[#FAF7F0] text-[#4A4740] hover:border-blue-300 hover:bg-white"
+                  }`}
+                >
+                  <span className="text-xs font-bold">SOP / Doc</span>
+                  <span className="text-[10px] text-[#78716C] mt-0.5">Direct steps</span>
+                </button>
+
+                {/* Help Center */}
+                <button
+                  type="button"
+                  onClick={() => setOutputStyle("help-center")}
+                  className={`flex flex-col items-center justify-center rounded-xl border p-2.5 text-center transition ${
+                    outputStyle === "help-center"
+                      ? "border-blue-600 bg-blue-50/50 text-blue-950 font-bold ring-1 ring-blue-600"
+                      : "border-[#D6CCB5] bg-[#FAF7F0] text-[#4A4740] hover:border-blue-300 hover:bg-white"
+                  }`}
+                >
+                  <span className="text-xs font-bold">Help Article</span>
+                  <span className="text-[10px] text-[#78716C] mt-0.5">User-facing</span>
+                </button>
+
+                {/* Checklist */}
+                <button
+                  type="button"
+                  onClick={() => setOutputStyle("checklist")}
+                  className={`flex flex-col items-center justify-center rounded-xl border p-2.5 text-center transition ${
+                    outputStyle === "checklist"
+                      ? "border-blue-600 bg-blue-50/50 text-blue-950 font-bold ring-1 ring-blue-600"
+                      : "border-[#D6CCB5] bg-[#FAF7F0] text-[#4A4740] hover:border-blue-300 hover:bg-white"
+                  }`}
+                >
+                  <span className="text-xs font-bold">Checklist</span>
+                  <span className="text-[10px] text-[#78716C] mt-0.5">Quick actions</span>
+                </button>
               </div>
             </div>
 
-            {/* Quick Sample Button */}
-            <div className="mt-3 flex justify-between items-center">
-              <button
-                type="button"
-                onClick={loadSampleData}
-                className="text-xs font-semibold text-blue-600 hover:underline"
-              >
-                Try sample screenshots (3 screens) →
-              </button>
-            </div>
-
-            {/* Generate Button matching image */}
-            <div className="mt-5 space-y-3">
+            {/* "Generate Guide" CTA Button */}
+            <div className="mt-6 space-y-3">
               <button
                 type="button"
                 disabled={busy || !shots.length}
                 onClick={handleGenerate}
-                className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 px-5 py-3 text-sm font-bold text-white shadow-md transition active:scale-98 disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 px-5 py-3.5 text-sm font-bold text-white shadow-md transition active:scale-98 disabled:opacity-50"
               >
                 <Sparkles className={`h-4 w-4 ${busy ? "animate-spin" : ""}`} />
-                <span>{busy ? "Analyzing & writing guide..." : "✨ Generate guide"}</span>
+                <span>{busy ? "Analyzing UI & Writing Steps..." : "✨ Generate Guide"}</span>
               </button>
 
-              <p className="text-[11px] leading-relaxed text-[#78716C]">
-                We don't keep your input or the result, only a record that the tool ran. By using this tool you agree to our Terms of Use and Privacy Policy.
-              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setGoalContext("How to connect a custom domain");
+                  setGuide(DEFAULT_SAMPLE_GUIDE);
+                  setShots([
+                    { id: "s1", url: screen1, name: "domain-settings.png" },
+                    { id: "s2", url: screen2, name: "dns-records.png" },
+                    { id: "s3", url: screen3, name: "activate-ssl.png" },
+                  ]);
+                  showToast("Loaded instant 3-step domain sample guide!");
+                }}
+                className="w-full text-center text-xs font-semibold text-blue-600 hover:underline"
+              >
+                Reload instant 3-step sample demo →
+              </button>
             </div>
           </div>
         </div>
 
-        {/* RIGHT COLUMN: RESULT / STEP-BY-STEP GUIDE */}
+        {/* 2. OUTPUT WORKSPACE (Right Column - approx 7 cols) */}
         <div className="lg:col-span-7">
-          <div
-            ref={printContainerRef}
-            className="rounded-3xl border border-[#D6CCB5] bg-white p-6 md:p-8 shadow-sm space-y-6"
-          >
-            {/* Top Result Tag */}
-            <div>
-              <span className="text-[11px] font-bold tracking-widest text-[#78716C] uppercase">
-                RESULT
-              </span>
-              <h2 className="text-2xl md:text-3xl font-extrabold text-[#1A1917] tracking-tight font-serif mt-1">
-                {guide.title}
-              </h2>
+          <div className="rounded-3xl border border-[#D6CCB5] bg-white p-6 md:p-8 shadow-sm space-y-6">
+            {/* Top Workspace Header & One-Click Export Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#EFECE6] pb-4">
+              <div>
+                <span className="text-[11px] font-bold tracking-widest text-[#78716C] uppercase">
+                  OUTPUT WORKSPACE
+                </span>
+                <p className="text-xs text-[#78716C]">
+                  Click on any text or screenshot to edit instructions & reposition action pins
+                </p>
+              </div>
+
+              {/* One-Click Export Bar */}
+              <div className="flex flex-wrap items-center gap-2 print:hidden">
+                <button
+                  type="button"
+                  onClick={exportCopyMarkdown}
+                  className="flex items-center gap-1.5 rounded-lg border border-[#D6CCB5] bg-white px-3 py-1.5 text-xs font-semibold text-[#1A1917] hover:border-[#000000] hover:bg-[#FAF7F0] transition active:scale-95 shadow-xs"
+                  title="Copy as Markdown for Notion, GitHub, Confluence"
+                >
+                  <FileCode className="h-3.5 w-3.5 text-blue-600" />
+                  <span>Copy Markdown</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={exportCopyRichText}
+                  className="flex items-center gap-1.5 rounded-lg border border-[#D6CCB5] bg-white px-3 py-1.5 text-xs font-semibold text-[#1A1917] hover:border-[#000000] hover:bg-[#FAF7F0] transition active:scale-95 shadow-xs"
+                  title="Copy Rich Text for Google Docs, Word"
+                >
+                  <Copy className="h-3.5 w-3.5 text-emerald-600" />
+                  <span>Copy Rich Text</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={exportDownloadHtml}
+                  className="flex items-center gap-1.5 rounded-lg border border-[#D6CCB5] bg-white px-3 py-1.5 text-xs font-semibold text-[#1A1917] hover:border-[#000000] hover:bg-[#FAF7F0] transition active:scale-95 shadow-xs"
+                  title="Download HTML file"
+                >
+                  <Download className="h-3.5 w-3.5 text-purple-600" />
+                  <span>HTML</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={exportPrintPdf}
+                  className="flex items-center gap-1.5 rounded-lg border border-[#D6CCB5] bg-white px-3 py-1.5 text-xs font-semibold text-[#1A1917] hover:border-[#000000] hover:bg-[#FAF7F0] transition active:scale-95 shadow-xs"
+                  title="Download or Print PDF"
+                >
+                  <Printer className="h-3.5 w-3.5 text-red-600" />
+                  <span>PDF</span>
+                </button>
+              </div>
             </div>
 
-            {/* 4 EXPORT TYPE PILLS matching the image */}
-            <div className="flex flex-wrap items-center gap-2 border-y border-[#EFECE6] py-3 print:hidden">
-              {/* Copy */}
-              <button
-                type="button"
-                onClick={exportCopy}
-                className="flex items-center gap-1.5 rounded-lg border border-[#D6CCB5] bg-white px-3 py-1.5 text-xs font-semibold text-[#1A1917] hover:border-[#000000] hover:bg-[#FAF7F0] transition active:scale-95"
-              >
-                <Copy className="h-3.5 w-3.5 text-[#78716C]" />
-                <span>Copy</span>
-              </button>
+            {/* Editable Guide Title & Intro */}
+            <div className="space-y-3">
+              <div className="relative group">
+                <input
+                  type="text"
+                  value={guide.title}
+                  onChange={(e) => setGuide({ ...guide, title: e.target.value })}
+                  className="w-full text-2xl md:text-3xl font-extrabold text-[#1A1917] tracking-tight font-serif bg-transparent border-b border-transparent hover:border-[#D6CCB5] focus:border-blue-600 focus:outline-none py-1"
+                  placeholder="Enter guide title..."
+                />
+                <Edit3 className="h-3.5 w-3.5 text-[#78716C] absolute right-2 top-3 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+              </div>
 
-              {/* Markdown */}
-              <button
-                type="button"
-                onClick={exportMarkdown}
-                className="flex items-center gap-1.5 rounded-lg border border-[#D6CCB5] bg-white px-3 py-1.5 text-xs font-semibold text-[#1A1917] hover:border-[#000000] hover:bg-[#FAF7F0] transition active:scale-95"
-              >
-                <FileCode className="h-3.5 w-3.5 text-blue-600" />
-                <span>Markdown</span>
-              </button>
-
-              {/* Word */}
-              <button
-                type="button"
-                onClick={exportWord}
-                className="flex items-center gap-1.5 rounded-lg border border-[#D6CCB5] bg-white px-3 py-1.5 text-xs font-semibold text-[#1A1917] hover:border-[#000000] hover:bg-[#FAF7F0] transition active:scale-95"
-              >
-                <FileText className="h-3.5 w-3.5 text-blue-800" />
-                <span>Word</span>
-              </button>
-
-              {/* PDF */}
-              <button
-                type="button"
-                onClick={exportPdf}
-                className="flex items-center gap-1.5 rounded-lg border border-[#D6CCB5] bg-white px-3 py-1.5 text-xs font-semibold text-[#1A1917] hover:border-[#000000] hover:bg-[#FAF7F0] transition active:scale-95"
-              >
-                <Printer className="h-3.5 w-3.5 text-red-600" />
-                <span>PDF</span>
-              </button>
+              <div className="relative group">
+                <textarea
+                  rows={2}
+                  value={guide.summary}
+                  onChange={(e) => setGuide({ ...guide, summary: e.target.value })}
+                  className="w-full text-xs md:text-sm text-[#4A4740] leading-relaxed bg-transparent border-b border-transparent hover:border-[#D6CCB5] focus:border-blue-600 focus:outline-none resize-none py-1"
+                  placeholder="Enter 1-sentence guide overview..."
+                />
+                <Edit3 className="h-3.5 w-3.5 text-[#78716C] absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+              </div>
             </div>
 
-            {/* Guide Summary paragraph */}
-            <p className="text-sm md:text-base leading-relaxed text-[#4A4740]">
-              {guide.summary}
-            </p>
-
-            {/* STEP BY STEP CARDS WITH FULL IMAGES */}
+            {/* Numbered Step Cards */}
             <div className="space-y-8 pt-2">
-              {guide.steps.map((step) => (
-                <div key={step.stepNumber} className="space-y-3">
-                  {/* Step Header with Blue Number Circle */}
-                  <div className="flex items-start gap-3">
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white shadow-xs mt-0.5">
-                      {step.stepNumber}
-                    </span>
-                    <div>
-                      <h3 className="text-base font-bold text-[#1A1917] leading-snug">
-                        {step.heading}
-                      </h3>
-                      <p className="mt-1 text-xs md:text-sm text-[#4A4740] leading-relaxed">
-                        {step.instruction}
-                      </p>
+              {guide.steps.map((step, idx) => (
+                <div
+                  key={step.id || idx}
+                  className="group/step relative rounded-2xl border border-[#D6CCB5]/80 bg-[#FAF7F0]/30 p-5 transition hover:border-[#D6CCB5] hover:bg-[#FAF7F0]/60 space-y-4"
+                >
+                  {/* Step Top Bar: Number + Editable Heading + Step Controls */}
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-3 flex-1">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white shadow-xs mt-0.5">
+                        {step.stepNumber}
+                      </span>
+                      <div className="flex-1 space-y-1">
+                        {/* Editable Step Heading */}
+                        <input
+                          type="text"
+                          value={step.heading}
+                          onChange={(e) => {
+                            const copy = [...guide.steps];
+                            copy[idx].heading = e.target.value;
+                            setGuide({ ...guide, steps: copy });
+                          }}
+                          className="w-full text-base font-bold text-[#1A1917] bg-transparent border-b border-transparent hover:border-[#D6CCB5] focus:border-blue-600 focus:outline-none"
+                          placeholder="Action verb + UI element..."
+                        />
+                        {/* Editable Instruction */}
+                        <textarea
+                          rows={2}
+                          value={step.instruction}
+                          onChange={(e) => {
+                            const copy = [...guide.steps];
+                            copy[idx].instruction = e.target.value;
+                            setGuide({ ...guide, steps: copy });
+                          }}
+                          className="w-full text-xs md:text-sm text-[#4A4740] bg-transparent border-b border-transparent hover:border-[#D6CCB5] focus:border-blue-600 focus:outline-none resize-none"
+                          placeholder="Describe specific instruction..."
+                        />
+                      </div>
+                    </div>
+
+                    {/* Step Controls (Add / Delete) */}
+                    <div className="flex items-center gap-1 opacity-80 group-hover/step:opacity-100 transition-opacity print:hidden">
+                      <button
+                        type="button"
+                        onClick={() => addStepAfter(idx)}
+                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#D6CCB5] bg-white text-[#4A4740] hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition"
+                        title="Add step after this"
+                      >
+                        <Plus className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => deleteStep(idx)}
+                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#D6CCB5] bg-white text-[#4A4740] hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition"
+                        title="Delete this step"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
                     </div>
                   </div>
 
-                  {/* Step Screenshot Image */}
+                  {/* Annotated Screenshot Preview with Click-to-Move Pin */}
                   {step.imageUrl && (
-                    <div className="overflow-hidden rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] shadow-sm ml-9">
-                      <img
-                        src={step.imageUrl}
-                        alt={step.heading}
-                        className="w-full h-auto max-h-[500px] object-contain bg-white"
-                      />
+                    <div className="space-y-1.5 ml-10">
+                      <div
+                        onClick={(e) => handleImagePinClick(idx, e)}
+                        className="relative cursor-crosshair overflow-hidden rounded-2xl border border-[#D6CCB5] bg-black shadow-sm group/img"
+                        title="Click anywhere on the screenshot to reposition the highlight pin"
+                      >
+                        <img
+                          src={step.imageUrl}
+                          alt={step.heading}
+                          className="w-full h-auto max-h-[440px] object-contain bg-white"
+                        />
+
+                        {/* Highlight Pin / Dot */}
+                        {step.annotation && (
+                          <div
+                            className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 flex items-center gap-1.5 animate-in zoom-in-75 duration-150"
+                            style={{
+                              left: `${step.annotation.x}%`,
+                              top: `${step.annotation.y}%`,
+                            }}
+                          >
+                            {/* Pulsing ring */}
+                            <span className="relative flex h-8 w-8 items-center justify-center">
+                              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-500 opacity-75" />
+                              <span className="relative inline-flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 border-2 border-white text-white text-xs font-black shadow-lg">
+                                {step.stepNumber}
+                              </span>
+                            </span>
+                            {step.annotation.label && (
+                              <span className="rounded-md bg-black/80 px-2 py-0.5 text-[10px] font-bold text-white shadow-md backdrop-blur">
+                                {step.annotation.label}
+                              </span>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Hover guidance overlay */}
+                        <div className="absolute inset-x-0 bottom-0 bg-black/60 py-1 px-3 text-center text-[10px] font-medium text-white opacity-0 group-hover/img:opacity-100 transition-opacity backdrop-blur-xs flex items-center justify-center gap-1.5 print:hidden">
+                          <Crosshair className="h-3 w-3 text-blue-400" />
+                          <span>Click anywhere on screenshot to move action pin</span>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
               ))}
+            </div>
+
+            {/* Bottom Add Step Button */}
+            <div className="pt-2 text-center print:hidden">
+              <button
+                type="button"
+                onClick={() => addStepAfter(guide.steps.length - 1)}
+                className="inline-flex items-center gap-2 rounded-xl border border-dashed border-[#D6CCB5] hover:border-blue-500 bg-[#FAF7F0]/50 hover:bg-blue-50/50 px-5 py-2.5 text-xs font-bold text-blue-700 transition"
+              >
+                <Plus className="h-4 w-4" />
+                <span>Add Another Step</span>
+              </button>
             </div>
           </div>
         </div>
