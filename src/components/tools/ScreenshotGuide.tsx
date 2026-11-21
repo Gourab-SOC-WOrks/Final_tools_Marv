@@ -947,12 +947,36 @@ Instruction: [1-2 sentences of specific instructions]
                                 </span>
                               </span>
 
-                              {/* Label badge */}
-                              <span className="rounded-md bg-black/85 px-2 py-0.5 text-[10px] font-bold text-white shadow-md backdrop-blur border border-white/20 whitespace-nowrap">
-                                {activeDragStep === idx
-                                  ? `${step.annotation.x}%, ${step.annotation.y}%`
-                                  : step.annotation.label || `Step ${step.stepNumber}`}
-                              </span>
+                              {/* Editable Label badge beside the highlight circle */}
+                              {activeDragStep === idx ? (
+                                <span className="pointer-events-none rounded-md bg-black/90 px-2 py-0.5 text-[10px] font-mono font-bold text-blue-300 shadow-md backdrop-blur border border-blue-400/40 whitespace-nowrap">
+                                  {step.annotation.x}%, {step.annotation.y}%
+                                </span>
+                              ) : (
+                                <div
+                                  className="pointer-events-auto flex items-center group/badge"
+                                  onPointerDown={(e) => e.stopPropagation()}
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <input
+                                    type="text"
+                                    value={step.annotation.label || `Step ${step.stepNumber}`}
+                                    onChange={(e) => {
+                                      const copy = [...guide.steps];
+                                      if (copy[idx].annotation) {
+                                        copy[idx].annotation = {
+                                          ...copy[idx].annotation!,
+                                          label: e.target.value,
+                                        };
+                                        setGuide({ ...guide, steps: copy });
+                                      }
+                                    }}
+                                    className="cursor-text rounded-md bg-black/85 px-2 py-0.5 text-[10px] font-bold text-white shadow-md backdrop-blur border border-white/20 hover:border-blue-400 focus:border-blue-500 focus:bg-black focus:outline-none w-24 sm:w-28 text-left transition"
+                                    title="Click to edit highlight label text directly on screenshot"
+                                    placeholder="Label..."
+                                  />
+                                </div>
+                              )}
                             </div>
                           </>
                         )}
@@ -967,10 +991,38 @@ Instruction: [1-2 sentences of specific instructions]
                           <span>
                             {activeDragStep === idx
                               ? "Dragging highlight pin freely across image..."
-                              : "Drag freely or click anywhere on screenshot to position highlight pin"}
+                              : "Drag freely or click to position pin • Click text badge to edit label"}
                           </span>
                         </div>
                       </div>
+
+                      {/* Micro Bar: Quick Pin Label Editor & Position */}
+                      {step.annotation && (
+                        <div className="flex flex-wrap items-center justify-between text-[11px] text-[#78716C] px-1 pt-1 print:hidden">
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-semibold text-[#1A1917]">Pin label:</span>
+                            <input
+                              type="text"
+                              value={step.annotation.label || `Step ${step.stepNumber}`}
+                              onChange={(e) => {
+                                const copy = [...guide.steps];
+                                if (copy[idx].annotation) {
+                                  copy[idx].annotation = {
+                                    ...copy[idx].annotation!,
+                                    label: e.target.value,
+                                  };
+                                  setGuide({ ...guide, steps: copy });
+                                }
+                              }}
+                              placeholder="e.g. Export CSV..."
+                              className="rounded-md border border-[#D6CCB5] bg-white px-2 py-0.5 text-xs font-medium text-[#1A1917] focus:border-blue-600 focus:outline-none"
+                            />
+                          </div>
+                          <span className="font-mono text-[10px] text-[#78716C]">
+                            Pin at ({step.annotation.x}%, {step.annotation.y}%)
+                          </span>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
