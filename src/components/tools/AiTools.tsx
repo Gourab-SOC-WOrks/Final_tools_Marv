@@ -27,15 +27,15 @@ type ToolCfg = { fields: FieldDef[]; cta: string; demo: Record<string, string> }
 const CONFIG: Record<string, ToolCfg> = {
   "video-summarizer": {
     cta: "Summarize",
-    fields: [{ key: "Transcript", label: "Paste the video transcript", type: "textarea", placeholder: "Paste a transcript (with timestamps if you have them)â€¦" }, { key: "Length", label: "Summary length", type: "select", options: ["Short", "Medium", "Detailed"] }],
+    fields: [{ key: "Transcript", label: "Paste the video transcript", type: "textarea", placeholder: "Paste a transcript (with timestamps if you have them)Ã¢â‚¬Â¦" }, { key: "Length", label: "Summary length", type: "select", options: ["Short", "Medium", "Detailed"] }],
     demo: {
-      Transcript: "00:00 Welcome back. Today I'm showing how a plain product walkthrough becomes an interactive demo.\n00:24 First, upload your recording â€” the tool runs in your browser, so the file never leaves your machine.\n01:02 Next, pick the steps your buyer actually cares about and hide the setup screens.\n01:41 Then put a call to action on the last step so viewers click straight through to pricing.\n02:10 Teams using these demos say sales conversations start with fewer, sharper questions.\n02:48 That's the loop: record once, publish everywhere, and see which step sells.",
+      Transcript: "00:00 Welcome back. Today I'm showing how a plain product walkthrough becomes an interactive demo.\n00:24 First, upload your recording Ã¢â‚¬â€ the tool runs in your browser, so the file never leaves your machine.\n01:02 Next, pick the steps your buyer actually cares about and hide the setup screens.\n01:41 Then put a call to action on the last step so viewers click straight through to pricing.\n02:10 Teams using these demos say sales conversations start with fewer, sharper questions.\n02:48 That's the loop: record once, publish everywhere, and see which step sells.",
       Length: "Medium",
     },
   },
   "youtube-title-generator": {
     cta: "Generate titles",
-    fields: [{ key: "Topic or transcript", label: "What's your video about?", type: "textarea", placeholder: "e.g. I tested 5 budget mics for podcastingâ€¦" }, { key: "Audience", label: "Who is it for?", placeholder: "Beginner podcasters" }, { key: "Style", label: "Style", type: "select", options: ["Curiosity", "How-to", "Listicle", "Bold & punchy"] }],
+    fields: [{ key: "Topic or transcript", label: "What's your video about?", type: "textarea", placeholder: "e.g. I tested 5 budget mics for podcastingÃ¢â‚¬Â¦" }, { key: "Audience", label: "Who is it for?", placeholder: "Beginner podcasters" }, { key: "Style", label: "Style", type: "select", options: ["Curiosity", "How-to", "Listicle", "Bold & punchy"] }],
     demo: {
       "Topic or transcript": "I tested five budget microphones under $50 for a full year of podcasting, and the cheapest one beat the most expensive one on every listen test.",
       Audience: "Beginner podcasters",
@@ -46,13 +46,13 @@ const CONFIG: Record<string, ToolCfg> = {
     cta: "Repurpose",
     fields: [{ key: "Source content", label: "Paste your blog post or transcript", type: "textarea" }, { key: "Voice", label: "Voice", type: "select", options: ["Same as original", "Professional", "Casual", "Witty"] }],
     demo: {
-      "Source content": "Most teams record more product video than they can ever edit. Six walkthroughs a week, and only the best three get cut into something shareable â€” the rest sit in a drive. The fix isn't hiring another editor. It's shrinking what you already have: pull the three moments that answer the buyer's question, turn them into a loop you can post natively, and let the rest become a written guide. One recording should feed the whole channel, not one post.",
+      "Source content": "Most teams record more product video than they can ever edit. Six walkthroughs a week, and only the best three get cut into something shareable Ã¢â‚¬â€ the rest sit in a drive. The fix isn't hiring another editor. It's shrinking what you already have: pull the three moments that answer the buyer's question, turn them into a loop you can post natively, and let the rest become a written guide. One recording should feed the whole channel, not one post.",
       Voice: "Casual",
     },
   },
   "product-description-generator": {
     cta: "Write description",
-    fields: [{ key: "Product name", label: "Product name", placeholder: "Aurora ceramic mug" }, { key: "Details", label: "Key details & features", type: "textarea", placeholder: "350ml, handmade, dishwasher safeâ€¦" }, { key: "Audience", label: "Ideal customer", placeholder: "Coffee lovers who like slow mornings" }, { key: "Tone", label: "Tone", type: "select", options: ["Warm", "Luxury", "Playful", "Technical", "Minimal"] }],
+    fields: [{ key: "Product name", label: "Product name", placeholder: "Aurora ceramic mug" }, { key: "Details", label: "Key details & features", type: "textarea", placeholder: "350ml, handmade, dishwasher safeÃ¢â‚¬Â¦" }, { key: "Audience", label: "Ideal customer", placeholder: "Coffee lovers who like slow mornings" }, { key: "Tone", label: "Tone", type: "select", options: ["Warm", "Luxury", "Playful", "Technical", "Minimal"] }],
     demo: {
       "Product name": "Aurora ceramic mug",
       Details: "350ml stoneware, reactive lavender glaze, handmade in small batches, dishwasher and microwave safe, matte unglazed base",
@@ -62,9 +62,9 @@ const CONFIG: Record<string, ToolCfg> = {
   },
   "demo-script-generator": {
     cta: "Write demo script",
-    fields: [{ key: "Product", label: "Product name & what it does", type: "textarea", placeholder: "Marvedge turns product walkthroughs into interactive demosâ€¦" }, { key: "Key features", label: "Features to show", type: "textarea" }, { key: "Audience", label: "Who's watching?", placeholder: "Sales leaders at B2B SaaS companies" }, { key: "Length", label: "Length", type: "select", options: ["60 seconds", "2 minutes", "3 minutes"] }],
+    fields: [{ key: "Product", label: "Product name & what it does", type: "textarea", placeholder: "Marvedge turns product walkthroughs into interactive demosÃ¢â‚¬Â¦" }, { key: "Key features", label: "Features to show", type: "textarea" }, { key: "Audience", label: "Who's watching?", placeholder: "Sales leaders at B2B SaaS companies" }, { key: "Length", label: "Length", type: "select", options: ["60 seconds", "2 minutes", "3 minutes"] }],
     demo: {
-      Product: "Marvedge â€” turns product walkthroughs into interactive demos",
+      Product: "Marvedge Ã¢â‚¬â€ turns product walkthroughs into interactive demos",
       "Key features": "Upload a recording, choose the steps buyers care about, add a call to action, share one link",
       Audience: "Sales leaders at B2B SaaS companies",
       Length: "60 seconds",
@@ -73,7 +73,17 @@ const CONFIG: Record<string, ToolCfg> = {
 };
 
 /* ---------- AI Video Summarizer ---------- */
-type InputMode = "transcript" | "video" | "url";
+type InputMode = "youtube" | "video" | "audio" | "pdf" | "webpage" | "longtext";
+type YoutubeSubMode = "video" | "playlist";
+
+const TOP_TABS: { id: InputMode; label: string; icon: string }[] = [
+  { id: "youtube",  label: "YouTube",            icon: "â–¶" },
+  { id: "video",    label: "Video",              icon: "ðŸŽ¬" },
+  { id: "audio",    label: "Audio",              icon: "ðŸŽ™" },
+  { id: "pdf",      label: "PDF, Image & More",  icon: "ðŸ“„" },
+  { id: "webpage",  label: "Webpage",            icon: "ðŸŒ" },
+  { id: "longtext", label: "Long Text",          icon: "ðŸ“" },
+];
 
 const OUTPUT_PRESETS = [
   { id: "default",   label: "General Summary",     emoji: "ðŸ“‹", desc: "TL;DR Â· Key points Â· Chapters" },
@@ -98,12 +108,23 @@ const SAMPLE_TRANSCRIPTS = [
 ];
 
 export function VideoSummarizer() {
-  const [mode, setMode] = useState<InputMode>("transcript");
+  const [mode, setMode] = useState<InputMode>("youtube");
+  const [ytSub, setYtSub] = useState<YoutubeSubMode>("video");
+  const [ytLinks, setYtLinks] = useState<string[]>([""]);
+  const [ytErr, setYtErr] = useState<string | null>(null);
+  const [separateSpeaker, setSeparateSpeaker] = useState(false);
+  const [quality, setQuality] = useState<"basic" | "premium">("basic");
+
   const [transcript, setTranscript] = useState("");
+  const [longText, setLongText] = useState("");
+  const [webUrl, setWebUrl] = useState("");
+  const [webErr, setWebErr] = useState<string | null>(null);
+
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
-  const [linkInput, setLinkInput] = useState("");
-  const [linkErr, setLinkErr] = useState<string | null>(null);
+  const [audioFile, setAudioFile] = useState<File | null>(null);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+
   const [preset, setPreset] = useState<PresetId>("default");
   const [transcribing, setTranscribing] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -115,94 +136,391 @@ export function VideoSummarizer() {
   const runTx = useServerFn(runTranscribe);
 
   const pickVideo = (f: File) => {
-    if (f.size > 500 * 1024 * 1024) {
-      setErr("File exceeds the 500 MB limit. Please trim or compress it first.");
-      return;
-    }
-    setVideoFile(f);
-    setVideoUrl(URL.createObjectURL(f));
-    setErr(null);
+    if (f.size > 500 * 1024 * 1024) { setErr("File exceeds 500 MB. Compress it first."); return; }
+    setVideoFile(f); setVideoUrl(URL.createObjectURL(f)); setErr(null);
+  };
+  const pickAudio = (f: File) => {
+    if (f.size > 500 * 1024 * 1024) { setErr("File exceeds 500 MB."); return; }
+    setAudioFile(f); setAudioUrl(URL.createObjectURL(f)); setErr(null);
   };
 
-  const transcribeVideo = async () => {
-    if (!videoFile) return;
+  const transcribeFile = async (file: File) => {
     setTranscribing(true); setErr(null);
     try {
-      const ab = await videoFile.arrayBuffer();
+      const ab = await file.arrayBuffer();
       const b64 = btoa(String.fromCharCode(...new Uint8Array(ab)));
-      const r = await runTx({ data: { audio: b64, mime: videoFile.type, name: videoFile.name } });
+      const r = await runTx({ data: { audio: b64, mime: file.type, name: file.name } });
       setTranscript(r.text);
-      setMode("transcript");
     } catch (e) { setErr(errMsg(e)); }
     setTranscribing(false);
   };
 
-  const handleLinkSubmit = () => {
-    setLinkErr(null);
-    const val = linkInput.trim();
-    if (!val) return;
-    if (!/^https?:\/\//i.test(val)) {
-      setLinkErr("Please enter a valid URL starting with http:// or https://");
-      return;
-    }
-    setLinkErr("Direct URL processing isn't available yet. Please download the video and upload it, or paste its auto-generated transcript below.");
+  const handleYtSubmit = () => {
+    setYtErr(null);
+    const filled = ytLinks.filter((l) => l.trim());
+    if (!filled.length) return;
+    const invalid = filled.find((l) => !/^https?:\/\//i.test(l));
+    if (invalid) { setYtErr("All links must start with http:// or https://"); return; }
+    setYtErr("Direct YouTube processing isn't available yet. Use YouTube's built-in transcript: click â‹¯ â†’ 'Show transcript' â†’ Copy all â†’ switch to Long Text tab.");
   };
 
+  const handleWebSubmit = () => {
+    setWebErr(null);
+    if (!webUrl.trim()) return;
+    if (!/^https?:\/\//i.test(webUrl)) { setWebErr("Please enter a valid URL."); return; }
+    setWebErr("Webpage scraping isn't available yet. Copy the article text and paste it in the Long Text tab.");
+  };
+
+  const activeTranscript = mode === "longtext" ? longText : transcript;
+
   const summarize = async () => {
-    if (!transcript.trim()) return;
+    const src = activeTranscript.trim();
+    if (!src) return;
     setBusy(true); setErr(null);
     try {
       const selectedPreset = OUTPUT_PRESETS.find((p) => p.id === preset)!;
-      const input = `Output Preset: ${selectedPreset.label}\n\nTranscript:\n${transcript}`;
+      const speakerNote = separateSpeaker ? "\nNote: Separate speakers in the output where identifiable." : "";
+      const input = `Output Preset: ${selectedPreset.label}${speakerNote}\n\nTranscript:\n${src}`;
       setOut((await runAi({ data: { tool: "video-summarizer", input } })).text);
     } catch (e) { setErr(errMsg(e)); }
     setBusy(false);
   };
 
   const reset = () => {
-    setTranscript(""); setOut(""); setVideoFile(null);
-    setVideoUrl(null); setLinkInput(""); setErr(null); setLinkErr(null);
+    setTranscript(""); setLongText(""); setOut(""); setVideoFile(null); setVideoUrl(null);
+    setAudioFile(null); setAudioUrl(null); setYtLinks([""]); setWebUrl("");
+    setErr(null); setYtErr(null); setWebErr(null);
   };
+
+  /* â”€â”€ pill helper â”€â”€ */
+  const Pill = ({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) => (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors ${
+        active ? "bg-[#000000] text-white" : "border border-[#D6CCB5] bg-[#FAF7F0] text-[#000000]/70 hover:border-[#7895B2] hover:text-[#000000]"
+      }`}
+    >
+      {children}
+    </button>
+  );
+
+  /* â”€â”€ toggle helper â”€â”€ */
+  const Toggle = ({ on, onToggle, label }: { on: boolean; onToggle: () => void; label: string }) => (
+    <label className="flex cursor-pointer items-center gap-2 text-xs font-semibold text-[#000000]/70 select-none">
+      <span>{label}</span>
+      <span
+        role="switch"
+        aria-checked={on}
+        onClick={onToggle}
+        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2] ${on ? "bg-[#000000]" : "bg-[#D6CCB5]"}`}
+      >
+        <span className={`inline-block h-3.5 w-3.5 translate-x-0.5 rounded-full bg-white transition-transform ${on ? "translate-x-[18px]" : ""}`} />
+      </span>
+    </label>
+  );
 
   return (
     <Panel>
-      {/* 1. Input mode tabs */}
-      <div className="flex gap-1.5 rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-1">
-        {(
-          [
-            { id: "transcript", label: "Paste Transcript",   emoji: "ðŸ“" },
-            { id: "video",      label: "Upload Video/Audio", emoji: "ðŸŽ¬" },
-            { id: "url",        label: "Video URL",          emoji: "ðŸ”—" },
-          ] as const
-        ).map((tab) => (
+      {/* â•â•â• 1. TOP TAB BAR â•â•â• */}
+      <div className="flex flex-wrap gap-1 rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-1">
+        {TOP_TABS.map((tab) => (
           <button
             key={tab.id}
             type="button"
             onClick={() => { setMode(tab.id); setErr(null); }}
-            className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2.5 text-xs font-semibold transition-colors sm:text-sm ${
+            className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition-colors whitespace-nowrap ${
               mode === tab.id
                 ? "bg-[#000000] text-white"
                 : "text-[#000000]/60 hover:text-[#000000]"
             }`}
           >
-            <span>{tab.emoji}</span>
+            <span className="text-sm">{tab.icon}</span>
             <span className="hidden sm:inline">{tab.label}</span>
-            <span className="sm:hidden">{tab.label.split(" ")[0]}</span>
           </button>
         ))}
       </div>
 
-      {/* 2a. Transcript mode */}
-      {mode === "transcript" && (
-        <>
-          <Field label={`Transcript (${transcript.length.toLocaleString()} / 40,000 chars)`}>
+      {/* â•â•â• 2a. YOUTUBE TAB â•â•â• */}
+      {mode === "youtube" && (
+        <div className="grid gap-4">
+          {/* Sub-tabs */}
+          <div className="flex gap-1 border-b border-[#D6CCB5]">
+            {(["video", "playlist"] as YoutubeSubMode[]).map((sub) => (
+              <button
+                key={sub}
+                type="button"
+                onClick={() => setYtSub(sub)}
+                className={`px-4 py-2 text-sm font-semibold capitalize transition-colors border-b-2 -mb-px ${
+                  ytSub === sub
+                    ? "border-[#7895B2] text-[#000000]"
+                    : "border-transparent text-[#000000]/50 hover:text-[#000000]"
+                }`}
+              >
+                YouTube {sub.charAt(0).toUpperCase() + sub.slice(1)}
+              </button>
+            ))}
+          </div>
+
+          {/* Link inputs */}
+          <div className="grid gap-2">
+            {ytLinks.map((link, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <span className="text-lg">â–¶</span>
+                <input
+                  className={`${inputCls} flex-1`}
+                  type="url"
+                  placeholder={ytSub === "playlist"
+                    ? "Paste the YouTube playlist link, e.g. https://youtube.com/playlist?list=â€¦"
+                    : "Paste the YouTube video link, e.g. https://youtube.com/watch?v=example"}
+                  value={link}
+                  onChange={(e) => {
+                    const updated = [...ytLinks];
+                    updated[i] = e.target.value;
+                    setYtLinks(updated);
+                    setYtErr(null);
+                  }}
+                />
+                {ytLinks.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => setYtLinks(ytLinks.filter((_, j) => j !== i))}
+                    className="rounded-full p-1 text-[#000000]/40 hover:text-red-500"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Toolbar row */}
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Add More Link */}
+            <button
+              type="button"
+              onClick={() => setYtLinks([...ytLinks, ""])}
+              className="flex items-center gap-1.5 rounded-full border border-[#D6CCB5] bg-[#FAF7F0] px-3.5 py-1.5 text-xs font-semibold text-[#000000]/70 transition-colors hover:border-[#7895B2] hover:text-[#000000]"
+            >
+              <span className="text-base">âŠ•</span> Add More Link
+            </button>
+
+            <div className="h-4 w-px bg-[#D6CCB5]" />
+
+            {/* Basic / Premium */}
+            <div className="flex gap-1 rounded-full border border-[#D6CCB5] bg-[#FAF7F0] p-0.5">
+              <Pill active={quality === "basic"} onClick={() => setQuality("basic")}>
+                âš¡ Basic
+              </Pill>
+              <Pill active={quality === "premium"} onClick={() => setQuality("premium")}>
+                âœ¨ Premium
+              </Pill>
+            </div>
+
+            <div className="h-4 w-px bg-[#D6CCB5]" />
+
+            {/* Separate Speaker */}
+            <Toggle on={separateSpeaker} onToggle={() => setSeparateSpeaker(!separateSpeaker)} label="Separate Speaker" />
+          </div>
+
+          {ytErr && (
+            <div className="rounded-xl border border-[#7895B2]/30 bg-[#7895B2]/10 px-4 py-3 text-sm text-[#3A5A72]">
+              ðŸ’¡ {ytErr}
+            </div>
+          )}
+
+          {/* Generate CTA */}
+          <button
+            type="button"
+            onClick={handleYtSubmit}
+            disabled={!ytLinks.some((l) => l.trim())}
+            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#000000] px-6 py-3.5 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <Sparkles className="h-4 w-4" />
+            Generate Summary
+          </button>
+        </div>
+      )}
+
+      {/* â•â•â• 2b. VIDEO UPLOAD TAB â•â•â• */}
+      {mode === "video" && (
+        <div className="grid gap-4">
+          <div className="rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-3 text-center">
+            <p className="text-xs text-[#4A4740]">
+              Accepts <strong>MP4, MOV, WebM</strong> Â· Max <strong>500 MB</strong> / ~90 min Â· processed securely
+            </p>
+          </div>
+          <Dropzone
+            accept="video/mp4,video/quicktime,video/webm"
+            label="Drop a video file to transcribe"
+            onFiles={([f]) => pickVideo(f!)}
+            sample={{
+              label: "Try a sample clip",
+              busy: sampling,
+              onPick: async () => {
+                setSampling(true);
+                await pickVideo(await loadSample("clip"));
+                setSampling(false);
+              },
+              note: "A short sample clip â€” we'll transcribe then summarize it.",
+            }}
+          />
+          {/* Toolbar */}
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex gap-1 rounded-full border border-[#D6CCB5] bg-[#FAF7F0] p-0.5">
+              <Pill active={quality === "basic"} onClick={() => setQuality("basic")}>âš¡ Basic</Pill>
+              <Pill active={quality === "premium"} onClick={() => setQuality("premium")}>âœ¨ Premium</Pill>
+            </div>
+            <div className="h-4 w-px bg-[#D6CCB5]" />
+            <Toggle on={separateSpeaker} onToggle={() => setSeparateSpeaker(!separateSpeaker)} label="Separate Speaker" />
+          </div>
+          {videoUrl && videoFile && (
+            <div className="rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-4">
+              <div className="mb-2 flex items-center justify-between">
+                <p className="text-xs font-semibold text-[#4A4740]">{videoFile.name}</p>
+                <span className="rounded-full bg-[#E8DFCA] px-2.5 py-0.5 text-[10px] font-bold text-[#000000]/70">
+                  {(videoFile.size / 1024 / 1024).toFixed(1)} MB
+                </span>
+              </div>
+              <video src={videoUrl} controls className="max-h-48 w-full rounded-xl" />
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={() => videoFile && transcribeFile(videoFile)}
+            disabled={!videoFile || transcribing}
+            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#000000] px-6 py-3.5 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <Sparkles className="h-4 w-4" />
+            {transcribing ? "Transcribingâ€¦" : "Generate Summary"}
+          </button>
+          {transcript && (
+            <div className="rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-4">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-[#537190]">Transcript extracted âœ“</p>
+              <p className="max-h-40 overflow-y-auto whitespace-pre-wrap text-sm leading-relaxed text-[#000000]">{transcript}</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* â•â•â• 2c. AUDIO TAB â•â•â• */}
+      {mode === "audio" && (
+        <div className="grid gap-4">
+          <div className="rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-3 text-center">
+            <p className="text-xs text-[#4A4740]">
+              Accepts <strong>MP3, WAV, M4A, OGG</strong> Â· Max <strong>500 MB</strong> / ~90 min Â· processed securely
+            </p>
+          </div>
+          <Dropzone
+            accept="audio/*"
+            label="Drop an audio file to transcribe"
+            onFiles={([f]) => pickAudio(f!)}
+            sample={{
+              label: "Try a sample narration",
+              busy: sampling,
+              onPick: async () => {
+                setSampling(true);
+                await pickAudio(await loadSample("narration"));
+                setSampling(false);
+              },
+              note: "A 15-second narration clip â€” we'll transcribe then summarize it.",
+            }}
+          />
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex gap-1 rounded-full border border-[#D6CCB5] bg-[#FAF7F0] p-0.5">
+              <Pill active={quality === "basic"} onClick={() => setQuality("basic")}>âš¡ Basic</Pill>
+              <Pill active={quality === "premium"} onClick={() => setQuality("premium")}>âœ¨ Premium</Pill>
+            </div>
+            <div className="h-4 w-px bg-[#D6CCB5]" />
+            <Toggle on={separateSpeaker} onToggle={() => setSeparateSpeaker(!separateSpeaker)} label="Separate Speaker" />
+          </div>
+          {audioUrl && audioFile && (
+            <div className="rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-4">
+              <p className="mb-2 text-xs font-semibold text-[#4A4740]">{audioFile.name} Â· {(audioFile.size / 1024 / 1024).toFixed(1)} MB</p>
+              <audio src={audioUrl} controls className="w-full" />
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={() => audioFile && transcribeFile(audioFile)}
+            disabled={!audioFile || transcribing}
+            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#000000] px-6 py-3.5 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <Sparkles className="h-4 w-4" />
+            {transcribing ? "Transcribingâ€¦" : "Generate Summary"}
+          </button>
+          {transcript && (
+            <div className="rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-4">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-[#537190]">Transcript extracted âœ“</p>
+              <p className="max-h-40 overflow-y-auto whitespace-pre-wrap text-sm leading-relaxed text-[#000000]">{transcript}</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* â•â•â• 2d. PDF / IMAGE & MORE FILES TAB â•â•â• */}
+      {mode === "pdf" && (
+        <div className="grid gap-4">
+          <div className="rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-4 text-center">
+            <p className="text-sm font-semibold text-[#000000]">ðŸ“„ PDF, Image & More Files</p>
+            <p className="mt-1 text-xs text-[#4A4740]">
+              Support for PDF, DOCX, and image files is coming soon.<br />
+              For now, copy the text content and paste it in the <strong>Long Text</strong> tab.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setMode("longtext")}
+            className="flex w-full items-center justify-center gap-2 rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] px-6 py-3 text-sm font-semibold text-[#000000] transition-colors hover:border-[#7895B2]"
+          >
+            ðŸ“ Switch to Long Text
+          </button>
+        </div>
+      )}
+
+      {/* â•â•â• 2e. WEBPAGE TAB â•â•â• */}
+      {mode === "webpage" && (
+        <div className="grid gap-3">
+          <Field label="Article or Webpage URL">
+            <div className="flex gap-2">
+              <input
+                className={`${inputCls} flex-1`}
+                type="url"
+                placeholder="https://example.com/article"
+                value={webUrl}
+                onChange={(e) => { setWebUrl(e.target.value); setWebErr(null); }}
+                onKeyDown={(e) => e.key === "Enter" && handleWebSubmit()}
+              />
+              <Btn onClick={handleWebSubmit} disabled={!webUrl.trim()}>Go</Btn>
+            </div>
+          </Field>
+          {webErr && (
+            <div className="rounded-xl border border-[#7895B2]/30 bg-[#7895B2]/10 px-4 py-3 text-sm text-[#3A5A72]">
+              ðŸ’¡ {webErr}
+            </div>
+          )}
+          <div className="rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-4 text-sm text-[#4A4740]">
+            <p className="font-semibold text-[#000000]">Get the article text instantly</p>
+            <ul className="mt-2 list-inside list-disc space-y-1 text-xs">
+              <li>Select all text on the page (Ctrl+A) â†’ Copy â†’ paste in Long Text tab</li>
+              <li>Use browser "Reader View" for clean copy</li>
+              <li>Or use a browser extension like Mercury Reader</li>
+            </ul>
+          </div>
+        </div>
+      )}
+
+      {/* â•â•â• 2f. LONG TEXT TAB â•â•â• */}
+      {mode === "longtext" && (
+        <div className="grid gap-4">
+          <Field label={`Long Text (${longText.length.toLocaleString()} / 40,000 chars)`}>
             <textarea
-              rows={8}
+              rows={9}
               maxLength={40000}
               className={inputCls}
-              placeholder="Paste your video transcript here (timestamps optional)â€¦"
-              value={transcript}
-              onChange={(e) => setTranscript(e.target.value)}
+              placeholder="Paste any long text here â€” article, transcript, meeting notes, PDF contentâ€¦"
+              value={longText}
+              onChange={(e) => setLongText(e.target.value)}
             />
           </Field>
           <div>
@@ -212,113 +530,28 @@ export function VideoSummarizer() {
                 <button
                   key={s.label}
                   type="button"
-                  onClick={() => { setTranscript(s.text); setOut(""); }}
-                  className="flex items-center gap-2 rounded-xl border border-[#D6CCB5] bg-[#FAF7F0] px-3.5 py-2 text-xs font-semibold text-[#000000]/80 transition-colors hover:border-[#7895B2] hover:bg-white hover:text-[#000000]"
+                  onClick={() => { setLongText(s.text); setOut(""); }}
+                  className="flex items-center gap-2 rounded-xl border border-[#D6CCB5] bg-[#FAF7F0] px-3.5 py-2 text-xs font-semibold text-[#000000]/80 transition-colors hover:border-[#7895B2] hover:bg-white"
                 >
                   <span>{s.emoji}</span> {s.label}
                 </button>
               ))}
-              {transcript && (
-                <button
-                  type="button"
-                  onClick={reset}
-                  className="rounded-xl border border-[#D6CCB5] bg-[#FAF7F0] px-3.5 py-2 text-xs font-semibold text-[#000000]/50 transition-colors hover:border-red-300 hover:text-red-600"
-                >
+              {longText && (
+                <button type="button" onClick={() => { setLongText(""); setOut(""); }}
+                  className="rounded-xl border border-[#D6CCB5] bg-[#FAF7F0] px-3.5 py-2 text-xs font-semibold text-[#000000]/50 transition-colors hover:border-red-300 hover:text-red-600">
                   âœ• Clear
                 </button>
               )}
             </div>
           </div>
-        </>
-      )}
-
-      {/* 2b. Video/Audio upload mode */}
-      {mode === "video" && (
-        <>
-          <div className="rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-3 text-center">
-            <p className="text-xs text-[#4A4740]">
-              Accepts <strong>MP4, MOV, WebM, MP3, WAV</strong> Â· Max <strong>500 MB</strong> / ~90 min Â· processed securely
-            </p>
-          </div>
-          <Dropzone
-            accept="audio/*,video/mp4,video/quicktime,video/webm"
-            label="Drop a video or audio file to transcribe"
-            onFiles={([f]) => pickVideo(f!)}
-            sample={{
-              label: "Try a sample narration",
-              busy: sampling,
-              onPick: async () => {
-                setSampling(true);
-                await pickVideo(await loadSample("narration"));
-                setSampling(false);
-              },
-              note: "A 15-second narration clip â€” we'll transcribe then summarize it.",
-            }}
-          />
-          {videoUrl && videoFile && (
-            <div className="rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-4">
-              <div className="mb-2 flex items-center justify-between">
-                <p className="text-xs font-semibold text-[#4A4740]">{videoFile.name}</p>
-                <span className="rounded-full bg-[#E8DFCA] px-2.5 py-0.5 text-[10px] font-bold text-[#000000]/70">
-                  {(videoFile.size / 1024 / 1024).toFixed(1)} MB
-                </span>
-              </div>
-              {videoFile.type.startsWith("video/") ? (
-                <video src={videoUrl} controls className="max-h-48 w-full rounded-xl" />
-              ) : (
-                <audio src={videoUrl} controls className="w-full" />
-              )}
-              <div className="mt-3">
-                <Btn busy={transcribing} disabled={!videoFile} onClick={transcribeVideo}>
-                  <Sparkles className="h-4 w-4" aria-hidden="true" />
-                  {transcribing ? "Transcribingâ€¦" : "Transcribe & continue"}
-                </Btn>
-              </div>
-            </div>
-          )}
-          {transcript && mode === "video" && (
-            <div className="rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-4">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-[#537190]">Transcript extracted âœ“</p>
-              <p className="max-h-40 overflow-y-auto whitespace-pre-wrap text-sm leading-relaxed text-[#000000]">{transcript}</p>
-            </div>
-          )}
-        </>
-      )}
-
-      {/* 2c. URL mode */}
-      {mode === "url" && (
-        <div className="grid gap-3">
-          <Field label="Video URL (YouTube, Loom, Vimeo, etc.)">
-            <div className="flex gap-2">
-              <input
-                className={inputCls}
-                type="url"
-                placeholder="https://youtube.com/watch?v=â€¦"
-                value={linkInput}
-                onChange={(e) => { setLinkInput(e.target.value); setLinkErr(null); }}
-                onKeyDown={(e) => e.key === "Enter" && handleLinkSubmit()}
-              />
-              <Btn onClick={handleLinkSubmit} disabled={!linkInput.trim()}>Go</Btn>
-            </div>
-          </Field>
-          {linkErr && (
-            <div className="rounded-xl border border-[#7895B2]/30 bg-[#7895B2]/10 px-4 py-3 text-sm text-[#3A5A72]">
-              ðŸ’¡ {linkErr}
-            </div>
-          )}
-          <div className="rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-4 text-sm text-[#4A4740]">
-            <p className="font-semibold text-[#000000]">Get a transcript in seconds</p>
-            <ul className="mt-2 list-inside list-disc space-y-1 text-xs">
-              <li><strong>YouTube:</strong> Click â‹¯ below the video â†’ "Show transcript" â†’ Copy all â†’ paste above</li>
-              <li><strong>Loom / Zoom:</strong> Download the transcript TXT from your dashboard</li>
-              <li><strong>Any video:</strong> Download the file â†’ switch to Upload tab</li>
-            </ul>
+          <div className="flex flex-wrap items-center gap-3">
+            <Toggle on={separateSpeaker} onToggle={() => setSeparateSpeaker(!separateSpeaker)} label="Separate Speaker" />
           </div>
         </div>
       )}
 
-      {/* 3. Output preset selector â€” appears once transcript is ready */}
-      {transcript.trim().length > 2 && (
+      {/* â•â•â• 3. OUTPUT PRESET SELECTOR â•â•â• */}
+      {activeTranscript.trim().length > 2 && (
         <>
           <div>
             <p className="mb-3 text-sm font-semibold text-[#000000]">Output format</p>
@@ -342,12 +575,19 @@ export function VideoSummarizer() {
               ))}
             </div>
           </div>
-          <div>
-            <Btn busy={busy} onClick={summarize}>
-              <Sparkles className="h-4 w-4" aria-hidden="true" />
-              {busy ? "Summarizingâ€¦" : `Summarize â€” ${OUTPUT_PRESETS.find((p) => p.id === preset)?.label}`}
-            </Btn>
-          </div>
+
+          {/* Generate Summary CTA */}
+          <button
+            type="button"
+            onClick={summarize}
+            disabled={busy}
+            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#000000] px-6 py-3.5 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {busy
+              ? <><span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> Summarizingâ€¦</>
+              : <><Sparkles className="h-4 w-4" /> Generate Summary â€” {OUTPUT_PRESETS.find((p) => p.id === preset)?.label}</>
+            }
+          </button>
         </>
       )}
 
@@ -356,7 +596,6 @@ export function VideoSummarizer() {
     </Panel>
   );
 }
-
 export function AiTextTool({ slug }: { slug: string }) {
   const cfg = CONFIG[slug]!;
   const [vals, setVals] = useState<Record<string, string>>(() => Object.fromEntries(cfg.fields.map((f) => [f.key, cfg.demo?.[f.key] ?? f.options?.[0] ?? ""])));
@@ -382,9 +621,9 @@ export function AiTextTool({ slug }: { slug: string }) {
           </div>
         ))}
       </div>
-      <p className="text-xs text-[#4A4740]">Example content is filled in so you can see it work â€” replace it with your own.</p>
+      <p className="text-xs text-[#4A4740]">Example content is filled in so you can see it work Ã¢â‚¬â€ replace it with your own.</p>
       <div className="flex flex-wrap gap-2">
-        <Btn busy={busy} disabled={!ready} onClick={go}><Sparkles className="h-4 w-4" aria-hidden="true" />{busy ? "Thinkingâ€¦" : cfg.cta}</Btn>
+        <Btn busy={busy} disabled={!ready} onClick={go}><Sparkles className="h-4 w-4" aria-hidden="true" />{busy ? "ThinkingÃ¢â‚¬Â¦" : cfg.cta}</Btn>
         <Btn variant="ghost" onClick={() => setVals(Object.fromEntries(cfg.fields.map((f) => [f.key, f.options?.[0] ?? ""])))}>Clear example</Btn>
       </div>
       <ErrorNote msg={err} />
@@ -438,7 +677,7 @@ export function ScreenshotGuide() {
           ))}
         </div>
       )}
-      <div><Btn busy={busy} disabled={!shots.length} onClick={go}><Sparkles className="h-4 w-4" aria-hidden="true" />{busy ? "Writing guideâ€¦" : "Generate guide"}</Btn></div>
+      <div><Btn busy={busy} disabled={!shots.length} onClick={go}><Sparkles className="h-4 w-4" aria-hidden="true" />{busy ? "Writing guideÃ¢â‚¬Â¦" : "Generate guide"}</Btn></div>
       <ErrorNote msg={err} />
       <Output text={out} />
       {out && <p className="text-xs text-[#4A4740]">Always review AI-written steps before sharing.</p>}
@@ -474,13 +713,13 @@ export function SubtitleGenerator() {
   const vtt = () => "WEBVTT\n\n" + cues.map((c) => `${ts(c.start, ".")} --> ${ts(c.end, ".")}\n${c.text}\n`).join("\n");
   return (
     <Panel>
-      <Dropzone accept="audio/*,video/mp4,video/webm,video/quicktime" label={busy ? "Transcribingâ€¦ this can take a minute" : "Drop an audio or video file (under 24 MB)"} onFiles={([f]) => pick(f)}
-        sample={{ label: "Try a sample narration", busy: sampling, onPick: async () => { setSampling(true); await pick(await loadSample("narration")); setSampling(false); }, note: "A dummy 15-second voiceover â€” we'll caption it for you." }} />
+      <Dropzone accept="audio/*,video/mp4,video/webm,video/quicktime" label={busy ? "TranscribingÃ¢â‚¬Â¦ this can take a minute" : "Drop an audio or video file (under 24 MB)"} onFiles={([f]) => pick(f)}
+        sample={{ label: "Try a sample narration", busy: sampling, onPick: async () => { setSampling(true); await pick(await loadSample("narration")); setSampling(false); }, note: "A dummy 15-second voiceover Ã¢â‚¬â€ we'll caption it for you." }} />
       <ErrorNote msg={err} />
       {url && (isVideo ? <video src={url} controls className="max-h-72 rounded-2xl" /> : <audio src={url} controls className="w-full" />)}
       {cues.length > 0 && (
         <>
-          <p className="text-xs text-[#4A4740]">Timings are estimated from the length of each line â€” nudge them below if needed.</p>
+          <p className="text-xs text-[#4A4740]">Timings are estimated from the length of each line Ã¢â‚¬â€ nudge them below if needed.</p>
           <div className="grid max-h-[480px] gap-2 overflow-y-auto overscroll-contain pr-1">
             {cues.map((c, i) => (
               <div key={i} className="grid grid-cols-[76px_76px_1fr] gap-2">
@@ -542,7 +781,7 @@ export function VoiceoverGenerator() {
         </div>
       </Field>
       <Field label="Delivery (optional)"><input className={inputCls} placeholder="warmly, with energy" value={style} onChange={(e) => setStyle(e.target.value)} /></Field>
-      <div><Btn busy={busy} disabled={!text.trim()} onClick={go}><Sparkles className="h-4 w-4" aria-hidden="true" />{busy ? "Recordingâ€¦" : "Generate voiceover"}</Btn></div>
+      <div><Btn busy={busy} disabled={!text.trim()} onClick={go}><Sparkles className="h-4 w-4" aria-hidden="true" />{busy ? "RecordingÃ¢â‚¬Â¦" : "Generate voiceover"}</Btn></div>
       <ErrorNote msg={err} />
       {audio && <div aria-live="polite" className="flex flex-wrap items-center gap-3 rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-4"><audio src={audio.url} controls autoPlay className="flex-1" /><DownloadBtn onClick={() => download(audio.blob, "voiceover.wav")} /></div>}
     </Panel>
