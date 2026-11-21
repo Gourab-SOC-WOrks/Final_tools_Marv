@@ -57,6 +57,27 @@ const TONES: ToneOption[] = [
   { id: "persuasive", label: "Persuasive", icon: "🎯" },
 ];
 
+export interface CustomerOption {
+  id: string;
+  label: string;
+  icon: string;
+}
+
+const CUSTOMERS: CustomerOption[] = [
+  { id: "general", label: "General Shoppers", icon: "👥" },
+  { id: "professionals", label: "Busy Professionals", icon: "💼" },
+  { id: "bargain", label: "Budget & Value Hunters", icon: "🏷️" },
+  { id: "luxury", label: "Luxury & High-End Buyers", icon: "✨" },
+  { id: "parents", label: "Parents & Families", icon: "👨‍👩‍👧" },
+  { id: "eco", label: "Eco-Conscious Consumers", icon: "🌿" },
+  { id: "tech", label: "Tech Enthusiasts & Innovators", icon: "🚀" },
+  { id: "fitness", label: "Fitness & Health Lovers", icon: "⚡" },
+  { id: "genz", label: "Gen Z & Trendsetters", icon: "📱" },
+  { id: "students", label: "Students & Young Adults", icon: "🎒" },
+  { id: "b2b", label: "B2B & Wholesale Buyers", icon: "🏢" },
+  { id: "gift", label: "Gift Shoppers", icon: "🎁" },
+];
+
 const WRITE_FORMATS = [
   { id: "1-para", label: "1 paragraph" },
   { id: "2-para", label: "2 paragraphs" },
@@ -92,6 +113,10 @@ export function ProductDescriptionGenerator() {
   const [isToneOpen, setIsToneOpen] = useState(false);
   const [isCustomMode, setIsCustomMode] = useState(false);
   const [customToneText, setCustomToneText] = useState("");
+  const [selectedCustomer, setSelectedCustomer] = useState(CUSTOMERS[0]); // General Shoppers
+  const [isCustomerOpen, setIsCustomerOpen] = useState(false);
+  const [isCustomCustomerMode, setIsCustomCustomerMode] = useState(false);
+  const [customCustomerText, setCustomCustomerText] = useState("");
   const [writeLength, setWriteLength] = useState("1 paragraph");
   const [isWriteOpen, setIsWriteOpen] = useState(false);
   const [makeStyle, setMakeStyle] = useState<"concise" | "detailed">("concise");
@@ -108,6 +133,7 @@ export function ProductDescriptionGenerator() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const langRef = useRef<HTMLDivElement>(null);
   const toneRef = useRef<HTMLDivElement>(null);
+  const customerRef = useRef<HTMLDivElement>(null);
   const writeRef = useRef<HTMLDivElement>(null);
 
   const runAi = useServerFn(runAiTool);
@@ -117,6 +143,7 @@ export function ProductDescriptionGenerator() {
     function handleClickOutside(e: MouseEvent) {
       if (langRef.current && !langRef.current.contains(e.target as Node)) setIsLangOpen(false);
       if (toneRef.current && !toneRef.current.contains(e.target as Node)) setIsToneOpen(false);
+      if (customerRef.current && !customerRef.current.contains(e.target as Node)) setIsCustomerOpen(false);
       if (writeRef.current && !writeRef.current.contains(e.target as Node)) setIsWriteOpen(false);
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -188,10 +215,11 @@ export function ProductDescriptionGenerator() {
 Product Details / Notes: ${descriptionInput || "See attached product image"}
 Language: ${selectedLanguage}
 Writing Tone: ${selectedTone.label}
+Ideal Customer / Target Audience: ${selectedCustomer.label}
 Format/Length: ${writeLength}
 Detail Level: ${makeStyle === "concise" ? "Concise (tight, punchy, high-converting)" : "Detailed (in-depth benefits, technical specs & storytelling)"}
 
-Write an e-commerce product description following this structure:
+Write an e-commerce product description tailored specifically to connect with ${selectedCustomer.label}, following this structure:
 Headline: [High-impact product title]
 Description: [The product copy formatted as ${writeLength}]
 Bullets:
@@ -228,7 +256,7 @@ Bullets:
         headline: parsedHeadline,
         description: parsedDesc,
         bullets: parsedBullets.length > 0 ? parsedBullets : DEFAULT_SAMPLE_RESULT.bullets,
-        specs: `${selectedTone.label} Tone • ${selectedLanguage} • ${makeStyle.toUpperCase()}`,
+        specs: `${selectedTone.label} Tone • For ${selectedCustomer.label} • ${selectedLanguage} • ${makeStyle.toUpperCase()}`,
       });
       setHasGenerated(true);
       showToast("Description generated successfully!");
@@ -451,109 +479,220 @@ Bullets:
               </div>
             </div>
 
-            {/* Bottom Bar: Writing Tone Pill + Generate Description CTA */}
+            {/* Bottom Bar: Writing Tone + Ideal Customer Pills + Generate Description CTA */}
             <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
-              {/* Writing Tone Pill */}
-              <div className="relative" ref={toneRef}>
-                <button
-                  type="button"
-                  onClick={() => setIsToneOpen(!isToneOpen)}
-                  className="flex items-center gap-2 rounded-xl border border-[#D6CCB5] bg-white px-3 py-2 text-xs font-bold text-[#1A1917] hover:border-[#000000] transition shadow-sm"
-                >
-                  <span className="text-base">{selectedTone.icon}</span>
-                  <span>{selectedTone.label}</span>
-                  <ChevronDown className="h-3.5 w-3.5 text-[#78716C]" />
-                </button>
-                <span className="block mt-1 text-[11px] text-[#78716C]">Writing tone</span>
+              <div className="flex flex-wrap items-center gap-3">
+                {/* Writing Tone Pill */}
+                <div className="relative" ref={toneRef}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsToneOpen(!isToneOpen);
+                      setIsCustomerOpen(false);
+                    }}
+                    className="flex items-center gap-2 rounded-xl border border-[#D6CCB5] bg-white px-3 py-2 text-xs font-bold text-[#1A1917] hover:border-[#000000] transition shadow-sm"
+                  >
+                    <span className="text-base">{selectedTone.icon}</span>
+                    <span>{selectedTone.label}</span>
+                    <ChevronDown className="h-3.5 w-3.5 text-[#78716C]" />
+                  </button>
+                  <span className="block mt-1 text-[11px] text-[#78716C]">Writing tone</span>
 
-                {isToneOpen && (
-                  <div className="absolute left-0 bottom-full mb-2 z-40 w-56 md:w-60 rounded-2xl border border-[#D6CCB5] bg-white p-1.5 shadow-2xl animate-in fade-in duration-150">
-                    <div className="max-h-72 overflow-y-auto pr-0.5 space-y-0.5">
-                      {TONES.map((t) => {
-                        const isSelected = selectedTone.id === t.id;
-                        return (
-                          <button
-                            key={t.id}
-                            type="button"
-                            onClick={() => {
-                              setSelectedTone(t);
-                              setIsToneOpen(false);
-                              setIsCustomMode(false);
+                  {isToneOpen && (
+                    <div className="absolute left-0 bottom-full mb-2 z-40 w-56 md:w-60 rounded-2xl border border-[#D6CCB5] bg-white p-1.5 shadow-2xl animate-in fade-in duration-150">
+                      <div className="max-h-72 overflow-y-auto pr-0.5 space-y-0.5">
+                        {TONES.map((t) => {
+                          const isSelected = selectedTone.id === t.id;
+                          return (
+                            <button
+                              key={t.id}
+                              type="button"
+                              onClick={() => {
+                                setSelectedTone(t);
+                                setIsToneOpen(false);
+                                setIsCustomMode(false);
+                              }}
+                              className={`w-full flex items-center justify-between rounded-xl px-3 py-2 text-left text-xs md:text-sm transition ${
+                                isSelected
+                                  ? "font-bold text-[#000000] bg-[#FAF7F0]"
+                                  : "text-[#4A4740] hover:bg-[#FAF7F0] hover:text-[#000000]"
+                              }`}
+                            >
+                              <div className="flex items-center gap-3">
+                                <span className="text-base shrink-0 leading-none">{t.icon}</span>
+                                <span className="truncate">{t.label}</span>
+                              </div>
+                              {isSelected && <Check className="h-3.5 w-3.5 text-[#000000] shrink-0" />}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {/* Divider before Custom */}
+                      <div className="my-1 border-t border-[#D6CCB5]/60" />
+
+                      {/* Custom Tone Option */}
+                      {isCustomMode ? (
+                        <div className="flex items-center gap-1.5 p-1 animate-in fade-in duration-100">
+                          <span className="text-base pl-1 shrink-0">🧠</span>
+                          <input
+                            type="text"
+                            autoFocus
+                            value={customToneText}
+                            onChange={(e) => setCustomToneText(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" && customToneText.trim()) {
+                                setSelectedTone({ id: "custom", label: customToneText.trim(), icon: "🧠" });
+                                setIsToneOpen(false);
+                                setIsCustomMode(false);
+                              }
                             }}
-                            className={`w-full flex items-center justify-between rounded-xl px-3 py-2 text-left text-xs md:text-sm transition ${
-                              isSelected
-                                ? "font-bold text-[#000000] bg-[#FAF7F0]"
-                                : "text-[#4A4740] hover:bg-[#FAF7F0] hover:text-[#000000]"
-                            }`}
+                            placeholder="e.g. Quirky & bold..."
+                            className="flex-1 min-w-0 rounded-lg border border-[#D6CCB5] bg-white px-2 py-1 text-xs text-[#1A1917] placeholder:text-[#9E988D] focus:outline-none focus:border-[#000000]"
+                          />
+                          <button
+                            type="button"
+                            disabled={!customToneText.trim()}
+                            onClick={() => {
+                              if (customToneText.trim()) {
+                                setSelectedTone({ id: "custom", label: customToneText.trim(), icon: "🧠" });
+                                setIsToneOpen(false);
+                                setIsCustomMode(false);
+                              }
+                            }}
+                            className="rounded-lg bg-[#000000] px-2.5 py-1 text-xs font-bold text-white hover:bg-[#1A1917] disabled:opacity-40 transition"
                           >
-                            <div className="flex items-center gap-3">
-                              <span className="text-base shrink-0 leading-none">{t.icon}</span>
-                              <span className="truncate">{t.label}</span>
-                            </div>
-                            {isSelected && <Check className="h-3.5 w-3.5 text-[#000000] shrink-0" />}
+                            Set
                           </button>
-                        );
-                      })}
-                    </div>
-
-                    {/* Divider before Custom */}
-                    <div className="my-1 border-t border-[#D6CCB5]/60" />
-
-                    {/* Custom Tone Option */}
-                    {isCustomMode ? (
-                      <div className="flex items-center gap-1.5 p-1 animate-in fade-in duration-100">
-                        <span className="text-base pl-1 shrink-0">🧠</span>
-                        <input
-                          type="text"
-                          autoFocus
-                          value={customToneText}
-                          onChange={(e) => setCustomToneText(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" && customToneText.trim()) {
-                              setSelectedTone({ id: "custom", label: customToneText.trim(), icon: "🧠" });
-                              setIsToneOpen(false);
-                              setIsCustomMode(false);
-                            }
-                          }}
-                          placeholder="e.g. Quirky & bold..."
-                          className="flex-1 min-w-0 rounded-lg border border-[#D6CCB5] bg-white px-2 py-1 text-xs text-[#1A1917] placeholder:text-[#9E988D] focus:outline-none focus:border-[#000000]"
-                        />
+                        </div>
+                      ) : (
                         <button
                           type="button"
-                          disabled={!customToneText.trim()}
-                          onClick={() => {
-                            if (customToneText.trim()) {
-                              setSelectedTone({ id: "custom", label: customToneText.trim(), icon: "🧠" });
-                              setIsToneOpen(false);
-                              setIsCustomMode(false);
-                            }
-                          }}
-                          className="rounded-lg bg-[#000000] px-2.5 py-1 text-xs font-bold text-white hover:bg-[#1A1917] disabled:opacity-40 transition"
+                          onClick={() => setIsCustomMode(true)}
+                          className={`w-full flex items-center justify-between rounded-xl px-3 py-2 text-left text-xs md:text-sm transition ${
+                            selectedTone.id === "custom"
+                              ? "font-bold text-[#000000] bg-[#FAF7F0]"
+                              : "text-[#4A4740] hover:bg-[#FAF7F0] hover:text-[#000000]"
+                          }`}
                         >
-                          Set
+                          <div className="flex items-center gap-3">
+                            <span className="text-base shrink-0 leading-none">🧠</span>
+                            <span className="truncate">
+                              {selectedTone.id === "custom" ? selectedTone.label : "Custom..."}
+                            </span>
+                          </div>
+                          {selectedTone.id === "custom" && <Check className="h-3.5 w-3.5 text-[#000000] shrink-0" />}
                         </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Ideal Customer Pill */}
+                <div className="relative" ref={customerRef}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsCustomerOpen(!isCustomerOpen);
+                      setIsToneOpen(false);
+                    }}
+                    className="flex items-center gap-2 rounded-xl border border-[#D6CCB5] bg-white px-3 py-2 text-xs font-bold text-[#1A1917] hover:border-[#000000] transition shadow-sm"
+                  >
+                    <span className="text-base">{selectedCustomer.icon}</span>
+                    <span>{selectedCustomer.label}</span>
+                    <ChevronDown className="h-3.5 w-3.5 text-[#78716C]" />
+                  </button>
+                  <span className="block mt-1 text-[11px] text-[#78716C]">Ideal customer</span>
+
+                  {isCustomerOpen && (
+                    <div className="absolute left-0 bottom-full mb-2 z-40 w-60 md:w-64 rounded-2xl border border-[#D6CCB5] bg-white p-1.5 shadow-2xl animate-in fade-in duration-150">
+                      <div className="max-h-72 overflow-y-auto pr-0.5 space-y-0.5">
+                        {CUSTOMERS.map((c) => {
+                          const isSelected = selectedCustomer.id === c.id;
+                          return (
+                            <button
+                              key={c.id}
+                              type="button"
+                              onClick={() => {
+                                setSelectedCustomer(c);
+                                setIsCustomerOpen(false);
+                                setIsCustomCustomerMode(false);
+                              }}
+                              className={`w-full flex items-center justify-between rounded-xl px-3 py-2 text-left text-xs md:text-sm transition ${
+                                isSelected
+                                  ? "font-bold text-[#000000] bg-[#FAF7F0]"
+                                  : "text-[#4A4740] hover:bg-[#FAF7F0] hover:text-[#000000]"
+                              }`}
+                            >
+                              <div className="flex items-center gap-3">
+                                <span className="text-base shrink-0 leading-none">{c.icon}</span>
+                                <span className="truncate">{c.label}</span>
+                              </div>
+                              {isSelected && <Check className="h-3.5 w-3.5 text-[#000000] shrink-0" />}
+                            </button>
+                          );
+                        })}
                       </div>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => setIsCustomMode(true)}
-                        className={`w-full flex items-center justify-between rounded-xl px-3 py-2 text-left text-xs md:text-sm transition ${
-                          selectedTone.id === "custom"
-                            ? "font-bold text-[#000000] bg-[#FAF7F0]"
-                            : "text-[#4A4740] hover:bg-[#FAF7F0] hover:text-[#000000]"
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <span className="text-base shrink-0 leading-none">🧠</span>
-                          <span className="truncate">
-                            {selectedTone.id === "custom" ? selectedTone.label : "Custom..."}
-                          </span>
+
+                      {/* Divider before Custom */}
+                      <div className="my-1 border-t border-[#D6CCB5]/60" />
+
+                      {/* Custom Persona Option */}
+                      {isCustomCustomerMode ? (
+                        <div className="flex items-center gap-1.5 p-1 animate-in fade-in duration-100">
+                          <span className="text-base pl-1 shrink-0">🧠</span>
+                          <input
+                            type="text"
+                            autoFocus
+                            value={customCustomerText}
+                            onChange={(e) => setCustomCustomerText(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" && customCustomerText.trim()) {
+                                setSelectedCustomer({ id: "custom", label: customCustomerText.trim(), icon: "🧠" });
+                                setIsCustomerOpen(false);
+                                setIsCustomCustomerMode(false);
+                              }
+                            }}
+                            placeholder="e.g. Eco vegan parents..."
+                            className="flex-1 min-w-0 rounded-lg border border-[#D6CCB5] bg-white px-2 py-1 text-xs text-[#1A1917] placeholder:text-[#9E988D] focus:outline-none focus:border-[#000000]"
+                          />
+                          <button
+                            type="button"
+                            disabled={!customCustomerText.trim()}
+                            onClick={() => {
+                              if (customCustomerText.trim()) {
+                                setSelectedCustomer({ id: "custom", label: customCustomerText.trim(), icon: "🧠" });
+                                setIsCustomerOpen(false);
+                                setIsCustomCustomerMode(false);
+                              }
+                            }}
+                            className="rounded-lg bg-[#000000] px-2.5 py-1 text-xs font-bold text-white hover:bg-[#1A1917] disabled:opacity-40 transition"
+                          >
+                            Set
+                          </button>
                         </div>
-                        {selectedTone.id === "custom" && <Check className="h-3.5 w-3.5 text-[#000000] shrink-0" />}
-                      </button>
-                    )}
-                  </div>
-                )}
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => setIsCustomCustomerMode(true)}
+                          className={`w-full flex items-center justify-between rounded-xl px-3 py-2 text-left text-xs md:text-sm transition ${
+                            selectedCustomer.id === "custom"
+                              ? "font-bold text-[#000000] bg-[#FAF7F0]"
+                              : "text-[#4A4740] hover:bg-[#FAF7F0] hover:text-[#000000]"
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className="text-base shrink-0 leading-none">🧠</span>
+                            <span className="truncate">
+                              {selectedCustomer.id === "custom" ? selectedCustomer.label : "Custom Persona..."}
+                            </span>
+                          </div>
+                          {selectedCustomer.id === "custom" && <Check className="h-3.5 w-3.5 text-[#000000] shrink-0" />}
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Generate Description CTA Button */}
