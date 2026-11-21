@@ -211,7 +211,7 @@ export function ScreenshotGuide() {
           annotation: {
             x,
             y,
-            label: updatedSteps[stepIndex].annotation?.label || `Action ${stepIndex + 1}`,
+            label: updatedSteps[stepIndex].annotation?.label ?? `Action ${stepIndex + 1}`,
           },
         };
       }
@@ -220,6 +220,11 @@ export function ScreenshotGuide() {
   };
 
   const handlePinPointerDown = (stepIndex: number, e: React.PointerEvent<HTMLDivElement>) => {
+    // If user clicked inside a text input or badge, do not drag the pin!
+    const target = e.target as HTMLElement;
+    if (target.tagName === "INPUT" || target.closest("input")) {
+      return;
+    }
     e.preventDefault();
     e.currentTarget.setPointerCapture(e.pointerId);
     setActiveDragStep(stepIndex);
@@ -894,7 +899,7 @@ Instruction: [1-2 sentences of specific instructions]
                         onPointerMove={(e) => handlePinPointerMove(idx, e)}
                         onPointerUp={(e) => handlePinPointerUp(idx, e)}
                         onPointerCancel={(e) => handlePinPointerUp(idx, e)}
-                        className={`relative touch-none select-none overflow-hidden rounded-2xl border bg-black shadow-sm group/img ${
+                        className={`relative touch-none overflow-hidden rounded-2xl border bg-black shadow-sm group/img ${
                           activeDragStep === idx
                             ? "cursor-grabbing border-blue-500 ring-2 ring-blue-400/40"
                             : "cursor-crosshair border-[#D6CCB5]"
@@ -954,26 +959,36 @@ Instruction: [1-2 sentences of specific instructions]
                                 </span>
                               ) : (
                                 <div
-                                  className="pointer-events-auto flex items-center group/badge"
+                                  className="pointer-events-auto flex items-center select-text"
                                   onPointerDown={(e) => e.stopPropagation()}
+                                  onMouseDown={(e) => e.stopPropagation()}
                                   onClick={(e) => e.stopPropagation()}
                                 >
                                   <input
                                     type="text"
-                                    value={step.annotation.label || `Step ${step.stepNumber}`}
+                                    value={step.annotation.label ?? ""}
                                     onChange={(e) => {
-                                      const copy = [...guide.steps];
-                                      if (copy[idx].annotation) {
-                                        copy[idx].annotation = {
-                                          ...copy[idx].annotation!,
-                                          label: e.target.value,
-                                        };
-                                        setGuide({ ...guide, steps: copy });
-                                      }
+                                      const val = e.target.value;
+                                      setGuide((prev) => {
+                                        const copy = [...prev.steps];
+                                        if (copy[idx].annotation) {
+                                          copy[idx] = {
+                                            ...copy[idx],
+                                            annotation: {
+                                              ...copy[idx].annotation!,
+                                              label: val,
+                                            },
+                                          };
+                                        }
+                                        return { ...prev, steps: copy };
+                                      });
                                     }}
-                                    className="cursor-text rounded-md bg-black/85 px-2 py-0.5 text-[10px] font-bold text-white shadow-md backdrop-blur border border-white/20 hover:border-blue-400 focus:border-blue-500 focus:bg-black focus:outline-none w-24 sm:w-28 text-left transition"
-                                    title="Click to edit highlight label text directly on screenshot"
-                                    placeholder="Label..."
+                                    onPointerDown={(e) => e.stopPropagation()}
+                                    onMouseDown={(e) => e.stopPropagation()}
+                                    onKeyDown={(e) => e.stopPropagation()}
+                                    className="cursor-text rounded-md bg-black/85 px-2 py-0.5 text-[10px] font-bold text-white shadow-md backdrop-blur border border-white/20 hover:border-blue-400 focus:border-blue-500 focus:bg-black focus:outline-none w-28 sm:w-32 text-left transition select-text"
+                                    title="Click to edit highlight label text"
+                                    placeholder={`Action ${step.stepNumber}...`}
                                   />
                                 </div>
                               )}
@@ -991,30 +1006,36 @@ Instruction: [1-2 sentences of specific instructions]
                           <span>
                             {activeDragStep === idx
                               ? "Dragging highlight pin freely across image..."
-                              : "Drag freely or click to position pin • Click text badge to edit label"}
+                              : "Drag freely or click to position pin • Type in the badge to edit text"}
                           </span>
                         </div>
                       </div>
 
                       {/* Micro Bar: Quick Pin Label Editor & Position */}
                       {step.annotation && (
-                        <div className="flex flex-wrap items-center justify-between text-[11px] text-[#78716C] px-1 pt-1 print:hidden">
+                        <div className="flex flex-wrap items-center justify-between text-[11px] text-[#78716C] px-1 pt-1 print:hidden select-text">
                           <div className="flex items-center gap-1.5">
                             <span className="font-semibold text-[#1A1917]">Pin label:</span>
                             <input
                               type="text"
-                              value={step.annotation.label || `Step ${step.stepNumber}`}
+                              value={step.annotation.label ?? ""}
                               onChange={(e) => {
-                                const copy = [...guide.steps];
-                                if (copy[idx].annotation) {
-                                  copy[idx].annotation = {
-                                    ...copy[idx].annotation!,
-                                    label: e.target.value,
-                                  };
-                                  setGuide({ ...guide, steps: copy });
-                                }
+                                const val = e.target.value;
+                                setGuide((prev) => {
+                                  const copy = [...prev.steps];
+                                  if (copy[idx].annotation) {
+                                    copy[idx] = {
+                                      ...copy[idx],
+                                      annotation: {
+                                        ...copy[idx].annotation!,
+                                        label: val,
+                                      },
+                                    };
+                                  }
+                                  return { ...prev, steps: copy };
+                                });
                               }}
-                              placeholder="e.g. Export CSV..."
+                              placeholder={`Action ${step.stepNumber}...`}
                               className="rounded-md border border-[#D6CCB5] bg-white px-2 py-0.5 text-xs font-medium text-[#1A1917] focus:border-blue-600 focus:outline-none"
                             />
                           </div>
