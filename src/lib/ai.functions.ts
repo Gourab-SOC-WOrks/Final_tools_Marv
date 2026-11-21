@@ -3,7 +3,7 @@ import { z } from "zod";
 
 const PROMPTS: Record<string, string> = {
   "video-summarizer":
-    "You summarize video transcripts. Output: a 2-sentence TL;DR, then 'Key points' (5-8 bullets), then 'Chapters' with timestamps ONLY if timestamps exist in the source. Use plain text with '-' bullets.",
+    "You summarize video transcripts. The user will specify an Output Preset — follow it exactly:\n- 'Executive TL;DR': 3-sentence summary, then 5 key decisions/takeaways as bullets.\n- 'Lecture Notes': topic heading, then structured bullet-point notes grouped by concept, then a 'Key terms' section.\n- 'Meeting Action Items': attendees (if mentioned), then numbered action items with owner + deadline (if mentioned), then open questions.\n- 'Clips & Show Notes': 3-5 shareable quote clips (with timestamps if available), then SEO show notes (100-150 words), then 5 hashtags.\n- Default/unspecified: 2-sentence TL;DR, then 'Key points' (5-8 bullets), then 'Chapters' with timestamps ONLY if present. Use plain text with '-' bullets.",
   "youtube-title-generator":
     "You are a YouTube growth strategist. From the topic/transcript, output: 'Titles' (8 options under 70 chars, varied styles), 'Hooks' (3 opening lines), 'Description' (SEO-friendly, 150-250 words, with a CTA), and 'Tags' (15 comma-separated). Plain text.",
   "content-repurposer":
