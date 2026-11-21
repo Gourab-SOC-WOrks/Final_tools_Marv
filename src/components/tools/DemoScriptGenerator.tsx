@@ -40,7 +40,6 @@ export interface DemoScene {
 
 export type DemoFormat = "30s" | "60s" | "2min";
 export type HookAngle = "problem" | "before_after" | "show_tell";
-export type AspectRatioType = "16:9" | "9:16" | "1:1" | "4:5";
 
 export function formatTimecode(sec: number): string {
   const m = Math.floor(Math.max(0, sec) / 60);
@@ -57,41 +56,6 @@ export function parseTimecode(str: string): number {
   }
   return parseInt(str, 10) || 0;
 }
-
-export const ASPECT_RATIOS = [
-  {
-    id: "16:9",
-    label: "16:9 Landscape",
-    sub: "YouTube / Desktop / Loom",
-    iconBox: "w-5 h-3",
-    tag: "16:9 Desktop",
-    framingTip: "Widescreen 16:9: Full desktop screen capture with browser URL bar & dashboard.",
-  },
-  {
-    id: "9:16",
-    label: "9:16 Vertical",
-    sub: "Shorts / TikTok / Reels",
-    iconBox: "w-3 h-5",
-    tag: "9:16 Mobile",
-    framingTip: "Vertical 9:16: Center-crop key actions into middle 60% for mobile feeds.",
-  },
-  {
-    id: "1:1",
-    label: "1:1 Square",
-    sub: "LinkedIn / X Feeds",
-    iconBox: "w-4 h-4",
-    tag: "1:1 Square",
-    framingTip: "Square 1:1: Tight crop on UI cards, metrics, and cursor clicks.",
-  },
-  {
-    id: "4:5",
-    label: "4:5 Portrait",
-    sub: "Instagram Feed",
-    iconBox: "w-3.5 h-4.5",
-    tag: "4:5 Feed",
-    framingTip: "Portrait 4:5: Optimized vertical feed view with subtitle padding.",
-  },
-] as const;
 
 export const FORMAT_OPTIONS = [
   { id: "30s", label: "30s Launch Teaser", desc: "X / Product Hunt viral hook", targetWords: 75, targetSec: 30 },
@@ -172,7 +136,6 @@ export function DemoScriptGenerator() {
   const [audience, setAudience] = useState(SAMPLE_PRODUCT.audience);
   const [format, setFormat] = useState<DemoFormat>("60s");
   const [hookAngle, setHookAngle] = useState<HookAngle>("problem");
-  const [aspectRatio, setAspectRatio] = useState<AspectRatioType>("16:9");
 
   // Output State
   const [scenes, setScenes] = useState<DemoScene[]>(INITIAL_SAMPLE_SCENES);
@@ -184,41 +147,10 @@ export function DemoScriptGenerator() {
   // TanStack Server Function
   const runAi = useServerFn(runAiTool);
 
-  const selectedAspectRatio = useMemo(
-    () => ASPECT_RATIOS.find((a) => a.id === aspectRatio) ?? ASPECT_RATIOS[0],
-    [aspectRatio]
-  );
-
   // Helper toast notification
   const showToast = (msg: string) => {
     setToastMsg(msg);
     setTimeout(() => setToastMsg(null), 2400);
-  };
-
-  // Adjust scene time start or end by delta seconds (+/- 1s)
-  const adjustSceneTime = (sceneId: string, type: "start" | "end", delta: number) => {
-    setScenes((prev) =>
-      prev.map((s) => {
-        if (s.id !== sceneId) return s;
-        if (type === "start") {
-          const nextStart = Math.max(0, Math.min(s.endSec - 1, s.startSec + delta));
-          return {
-            ...s,
-            startSec: nextStart,
-            durationSec: s.endSec - nextStart,
-            timeRange: `${formatTimecode(nextStart)}–${formatTimecode(s.endSec)}`,
-          };
-        } else {
-          const nextEnd = Math.max(s.startSec + 1, s.endSec + delta);
-          return {
-            ...s,
-            endSec: nextEnd,
-            durationSec: nextEnd - s.startSec,
-            timeRange: `${formatTimecode(s.startSec)}–${formatTimecode(nextEnd)}`,
-          };
-        }
-      })
-    );
   };
 
   // Word count and estimated speaking time calculation
@@ -260,7 +192,7 @@ export function DemoScriptGenerator() {
       timeRange: `${formatTimecode(nextStart)}–${formatTimecode(nextEnd)}`,
       name: `Step ${scenes.length + 1}`,
       durationSec: 15,
-      visualCue: `Screen recording (${selectedAspectRatio.tag}): Demonstrate product feature in action.`,
+      visualCue: "Screen recording: Demonstrate product feature in action.",
       voiceover: "Here is how this feature solves your workflow challenges effortlessly.",
     };
     const next = [...scenes];
@@ -368,7 +300,7 @@ export function DemoScriptGenerator() {
             timeRange: `${formatTimecode(startSec)}–${formatTimecode(endSec)}`,
             name,
             durationSec: Math.max(1, endSec - startSec),
-            visualCue: visual || `Screen recording (${selectedAspectRatio.tag}): Highlight product workflow on screen.`,
+            visualCue: visual || "Screen recording: Highlight product workflow on screen.",
             voiceover: voiceover || "Here is how this feature delivers results for users.",
           });
         }
@@ -391,7 +323,7 @@ export function DemoScriptGenerator() {
         timeRange: `${formatTimecode(sSec)}–${formatTimecode(eSec)}`,
         name: idx === 0 ? "Hook" : idx === 1 ? "Problem" : idx === 2 ? "Walkthrough" : "CTA",
         durationSec: eSec - sSec,
-        visualCue: `Screen recording (${selectedAspectRatio.tag}): Demonstrate step ${idx + 1} clearly on screen.`,
+        visualCue: `Screen recording: Demonstrate step ${idx + 1} clearly on screen.`,
         voiceover: p.replace(/^[-•*#\d.]+\s*/, ""),
       };
     });
@@ -412,12 +344,11 @@ export function DemoScriptGenerator() {
       audience ? `Target Audience: ${audience}` : "",
       `Format Target: ${format === "30s" ? "30s Launch Teaser" : format === "60s" ? "60s Explainer" : "2-Min Loom Walkthrough"}`,
       `Hook Angle: ${hookAngle === "problem" ? "Problem-Agitation" : hookAngle === "before_after" ? "Before vs. After" : "Direct Show-Don't-Tell"}`,
-      `Aspect Ratio Framing: ${selectedAspectRatio.label} (${selectedAspectRatio.framingTip})`,
       `\nCRITICAL INSTRUCTIONS: Output formatted scenes. For every scene output EXACTLY:
 ===SCENE===
 [TIME]: 00:00–00:05
 [NAME]: Hook
-[VISUAL]: Screen recording (${selectedAspectRatio.id}): ... (bold actionable camera/screen cue tailored for ${selectedAspectRatio.label})
+[VISUAL]: Screen recording: ... (bold actionable camera or screen cue)
 [VOICEOVER]: ... (natural, conversational spoken script)
 ===SCENE===
 (Provide 3 to 5 scenes matching the chosen video duration)`,
@@ -690,50 +621,6 @@ export function DemoScriptGenerator() {
               </div>
             </div>
 
-            {/* Quick Controls: Aspect Ratio Selector Tool */}
-            <div className="space-y-1.5 pt-1">
-              <div className="flex items-center justify-between">
-                <label className="text-[11px] font-semibold text-[#86868B] uppercase tracking-wider block">
-                  Aspect Ratio Selector
-                </label>
-                <span className="text-[10px] text-[#0071E3] font-semibold">
-                  {selectedAspectRatio.tag}
-                </span>
-              </div>
-              <div className="grid grid-cols-4 gap-1 p-1 rounded-xl bg-black/[0.04] border border-black/[0.04]">
-                {ASPECT_RATIOS.map((ar) => (
-                  <button
-                    key={ar.id}
-                    type="button"
-                    onClick={() => {
-                      setAspectRatio(ar.id);
-                      showToast(`Framing set to ${ar.label}`);
-                    }}
-                    className={`py-2 px-1 text-xs font-medium rounded-lg text-center transition-all duration-150 active:scale-[0.96] flex flex-col items-center justify-center gap-1.5 ${
-                      aspectRatio === ar.id
-                        ? "bg-white text-[#1D1D1F] shadow-[0_1px_3px_rgba(0,0,0,0.08),0_1px_1px_rgba(0,0,0,0.04)] font-semibold"
-                        : "text-[#86868B] hover:text-[#1D1D1F] hover:bg-white/50"
-                    }`}
-                  >
-                    <span
-                      className={`border-1.5 rounded-xs ${ar.iconBox} ${
-                        aspectRatio === ar.id
-                          ? "border-[#0071E3] bg-[#0071E3]/15"
-                          : "border-[#86868B]"
-                      }`}
-                    />
-                    <span className="text-[10px] font-mono leading-none">{ar.id}</span>
-                    <span className="text-[9px] text-[#86868B] hidden sm:inline leading-none truncate max-w-full">
-                      {ar.tag.split(" ")[1] ?? ar.tag}
-                    </span>
-                  </button>
-                ))}
-              </div>
-              <p className="text-[10px] text-[#86868B] italic">
-                {selectedAspectRatio.framingTip}
-              </p>
-            </div>
-
             {/* "Generate Demo Script" CTA Button */}
             <div className="pt-2">
               <button
@@ -828,8 +715,8 @@ export function DemoScriptGenerator() {
                     className="group rounded-2xl border border-black/[0.08] bg-white p-4 space-y-3 hover:border-black/[0.16] transition-all shadow-xs"
                   >
                     {/* Scene Card Header: Time, Scene Name, Word count, Controls */}
-                    <div className="flex flex-wrap items-center justify-between gap-2.5 border-b border-black/[0.05] pb-2.5">
-                      <div className="flex items-center gap-2 flex-wrap">
+                    <div className="flex items-center justify-between gap-2.5 border-b border-black/[0.05] pb-2.5">
+                      <div className="flex items-center gap-2">
                         <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#0071E3]/10 text-[11px] font-bold text-[#0071E3]">
                           {idx + 1}
                         </span>
@@ -839,59 +726,9 @@ export function DemoScriptGenerator() {
                           onChange={(e) => updateScene(scene.id, "name", e.target.value)}
                           className="font-semibold text-xs text-[#1D1D1F] bg-transparent border-b border-transparent hover:border-black/20 focus:border-[#0071E3] focus:outline-none px-1"
                         />
-
-                        {/* Custom Timeline Changer Capsules */}
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          {/* Start Capsule */}
-                          <div className="inline-flex items-center gap-2 rounded-full bg-[#1D1D1F] px-3 py-1 shadow-sm border border-black/10">
-                            <span className="font-mono text-[11px] text-[#A1A1A6] select-none tracking-tight">
-                              Start: <span className="text-white font-medium">{formatTimecode(scene.startSec)}</span>
-                            </span>
-                            <div className="flex items-center gap-1">
-                              <button
-                                type="button"
-                                onClick={() => adjustSceneTime(scene.id, "start", -1)}
-                                className="flex h-5 items-center justify-center rounded-[5px] bg-[#323234] hover:bg-[#3E3E42] px-1.5 text-[10px] font-mono text-white transition active:scale-95 cursor-pointer"
-                                title="Subtract 1 second from start time"
-                              >
-                                -1s
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => adjustSceneTime(scene.id, "start", 1)}
-                                className="flex h-5 items-center justify-center rounded-[5px] bg-[#323234] hover:bg-[#3E3E42] px-1.5 text-[10px] font-mono text-white transition active:scale-95 cursor-pointer"
-                                title="Add 1 second to start time"
-                              >
-                                +1s
-                              </button>
-                            </div>
-                          </div>
-
-                          {/* End Capsule */}
-                          <div className="inline-flex items-center gap-2 rounded-full bg-[#1D1D1F] px-3 py-1 shadow-sm border border-black/10">
-                            <span className="font-mono text-[11px] text-[#A1A1A6] select-none tracking-tight">
-                              End: <span className="text-white font-medium">{formatTimecode(scene.endSec)}</span>
-                            </span>
-                            <div className="flex items-center gap-1">
-                              <button
-                                type="button"
-                                onClick={() => adjustSceneTime(scene.id, "end", -1)}
-                                className="flex h-5 items-center justify-center rounded-[5px] bg-[#323234] hover:bg-[#3E3E42] px-1.5 text-[10px] font-mono text-white transition active:scale-95 cursor-pointer"
-                                title="Subtract 1 second from end time"
-                              >
-                                -1s
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => adjustSceneTime(scene.id, "end", 1)}
-                                className="flex h-5 items-center justify-center rounded-[5px] bg-[#323234] hover:bg-[#3E3E42] border border-white/60 px-1.5 text-[10px] font-mono text-white transition active:scale-95 cursor-pointer"
-                                title="Add 1 second to end time"
-                              >
-                                +1s
-                              </button>
-                            </div>
-                          </div>
-                        </div>
+                        <span className="text-[11px] font-mono font-medium text-[#86868B] bg-black/[0.04] px-2 py-0.5 rounded-full border border-black/[0.06]">
+                          {scene.timeRange}
+                        </span>
                       </div>
 
                       {/* Scene Stats & Actions */}
@@ -937,15 +774,9 @@ export function DemoScriptGenerator() {
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-stretch">
                       {/* Left Column: Visual / Screen Cue (5 Cols) */}
                       <div className="md:col-span-5 rounded-xl bg-amber-500/[0.04] border border-amber-600/15 p-3 flex flex-col justify-between space-y-1.5">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-1.5 text-[10px] font-bold text-amber-800 uppercase tracking-wider">
-                            <Monitor className="h-3.5 w-3.5 text-amber-600" />
-                            <span>Visual / Screen Cue</span>
-                          </div>
-                          <span className="text-[10px] font-semibold text-amber-900 bg-amber-500/15 border border-amber-500/20 px-1.5 py-0.5 rounded-md flex items-center gap-1">
-                            <span className={`border rounded-2xs ${selectedAspectRatio.iconBox}`} />
-                            <span>{selectedAspectRatio.id}</span>
-                          </span>
+                        <div className="flex items-center gap-1.5 text-[10px] font-bold text-amber-800 uppercase tracking-wider">
+                          <Monitor className="h-3.5 w-3.5 text-amber-600" />
+                          <span>Visual / Screen Cue</span>
                         </div>
                         <textarea
                           rows={3}

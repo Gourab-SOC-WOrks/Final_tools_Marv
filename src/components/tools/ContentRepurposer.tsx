@@ -81,6 +81,47 @@ function formatTime(seconds: number): string {
   return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
 }
 
+export type AspectRatioType = "9:16" | "16:9" | "1:1" | "4:5";
+
+export interface AspectRatioOption {
+  id: AspectRatioType;
+  label: string;
+  tag: string;
+  iconBox: string;
+  containerClass: string;
+}
+
+export const ASPECT_RATIOS: AspectRatioOption[] = [
+  {
+    id: "9:16",
+    label: "9:16 Vertical",
+    tag: "Shorts / Reels / TikTok",
+    iconBox: "w-2.5 h-4",
+    containerClass: "aspect-[9/16] max-w-[280px]",
+  },
+  {
+    id: "16:9",
+    label: "16:9 Landscape",
+    tag: "YouTube / Desktop",
+    iconBox: "w-4 h-2.5",
+    containerClass: "aspect-[16/9] max-w-[420px]",
+  },
+  {
+    id: "1:1",
+    label: "1:1 Square",
+    tag: "LinkedIn / X Feeds",
+    iconBox: "w-3 h-3",
+    containerClass: "aspect-square max-w-[310px]",
+  },
+  {
+    id: "4:5",
+    label: "4:5 Portrait",
+    tag: "Instagram Feed",
+    iconBox: "w-3 h-3.5",
+    containerClass: "aspect-[4/5] max-w-[290px]",
+  },
+];
+
 // 12 Supported Sources mapped to row-major order for 3-column layout
 interface SourceOption {
   id: string;
@@ -235,6 +276,7 @@ export function ContentRepurposer() {
   const [captionStyle, setCaptionStyle] = useState<"bold-yellow" | "clean-white" | "none">("bold-yellow");
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
+  const [aspectRatio, setAspectRatio] = useState<AspectRatioType>("9:16");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -243,6 +285,7 @@ export function ContentRepurposer() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const activeClip = clips.find((c) => c.id === selectedClipId) || clips[0];
+  const currentAspectRatio = ASPECT_RATIOS.find((a) => a.id === aspectRatio) ?? ASPECT_RATIOS[0];
 
   // Close smart popover when clicking outside
   useEffect(() => {
@@ -639,16 +682,21 @@ export function ContentRepurposer() {
             <div className="lg:col-span-5 sticky top-6 space-y-4">
               <div className="rounded-3xl border border-[#000000] bg-[#1A1917] p-5 text-white shadow-xl">
                 <div className="flex items-center justify-between mb-3 text-xs text-[#AEBDCA]">
-                  <span className="font-semibold uppercase tracking-wider">
-                    9:16 Vertical Preview
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold uppercase tracking-wider">
+                      {currentAspectRatio.label} Preview
+                    </span>
+                    <span className="text-[10px] text-white/50 bg-white/10 px-1.5 py-0.5 rounded font-mono">
+                      {currentAspectRatio.tag}
+                    </span>
+                  </div>
                   <span className="font-mono text-[11px] bg-white/10 px-2 py-0.5 rounded-md">
                     {formatTime(activeClip.startSec)} – {formatTime(activeClip.endSec)}
                   </span>
                 </div>
 
-                {/* 9:16 Vertical Player Frame */}
-                <div className="relative mx-auto aspect-[9/16] w-full max-w-[280px] overflow-hidden rounded-2xl bg-black border border-white/20 shadow-inner group">
+                {/* Adaptive Video Player Frame */}
+                <div className={`relative mx-auto w-full overflow-hidden rounded-2xl bg-black border border-white/20 shadow-inner group transition-all duration-300 ${currentAspectRatio.containerClass}`}>
                   <video
                     ref={videoRef}
                     src={clipUrl}
@@ -704,8 +752,44 @@ export function ContentRepurposer() {
                   </div>
                 </div>
 
-                {/* 3 Micro-Controls Underneath */}
+                {/* Micro-Controls Underneath */}
                 <div className="mt-5 space-y-4 pt-3 border-t border-white/10">
+                  {/* Aspect Ratio Selector Tool */}
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="text-xs font-semibold text-[#AEBDCA]">
+                        Aspect Ratio Selector
+                      </label>
+                      <span className="text-[11px] font-mono text-emerald-400 font-medium">
+                        {currentAspectRatio.id} Framing
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-4 gap-1.5 p-1 rounded-xl bg-white/5 border border-white/10">
+                      {ASPECT_RATIOS.map((ar) => (
+                        <button
+                          key={ar.id}
+                          type="button"
+                          onClick={() => {
+                            setAspectRatio(ar.id);
+                            showToast(`Framing set to ${ar.label}`);
+                          }}
+                          className={`py-2 px-1 text-xs font-medium rounded-lg text-center transition-all duration-150 active:scale-[0.96] flex flex-col items-center justify-center gap-1 ${
+                            aspectRatio === ar.id
+                              ? "bg-white text-black shadow-sm font-semibold"
+                              : "text-[#AEBDCA] hover:text-white hover:bg-white/10"
+                          }`}
+                        >
+                          <span
+                            className={`border-1.5 rounded-xs ${ar.iconBox} ${
+                              aspectRatio === ar.id ? "border-black bg-black/10" : "border-[#AEBDCA]"
+                            }`}
+                          />
+                          <span className="text-[10px] font-mono leading-none">{ar.id}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
                   {/* Micro-Control 1: Caption Style Swatches */}
                   <div>
                     <label className="text-xs font-semibold text-[#AEBDCA] block mb-2">
@@ -753,56 +837,62 @@ export function ContentRepurposer() {
                     </div>
                   </div>
 
-                  {/* Micro-Control 2: Trim Nudgers (-1s / +1s) */}
+                  {/* Micro-Control 2: Custom Timeline Changer Capsules (Matching Reference Screenshot) */}
                   <div>
-                    <label className="text-xs font-semibold text-[#AEBDCA] block mb-2">
-                      Fine-Trim Timeline
-                    </label>
-                    <div className="grid grid-cols-2 gap-3">
-                      {/* Start Time Nudger */}
-                      <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 p-2 px-3">
-                        <span className="text-[11px] font-mono text-[#AEBDCA]">
-                          Start: {formatTime(activeClip.startSec)}
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="text-xs font-semibold text-[#AEBDCA]">
+                        Custom Timeline Changer
+                      </label>
+                      <span className="text-[10px] text-white/50 font-mono">
+                        {activeClip.endSec - activeClip.startSec}s cutdown
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {/* Start Capsule */}
+                      <div className="inline-flex items-center gap-2.5 rounded-full bg-[#1D1D1F] px-4 py-1.5 shadow-sm border border-white/10">
+                        <span className="font-mono text-xs text-[#A1A1A6] select-none tracking-tight">
+                          Start: <span className="text-white font-medium">{formatTime(activeClip.startSec)}</span>
                         </span>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1.5">
                           <button
                             type="button"
                             onClick={() => handleTrimNudge("start", -1)}
-                            className="h-6 w-6 rounded bg-white/10 text-xs font-mono font-bold hover:bg-white/20 active:scale-95 transition"
-                            title="-1 second start"
+                            className="flex h-5 items-center justify-center rounded-[5px] bg-[#323234] hover:bg-[#3E3E42] px-1.5 text-[10px] font-mono text-white transition active:scale-95 cursor-pointer"
+                            title="Subtract 1 second from start time"
                           >
                             -1s
                           </button>
                           <button
                             type="button"
-                            onClick={() => handleTrimNudge("start", +1)}
-                            className="h-6 w-6 rounded bg-white/10 text-xs font-mono font-bold hover:bg-white/20 active:scale-95 transition"
-                            title="+1 second start"
+                            onClick={() => handleTrimNudge("start", 1)}
+                            className="flex h-5 items-center justify-center rounded-[5px] bg-[#323234] hover:bg-[#3E3E42] px-1.5 text-[10px] font-mono text-white transition active:scale-95 cursor-pointer"
+                            title="Add 1 second to start time"
                           >
                             +1s
                           </button>
                         </div>
                       </div>
 
-                      {/* End Time Nudger */}
-                      <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 p-2 px-3">
-                        <span className="text-[11px] font-mono text-[#AEBDCA]">
-                          End: {formatTime(activeClip.endSec)}
+                      {/* End Capsule */}
+                      <div className="inline-flex items-center gap-2.5 rounded-full bg-[#1D1D1F] px-4 py-1.5 shadow-sm border border-white/10">
+                        <span className="font-mono text-xs text-[#A1A1A6] select-none tracking-tight">
+                          End: <span className="text-white font-medium">{formatTime(activeClip.endSec)}</span>
                         </span>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1.5">
                           <button
                             type="button"
                             onClick={() => handleTrimNudge("end", -1)}
-                            className="h-6 w-6 rounded bg-white/10 text-xs font-mono font-bold hover:bg-white/20 active:scale-95 transition"
-                            title="-1 second end"
+                            className="flex h-5 items-center justify-center rounded-[5px] bg-[#323234] hover:bg-[#3E3E42] px-1.5 text-[10px] font-mono text-white transition active:scale-95 cursor-pointer"
+                            title="Subtract 1 second from end time"
                           >
                             -1s
                           </button>
                           <button
                             type="button"
-                            onClick={() => handleTrimNudge("end", +1)}
-                            className="h-6 w-6 rounded bg-white/10 text-xs font-mono font-bold hover:bg-white/20 active:scale-95 transition"
-                            title="+1 second end"
+                            onClick={() => handleTrimNudge("end", 1)}
+                            className="flex h-5 items-center justify-center rounded-[5px] bg-[#323234] hover:bg-[#3E3E42] border border-white/60 px-1.5 text-[10px] font-mono text-white transition active:scale-95 cursor-pointer"
+                            title="Add 1 second to end time"
                           >
                             +1s
                           </button>
