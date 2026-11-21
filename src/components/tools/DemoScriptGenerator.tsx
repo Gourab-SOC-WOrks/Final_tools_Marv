@@ -715,25 +715,32 @@ export function DemoScriptGenerator() {
                     className="group rounded-2xl border border-black/[0.08] bg-white p-4 space-y-3 hover:border-black/[0.16] transition-all shadow-xs"
                   >
                     {/* Scene Card Header: Time, Scene Name, Word count, Controls */}
-                    <div className="flex items-center justify-between gap-2.5 border-b border-black/[0.05] pb-2.5">
-                      <div className="flex items-center gap-2">
-                        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#0071E3]/10 text-[11px] font-bold text-[#0071E3]">
+                    <div className="flex items-center justify-between gap-3 border-b border-black/[0.05] pb-2.5">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#0071E3]/10 text-[11px] font-bold text-[#0071E3] shrink-0">
                           {idx + 1}
                         </span>
                         <input
                           type="text"
                           value={scene.name}
                           onChange={(e) => updateScene(scene.id, "name", e.target.value)}
-                          className="font-semibold text-xs text-[#1D1D1F] bg-transparent border-b border-transparent hover:border-black/20 focus:border-[#0071E3] focus:outline-none px-1"
+                          style={{ width: `${Math.max(4, scene.name.length + 1)}ch` }}
+                          className="font-semibold text-xs text-[#1D1D1F] bg-transparent hover:bg-black/[0.04] focus:bg-white focus:ring-1 focus:ring-[#0071E3]/30 rounded-md px-1.5 py-0.5 focus:outline-none transition-all"
+                          title="Click to edit scene name"
                         />
-                        <span className="text-[11px] font-mono font-medium text-[#86868B] bg-black/[0.04] px-2 py-0.5 rounded-full border border-black/[0.06]">
-                          {scene.timeRange}
-                        </span>
+                        <input
+                          type="text"
+                          value={scene.timeRange}
+                          onChange={(e) => updateScene(scene.id, "timeRange", e.target.value)}
+                          style={{ width: `${Math.max(9, scene.timeRange.length + 1)}ch` }}
+                          className="text-[11px] font-mono font-medium text-[#86868B] bg-black/[0.04] hover:bg-black/[0.08] focus:bg-white focus:text-[#1D1D1F] focus:ring-1 focus:ring-[#0071E3]/30 px-2.5 py-0.5 rounded-full border border-black/[0.06] text-center focus:outline-none transition-all shrink-0"
+                          title="Click to edit timestamp range"
+                        />
                       </div>
 
                       {/* Scene Stats & Actions */}
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-[10px] text-[#86868B] font-mono mr-1">
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className="text-[10px] text-[#86868B] font-mono mr-1 select-none">
                           {sceneWords}w (~{sceneSec}s)
                         </span>
 
@@ -743,7 +750,7 @@ export function DemoScriptGenerator() {
                           disabled={isRegenerating}
                           onClick={() => handleRegenerateScene(scene.id, idx)}
                           title={`Regenerate ${scene.name} with fresh angle`}
-                          className="flex h-7 w-7 items-center justify-center rounded-lg border border-black/[0.08] bg-black/[0.02] text-[#555] hover:text-[#1D1D1F] hover:bg-black/[0.06] transition active:scale-90"
+                          className="flex h-7 w-7 items-center justify-center rounded-full border border-black/[0.08] bg-white text-[#555] hover:text-[#1D1D1F] hover:bg-black/[0.04] shadow-2xs transition active:scale-90"
                         >
                           <RotateCcw className={`h-3.5 w-3.5 ${isRegenerating ? "animate-spin text-[#0071E3]" : ""}`} />
                         </button>
@@ -753,7 +760,7 @@ export function DemoScriptGenerator() {
                           type="button"
                           onClick={() => addScene(idx)}
                           title="Add scene below"
-                          className="flex h-7 w-7 items-center justify-center rounded-lg border border-black/[0.08] bg-black/[0.02] text-[#555] hover:text-[#1D1D1F] hover:bg-black/[0.06] transition active:scale-90"
+                          className="flex h-7 w-7 items-center justify-center rounded-full border border-black/[0.08] bg-white text-[#555] hover:text-[#1D1D1F] hover:bg-black/[0.04] shadow-2xs transition active:scale-90"
                         >
                           <Plus className="h-3.5 w-3.5" />
                         </button>
@@ -763,7 +770,7 @@ export function DemoScriptGenerator() {
                           type="button"
                           onClick={() => deleteScene(scene.id)}
                           title="Remove scene"
-                          className="flex h-7 w-7 items-center justify-center rounded-lg border border-black/[0.08] bg-black/[0.02] text-[#555] hover:text-red-600 hover:bg-red-50 transition active:scale-90"
+                          className="flex h-7 w-7 items-center justify-center rounded-full border border-black/[0.08] bg-white text-[#555] hover:text-red-600 hover:bg-red-50 hover:border-red-200 shadow-2xs transition active:scale-90"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
