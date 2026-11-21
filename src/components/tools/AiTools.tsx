@@ -1744,3 +1744,6 @@ export function VoiceoverGenerator() {
     </Panel>
   );
 }
+
+export { ContentRepurposer } from "./ContentRepurposer";
+
