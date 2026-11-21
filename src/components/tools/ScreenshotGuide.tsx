@@ -17,6 +17,9 @@ import {
   ShieldCheck,
   Layers,
   ArrowRight,
+  ArrowLeft,
+  ArrowUp,
+  ArrowDown,
   Crosshair,
   Download,
   Info,
@@ -1509,11 +1512,8 @@ Instruction: [1-2 sentences of specific instructions]
                                 </div>
                               </div>
 
-                              {/* Pin Coordinates & Quick Actions */}
-                              <div className="flex items-center gap-2 text-[11px] text-[#78716C]">
-                                <span className="font-mono bg-white px-2 py-0.5 rounded-md border border-[#D6CCB5] text-[10px]">
-                                  Pin: ({step.annotation.x}%, {step.annotation.y}%)
-                                </span>
+                              {/* Quick Actions (Center & Remove) */}
+                              <div className="flex items-center gap-2 text-xs text-[#78716C]">
                                 <button
                                   type="button"
                                   onClick={() => updateStepAnnotation(idx, { x: 50, y: 50 })}
@@ -1534,52 +1534,50 @@ Instruction: [1-2 sentences of specific instructions]
                               </div>
                             </div>
 
-                            {/* Expanded Properties Drawer: 2 spacious cards, no text clipping! */}
+                            {/* Expanded Properties Drawer: Clean, spacious, minimal */}
                             {expandedPropsStep === idx && (
                               <div className="pt-2.5 border-t border-[#D6CCB5]/80 grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                                 {/* Card 1: Label Configuration */}
                                 <div className="space-y-2.5 bg-white p-3 rounded-xl border border-[#D6CCB5]/80 shadow-2xs">
-                                  {/* Label Placement */}
+                                  {/* Label Placement: Arrows only, no text */}
                                   <div className="space-y-1">
-                                    <span className="font-semibold text-[#1A1917] flex items-center justify-between">
-                                      <span>Label Position</span>
-                                      <span className="text-[10px] text-[#78716C] font-normal">Placement relative to pin</span>
-                                    </span>
+                                    <span className="font-semibold text-[#1A1917] block">Label Position</span>
                                     <div className="grid grid-cols-4 gap-1 bg-[#FAF7F0] border border-[#D6CCB5] rounded-lg p-0.5 text-center font-medium">
                                       {[
-                                        { id: "left", label: "Left", icon: "←" },
-                                        { id: "top", label: "Top", icon: "↑" },
-                                        { id: "bottom", label: "Bottom", icon: "↓" },
-                                        { id: "right", label: "Right", icon: "→" },
+                                        { id: "left", title: "Left", icon: ArrowLeft },
+                                        { id: "top", title: "Top", icon: ArrowUp },
+                                        { id: "bottom", title: "Bottom", icon: ArrowDown },
+                                        { id: "right", title: "Right", icon: ArrowRight },
                                       ].map((pos) => {
                                         const isAct = (step.annotation?.labelPosition || "right") === pos.id;
+                                        const IconComponent = pos.icon;
                                         return (
                                           <button
                                             key={pos.id}
                                             type="button"
                                             onClick={() => updateStepAnnotation(idx, { labelPosition: pos.id as LabelPosition })}
-                                            className={`py-1 rounded-md text-xs transition flex items-center justify-center gap-1 ${
+                                            className={`py-1.5 rounded-md transition flex items-center justify-center ${
                                               isAct
-                                                ? "bg-[#1A1917] text-white font-bold shadow-xs"
+                                                ? "bg-[#1A1917] text-white shadow-xs"
                                                 : "text-[#4A4740] hover:bg-white hover:text-black"
                                             }`}
+                                            title={`Position label: ${pos.title}`}
                                           >
-                                            <span className="text-[10px] opacity-75">{pos.icon}</span>
-                                            <span>{pos.label}</span>
+                                            <IconComponent className="h-4 w-4" />
                                           </button>
                                         );
                                       })}
                                     </div>
                                   </div>
 
-                                  {/* Label Theme Style */}
+                                  {/* Label Theme Style: No emojis */}
                                   <div className="space-y-1">
                                     <span className="font-semibold text-[#1A1917] block">Label Theme</span>
                                     <div className="grid grid-cols-3 gap-1 bg-[#FAF7F0] border border-[#D6CCB5] rounded-lg p-0.5 text-center font-medium">
                                       {[
-                                        { id: "dark", label: "🌙 Dark" },
-                                        { id: "light", label: "☀️ Light" },
-                                        { id: "match", label: "🎨 Color" },
+                                        { id: "dark", label: "Dark" },
+                                        { id: "light", label: "Light" },
+                                        { id: "match", label: "Color" },
                                       ].map((th) => {
                                         const isAct = (step.annotation?.labelTheme || "dark") === th.id;
                                         return (
@@ -1601,19 +1599,16 @@ Instruction: [1-2 sentences of specific instructions]
                                   </div>
                                 </div>
 
-                                {/* Card 2: Hotspot Sizing & Animation */}
+                                {/* Card 2: Hotspot Sizing & Toggle Switches */}
                                 <div className="space-y-2.5 bg-white p-3 rounded-xl border border-[#D6CCB5]/80 shadow-2xs">
-                                  {/* Hotspot Size */}
+                                  {/* Hotspot Size: No px thing */}
                                   <div className="space-y-1">
-                                    <span className="font-semibold text-[#1A1917] flex items-center justify-between">
-                                      <span>Hotspot Size</span>
-                                      <span className="text-[10px] text-[#78716C] font-normal">Diameter</span>
-                                    </span>
+                                    <span className="font-semibold text-[#1A1917] block">Hotspot Size</span>
                                     <div className="grid grid-cols-3 gap-1 bg-[#FAF7F0] border border-[#D6CCB5] rounded-lg p-0.5 text-center font-medium">
                                       {[
-                                        { id: "sm", label: "Small (24px)" },
-                                        { id: "md", label: "Medium (28px)" },
-                                        { id: "lg", label: "Large (36px)" },
+                                        { id: "sm", label: "Small" },
+                                        { id: "md", label: "Medium" },
+                                        { id: "lg", label: "Large" },
                                       ].map((sz) => {
                                         const isAct = (step.annotation?.size || "md") === sz.id;
                                         return (
@@ -1634,38 +1629,55 @@ Instruction: [1-2 sentences of specific instructions]
                                     </div>
                                   </div>
 
-                                  {/* Animation & Numbering Badges */}
-                                  <div className="space-y-1">
+                                  {/* Animation & Numbering Badges: Modern Toggle Switches */}
+                                  <div className="space-y-1.5">
                                     <span className="font-semibold text-[#1A1917] block">Animation & Badges</span>
-                                    <div className="grid grid-cols-2 gap-1.5">
-                                      <button
-                                        type="button"
-                                        onClick={() => updateStepAnnotation(idx, { pulse: !(step.annotation?.pulse ?? true) })}
-                                        className={`py-1.5 px-2 rounded-lg border text-xs font-semibold transition flex items-center justify-center gap-1.5 ${
-                                          step.annotation?.pulse ?? true
-                                            ? "bg-emerald-50 border-emerald-300 text-emerald-800 shadow-2xs"
-                                            : "bg-[#FAF7F0] border-[#D6CCB5] text-[#78716C]"
-                                        }`}
-                                      >
-                                        <Zap className="h-3 w-3" />
-                                        <span>{(step.annotation?.pulse ?? true) ? "Pulse Beacon: ON" : "Pulse Beacon: OFF"}</span>
-                                      </button>
+                                    <div className="space-y-1.5">
+                                      {/* Toggle 1: Pulse Beacon */}
+                                      <div className="flex items-center justify-between bg-[#FAF7F0] border border-[#D6CCB5] rounded-lg px-2.5 py-1.5">
+                                        <span className="font-medium text-[#1A1917] text-xs">Pulse Beacon</span>
+                                        <button
+                                          type="button"
+                                          role="switch"
+                                          aria-checked={step.annotation?.pulse ?? true}
+                                          onClick={() => updateStepAnnotation(idx, { pulse: !(step.annotation?.pulse ?? true) })}
+                                          className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                                            (step.annotation?.pulse ?? true) ? "bg-emerald-600" : "bg-stone-300"
+                                          }`}
+                                          title="Toggle pulse beacon animation"
+                                        >
+                                          <span
+                                            className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                                              (step.annotation?.pulse ?? true) ? "translate-x-4" : "translate-x-0"
+                                            }`}
+                                          />
+                                        </button>
+                                      </div>
 
-                                      <button
-                                        type="button"
-                                        onClick={() =>
-                                          updateStepAnnotation(idx, {
-                                            showStepNumber: !(step.annotation?.showStepNumber ?? true),
-                                          })
-                                        }
-                                        className={`py-1.5 px-2 rounded-lg border text-xs font-semibold transition flex items-center justify-center gap-1.5 ${
-                                          step.annotation?.showStepNumber ?? true
-                                            ? "bg-blue-50 border-blue-300 text-blue-800 shadow-2xs"
-                                            : "bg-[#FAF7F0] border-[#D6CCB5] text-[#78716C]"
-                                        }`}
-                                      >
-                                        <span>{(step.annotation?.showStepNumber ?? true) ? `# Step ${step.stepNumber}` : "• Plain Pinpoint"}</span>
-                                      </button>
+                                      {/* Toggle 2: Show Step Number */}
+                                      <div className="flex items-center justify-between bg-[#FAF7F0] border border-[#D6CCB5] rounded-lg px-2.5 py-1.5">
+                                        <span className="font-medium text-[#1A1917] text-xs">Step Number</span>
+                                        <button
+                                          type="button"
+                                          role="switch"
+                                          aria-checked={step.annotation?.showStepNumber ?? true}
+                                          onClick={() =>
+                                            updateStepAnnotation(idx, {
+                                              showStepNumber: !(step.annotation?.showStepNumber ?? true),
+                                            })
+                                          }
+                                          className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                                            (step.annotation?.showStepNumber ?? true) ? "bg-blue-600" : "bg-stone-300"
+                                          }`}
+                                          title="Toggle step number display"
+                                        >
+                                          <span
+                                            className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                                              (step.annotation?.showStepNumber ?? true) ? "translate-x-4" : "translate-x-0"
+                                            }`}
+                                          />
+                                        </button>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
