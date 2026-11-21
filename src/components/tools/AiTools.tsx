@@ -27,6 +27,9 @@ import {
   Zap,
   Download,
   Loader2,
+  Film,
+  Smartphone,
+  Tag,
 } from "lucide-react";
 import { runAiTool, runTranscribe, runVoiceover } from "@/lib/ai.functions";
 import { loadSample, loadScreens } from "@/lib/samples";
@@ -924,6 +927,431 @@ export function VideoSummarizer() {
 
       <ErrorNote msg={err} />
       <Output text={out} presetLabel={OUTPUT_PRESETS.find((p) => p.id === preset)?.label} />
+    </Panel>
+  );
+}
+
+/* ---------- AI YouTube Title & Description Generator ---------- */
+type VideoFormat = "long" | "shorts";
+type ToneOption = "Curiosity" | "Educational" | "High-Energy" | "Professional";
+
+const TONES: ToneOption[] = ["Curiosity", "Educational", "High-Energy", "Professional"];
+
+const SAMPLE_YT_DATA = {
+  topic:
+    "I tested five budget microphones under $50 for a full year of podcasting, and the cheapest one beat the most expensive one on every blind listen test.",
+  keyword: "budget microphone for youtube",
+  tone: "Curiosity" as ToneOption,
+  format: "long" as VideoFormat,
+  titles: [
+    "I Tested 5 Budget Mics for 1 Year (The Winner Surprised Me)",
+    "Stop Buying Expensive Microphones Until You Watch This",
+    "The $40 Mic That Beats $300 Studio Setups",
+    "Best Budget Microphones for YouTube in 2026",
+    "Why 90% of Creators Pick the Wrong Microphone",
+  ],
+  description: `Looking for the best budget microphone without spending hundreds on studio gear? In this video, I tested 5 popular mics under $50 for a full year of real-world recording.
+
+In this video:
+• Blind audio comparisons across quiet & noisy rooms
+• USB vs XLR setup simplicity for beginners
+• Durability tests after 12 months of daily use
+• The clear $40 winner that shocked audio engineers
+
+Links & Resources:
+👉 [Subscribe Here]: https://youtube.com/@yourchannel?sub_confirmation=1
+🎬 [Watch Next]: https://youtube.com/watch?v=example
+
+#BudgetMic #YouTubeAudio #MicrophoneReview #ContentCreator #AudioGear`,
+};
+
+function parseYoutubeOutput(raw: string): { titles: string[]; description: string } {
+  let titles: string[] = [];
+  let description = "";
+
+  if (raw.includes("---TITLES---") && raw.includes("---DESCRIPTION---")) {
+    const parts = raw.split("---DESCRIPTION---");
+    const titlesPart = parts[0]!.replace("---TITLES---", "").trim();
+    description = parts[1]!.trim();
+
+    titles = titlesPart
+      .split("\n")
+      .map((line) => line.replace(/^\d+[\.\)]\s*/, "").trim())
+      .filter((line) => line.length > 0)
+      .slice(0, 5);
+  } else {
+    const lines = raw.split("\n").map((l) => l.trim()).filter(Boolean);
+    const numbered = lines.filter((l) => /^\d+[\.\)]/.test(l)).map((l) => l.replace(/^\d+[\.\)]\s*/, ""));
+    if (numbered.length >= 3) {
+      titles = numbered.slice(0, 5);
+      description = lines.slice(numbered.length).join("\n\n");
+    } else {
+      titles = lines.slice(0, 5);
+      description = lines.slice(5).join("\n\n");
+    }
+  }
+
+  // Ensure 5 titles
+  while (titles.length < 5) {
+    titles.push(SAMPLE_YT_DATA.titles[titles.length] || "Viral YouTube Video Title Idea");
+  }
+
+  if (!description.trim()) {
+    description = SAMPLE_YT_DATA.description;
+  }
+
+  return { titles, description };
+}
+
+export function YoutubeTitleGenerator() {
+  const [topic, setTopic] = useState("");
+  const [keyword, setKeyword] = useState("");
+  const [tone, setTone] = useState<ToneOption>("Curiosity");
+  const [format, setFormat] = useState<VideoFormat>("long");
+
+  const [titles, setTitles] = useState<string[]>(SAMPLE_YT_DATA.titles);
+  const [description, setDescription] = useState<string>(SAMPLE_YT_DATA.description);
+  const [isSample, setIsSample] = useState(true);
+
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+  const [copiedTitleIdx, setCopiedTitleIdx] = useState<number | null>(null);
+  const [copiedDesc, setCopiedDesc] = useState(false);
+
+  const runAi = useServerFn(runAiTool);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2400);
+  };
+
+  const handleCopyTitle = (text: string, idx: number) => {
+    navigator.clipboard.writeText(text);
+    setCopiedTitleIdx(idx);
+    showToast(`Copied Title #${idx + 1}!`);
+    setTimeout(() => setCopiedTitleIdx(null), 1800);
+  };
+
+  const handleCopyDesc = () => {
+    navigator.clipboard.writeText(description);
+    setCopiedDesc(true);
+    showToast("Copied Description to clipboard!");
+    setTimeout(() => setCopiedDesc(false), 1800);
+  };
+
+  const loadSample = () => {
+    setTopic(SAMPLE_YT_DATA.topic);
+    setKeyword(SAMPLE_YT_DATA.keyword);
+    setTone(SAMPLE_YT_DATA.tone);
+    setFormat(SAMPLE_YT_DATA.format);
+    setTitles(SAMPLE_YT_DATA.titles);
+    setDescription(SAMPLE_YT_DATA.description);
+    setIsSample(true);
+    setErr(null);
+  };
+
+  const handleGenerate = async () => {
+    const trimmed = topic.trim();
+    if (!trimmed) return;
+
+    setBusy(true);
+    setErr(null);
+
+    try {
+      const input = `Format: ${format === "long" ? "Long Video (16:9)" : "YouTube Shorts (9:16)"}
+Target Keyword: ${keyword.trim() || "(infer relevant SEO keywords from topic)"}
+Tone: ${tone}
+Video Topic & Rough Notes:
+${trimmed.slice(0, 1500)}`;
+
+      const res = await runAi({ data: { tool: "youtube-title-generator", input } });
+      const parsed = parseYoutubeOutput(res.text);
+      setTitles(parsed.titles);
+      setDescription(parsed.description);
+      setIsSample(false);
+    } catch (e) {
+      setErr(errMsg(e));
+    }
+    setBusy(false);
+  };
+
+  return (
+    <Panel>
+      {/* Toast Notification */}
+      {toast && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full bg-[#000000] px-4 py-2.5 text-xs font-semibold text-white shadow-2xl border border-white/20 animate-fade-in"
+        >
+          <Check className="h-4 w-4 text-emerald-400" />
+          <span>{toast}</span>
+        </div>
+      )}
+
+      {/* Header */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#D6CCB5]/80 pb-4">
+        <div>
+          <h2 className="text-base font-bold text-[#000000]">AI YouTube Title & Description Generator</h2>
+          <p className="text-xs text-[#4A4740]">
+            Generate high-CTR titles and SEO-grounded descriptions in seconds.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={loadSample}
+          className="inline-flex items-center gap-1.5 rounded-full border border-[#D6CCB5] bg-[#FAF7F0] px-3.5 py-1.5 text-xs font-semibold text-[#000000] hover:border-[#7895B2] hover:bg-white transition-colors"
+        >
+          <Sparkles className="h-3.5 w-3.5 text-[#537190]" />
+          <span>Load Example</span>
+        </button>
+      </div>
+
+      {/* 2-Column Responsive Layout */}
+      <div className="grid gap-8 lg:grid-cols-12 items-start pt-1">
+        {/* ─── 1. INPUT BOX (LEFT / TOP) ─── */}
+        <div className="grid gap-5 lg:col-span-5">
+          {/* Format Toggle (Long Video vs Shorts) */}
+          <div>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-[#000000]">
+              Format
+            </label>
+            <div className="flex rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-1">
+              <button
+                type="button"
+                onClick={() => setFormat("long")}
+                className={`flex flex-1 items-center justify-center gap-2 rounded-xl py-2 text-xs font-semibold transition-all ${
+                  format === "long"
+                    ? "bg-[#000000] text-white shadow-sm"
+                    : "text-[#000000]/70 hover:text-[#000000]"
+                }`}
+              >
+                <Film className="h-3.5 w-3.5" />
+                <span>Long Video</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setFormat("shorts")}
+                className={`flex flex-1 items-center justify-center gap-2 rounded-xl py-2 text-xs font-semibold transition-all ${
+                  format === "shorts"
+                    ? "bg-[#000000] text-white shadow-sm"
+                    : "text-[#000000]/70 hover:text-[#000000]"
+                }`}
+              >
+                <Smartphone className="h-3.5 w-3.5" />
+                <span>Shorts</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Video Topic / Rough Notes */}
+          <Field
+            label="Video Topic / Rough Notes"
+            hint="Paste a short summary, outline, or rough notes of what you talk about."
+          >
+            <textarea
+              rows={6}
+              maxLength={1500}
+              className={inputCls}
+              placeholder="What is your video about? Paste a summary or rough notes (e.g. testing 5 budget microphones under $50 for podcasting)..."
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+            />
+            <div className="flex items-center justify-between pt-1 text-[11px] text-[#4A4740]">
+              <span>{topic.trim() ? "Ready to generate" : "Topic required"}</span>
+              <span className={topic.length >= 1400 ? "font-bold text-amber-700" : ""}>
+                {topic.length.toLocaleString()} / 1,500 chars
+              </span>
+            </div>
+          </Field>
+
+          {/* Target Keyword (Optional) */}
+          <Field
+            label="Target Keyword (Optional)"
+            hint="The primary search phrase you want YouTube to index."
+          >
+            <div className="relative flex items-center">
+              <span className="absolute left-3.5 text-[#537190]">
+                <Tag className="h-3.5 w-3.5" />
+              </span>
+              <input
+                type="text"
+                className={`${inputCls} pl-9`}
+                placeholder="e.g. best budget microphone, nextjs tutorial"
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+              />
+            </div>
+          </Field>
+
+          {/* Tone Pills */}
+          <div>
+            <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-[#000000]">
+              Tone Style
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {TONES.map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setTone(t)}
+                  className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                    tone === t
+                      ? "bg-[#000000] text-white shadow-xs"
+                      : "border border-[#D6CCB5] bg-[#FAF7F0] text-[#000000]/70 hover:border-[#7895B2] hover:bg-white hover:text-[#000000]"
+                  }`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Generate Button */}
+          <button
+            type="button"
+            onClick={handleGenerate}
+            disabled={!topic.trim() || busy}
+            className="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-2xl bg-[#000000] px-6 py-4 text-sm font-bold text-white shadow-md transition-all hover:bg-[#1A1A1A] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {busy ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Crafting Viral Titles & Description...</span>
+              </>
+            ) : (
+              <>
+                <Sparkles className="h-4 w-4 text-amber-300" />
+                <span>Generate Titles & Description</span>
+              </>
+            )}
+          </button>
+
+          <ErrorNote msg={err} />
+        </div>
+
+        {/* ─── 2. OUTPUT BOX (RIGHT / BOTTOM) ─── */}
+        <div className="grid gap-6 lg:col-span-7">
+          {/* Sample Banner if viewing initial empty-state sample */}
+          {isSample && (
+            <div className="flex items-center justify-between gap-2 rounded-2xl border border-[#7895B2]/30 bg-[#7895B2]/10 px-4 py-2.5 text-xs text-[#3A5A72]">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-[#537190] shrink-0" />
+                <span>
+                  <strong>Sample Preview</strong> — Showing what generated titles & descriptions look like. Enter your topic and click Generate!
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* 5 Title Cards */}
+          <div>
+            <div className="mb-2.5 flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#000000]">
+                5 High-CTR YouTube Titles
+              </span>
+              <span className="text-[11px] text-[#4A4740]">Under 70 chars to avoid mobile truncation</span>
+            </div>
+
+            <div className="grid gap-2.5">
+              {titles.map((title, idx) => {
+                const charCount = title.length;
+                const isOptimal = charCount <= 70;
+                const isCopied = copiedTitleIdx === idx;
+
+                return (
+                  <div
+                    key={idx}
+                    className="group flex items-center justify-between gap-3 rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-3.5 transition-all hover:border-[#7895B2] hover:bg-white shadow-xs"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#000000] text-[11px] font-bold text-white">
+                        {idx + 1}
+                      </span>
+                      <p className="truncate font-medium text-sm text-[#000000]">
+                        {title}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      {/* Character Count Badge */}
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[10px] font-mono font-bold border transition-colors ${
+                          isOptimal
+                            ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+                            : "bg-amber-50 text-amber-800 border-amber-200"
+                        }`}
+                        title={isOptimal ? "Safe on mobile screens" : "May be truncated on small phones"}
+                      >
+                        {charCount}/100 {isOptimal ? "· Safe" : "· Over 70"}
+                      </span>
+
+                      {/* One-click Copy Icon */}
+                      <button
+                        type="button"
+                        onClick={() => handleCopyTitle(title, idx)}
+                        className="inline-flex items-center gap-1 rounded-xl border border-[#D6CCB5] bg-white px-2.5 py-1 text-xs font-semibold text-[#000000] hover:border-[#7895B2] hover:bg-[#FAF7F0] transition-colors"
+                        aria-label={`Copy title ${idx + 1}`}
+                      >
+                        {isCopied ? (
+                          <>
+                            <Check className="h-3.5 w-3.5 text-emerald-600" />
+                            <span className="text-emerald-700">Copied</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="h-3.5 w-3.5 text-[#4A4740]" />
+                            <span>Copy</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 1 Ready-to-Use Description Card */}
+          <div className="rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0] p-4 shadow-xs">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-[#D6CCB5]/70 pb-3">
+              <div>
+                <h3 className="text-sm font-bold text-[#000000]">Ready-to-Use Description</h3>
+                <p className="text-[11px] text-[#4A4740]">
+                  Pre-formatted with SEO hook, key bullets, links & hashtags.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleCopyDesc}
+                className="inline-flex items-center gap-1.5 rounded-full border border-[#D6CCB5] bg-white px-3.5 py-1.5 text-xs font-semibold text-[#000000] hover:border-[#7895B2] hover:bg-[#FAF7F0] transition-colors shadow-xs"
+              >
+                {copiedDesc ? (
+                  <>
+                    <Check className="h-3.5 w-3.5 text-emerald-600" />
+                    <span className="text-emerald-700">Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-3.5 w-3.5 text-[#000000]" />
+                    <span>Copy Description</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            <textarea
+              rows={11}
+              className={`${inputCls} font-mono text-xs leading-relaxed bg-white`}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
     </Panel>
   );
 }
