@@ -38,7 +38,8 @@ import { useServerFn } from "@tanstack/react-start";
 
 type OutputStyle = "sop" | "help-center" | "checklist";
 
-export type HotspotColor = "blue" | "red" | "green" | "amber" | "purple" | "black";
+export type HotspotPresetColor = "blue" | "red" | "green" | "amber" | "purple" | "black";
+export type HotspotColor = HotspotPresetColor | string;
 export type HotspotShape = "circle" | "box" | "arrow" | "beacon";
 export type HotspotSize = "sm" | "md" | "lg";
 export type LabelPosition = "right" | "bottom" | "top" | "left";
@@ -60,7 +61,7 @@ export interface StepAnnotation {
 }
 
 export const HOTSPOT_COLORS: Record<
-  HotspotColor,
+  HotspotPresetColor,
   {
     name: string;
     hex: string;
@@ -119,6 +120,31 @@ export const HOTSPOT_COLORS: Record<
     text: "text-stone-900",
   },
 };
+
+export function resolveHotspotColor(color?: string) {
+  if (color && HOTSPOT_COLORS[color as HotspotPresetColor]) {
+    const c = HOTSPOT_COLORS[color as HotspotPresetColor];
+    return {
+      name: c.name,
+      hex: c.hex,
+      bg: c.bg,
+      border: c.border,
+      ring: c.ring,
+      text: c.text,
+      isCustom: false,
+    };
+  }
+  const hex = color && color.startsWith("#") ? color : "#2563EB";
+  return {
+    name: "Custom",
+    hex,
+    bg: "",
+    border: "",
+    ring: "",
+    text: "",
+    isCustom: true,
+  };
+}
 
 interface GuideStep {
   id: string;
@@ -420,7 +446,7 @@ export function ScreenshotGuide() {
       setActiveDragStep(null);
       try {
         e.currentTarget.releasePointerCapture(e.pointerId);
-      } catch {}
+      } catch { }
       showToast(`Highlight pin placed!`);
     }
   };
@@ -580,10 +606,10 @@ Instruction: [1-2 sentences of specific instructions]
           i === 0
             ? "Open target dashboard"
             : i === 1
-            ? "Configure field options"
-            : i === 2
-            ? "Confirm and save changes"
-            : `Execute step ${i + 1}`,
+              ? "Configure field options"
+              : i === 2
+                ? "Confirm and save changes"
+                : `Execute step ${i + 1}`,
         instruction:
           outputStyle === "checklist"
             ? `Select the verified element and ensure status turns active.`
@@ -634,16 +660,16 @@ Instruction: [1-2 sentences of specific instructions]
         <h1 style="color: #0f172a; font-size: 24px; border-bottom: 2px solid #2563eb; padding-bottom: 8px;">${guide.title}</h1>
         <p style="font-size: 15px; color: #475569; font-style: italic; background: #f8fafc; padding: 10px; border-left: 4px solid #2563eb;">${guide.summary}</p>
         ${guide.steps
-          .map(
-            (s) => `
+        .map(
+          (s) => `
           <div style="margin-top: 24px; margin-bottom: 16px;">
             <h2 style="color: #1e40af; font-size: 18px;">Step ${s.stepNumber}: ${s.heading}</h2>
             <p style="font-size: 14px; color: #334155;">${s.instruction}</p>
             ${s.annotation?.label ? `<div style="margin-top: 6px;"><span style="font-size: 12px; font-weight: bold; color: #2563eb; background: #eff6ff; display: inline-block; padding: 3px 8px; border-radius: 4px; border: 1px solid #bfdbfe;">Action: ${s.annotation.label}</span></div>` : ""}
           </div>
         `
-          )
-          .join("")}
+        )
+        .join("")}
       </div>
     `;
     const plainText = `# ${guide.title}\n\n${guide.summary}\n\n` +
@@ -688,8 +714,8 @@ Instruction: [1-2 sentences of specific instructions]
   <h1>${guide.title}</h1>
   <p class="summary">${guide.summary}</p>
   ${guide.steps
-    .map(
-      (s) => `
+        .map(
+          (s) => `
     <div class="step">
       <div class="step-header">
         <div class="step-badge">${s.stepNumber}</div>
@@ -699,8 +725,8 @@ Instruction: [1-2 sentences of specific instructions]
       ${s.imageUrl ? `<img src="${s.imageUrl}" alt="Step ${s.stepNumber}">` : ""}
     </div>
   `
-    )
-    .join("")}
+        )
+        .join("")}
 </body>
 </html>`;
     const blob = new Blob([fullHtml], { type: "text/html;charset=utf-8" });
@@ -798,11 +824,10 @@ Instruction: [1-2 sentences of specific instructions]
               }}
               onDragLeave={() => setIsDragging(false)}
               onDrop={handleDrop}
-              className={`relative rounded-2xl border-2 border-dashed p-6 text-center transition-all duration-200 ${
-                isDragging
+              className={`relative rounded-2xl border-2 border-dashed p-6 text-center transition-all duration-200 ${isDragging
                   ? "border-blue-500 bg-blue-50/50"
                   : "border-[#D6CCB5] bg-[#FAF7F0]/40 hover:border-blue-400 hover:bg-[#FAF7F0]"
-              }`}
+                }`}
             >
               <div
                 onClick={() => fileInputRef.current?.click()}
@@ -848,9 +873,8 @@ Instruction: [1-2 sentences of specific instructions]
                       onDragStart={() => handleThumbnailDragStart(idx)}
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={() => handleThumbnailDrop(idx)}
-                      className={`group relative aspect-video cursor-grab overflow-hidden rounded-xl border bg-black shadow-xs transition active:cursor-grabbing ${
-                        draggedShotIdx === idx ? "opacity-40 border-blue-500" : "border-[#D6CCB5]"
-                      }`}
+                      className={`group relative aspect-video cursor-grab overflow-hidden rounded-xl border bg-black shadow-xs transition active:cursor-grabbing ${draggedShotIdx === idx ? "opacity-40 border-blue-500" : "border-[#D6CCB5]"
+                        }`}
                       title="Drag to reorder"
                     >
                       <img
@@ -901,11 +925,10 @@ Instruction: [1-2 sentences of specific instructions]
                 <button
                   type="button"
                   onClick={() => setOutputStyle("sop")}
-                  className={`flex flex-col items-center justify-center rounded-xl border p-2.5 text-center transition ${
-                    outputStyle === "sop"
+                  className={`flex flex-col items-center justify-center rounded-xl border p-2.5 text-center transition ${outputStyle === "sop"
                       ? "border-blue-600 bg-blue-50/50 text-blue-950 font-bold ring-1 ring-blue-600"
                       : "border-[#D6CCB5] bg-[#FAF7F0] text-[#4A4740] hover:border-blue-300 hover:bg-white"
-                  }`}
+                    }`}
                 >
                   <span className="text-xs font-bold">SOP / Doc</span>
                   <span className="text-[10px] text-[#78716C] mt-0.5">Direct steps</span>
@@ -915,11 +938,10 @@ Instruction: [1-2 sentences of specific instructions]
                 <button
                   type="button"
                   onClick={() => setOutputStyle("help-center")}
-                  className={`flex flex-col items-center justify-center rounded-xl border p-2.5 text-center transition ${
-                    outputStyle === "help-center"
+                  className={`flex flex-col items-center justify-center rounded-xl border p-2.5 text-center transition ${outputStyle === "help-center"
                       ? "border-blue-600 bg-blue-50/50 text-blue-950 font-bold ring-1 ring-blue-600"
                       : "border-[#D6CCB5] bg-[#FAF7F0] text-[#4A4740] hover:border-blue-300 hover:bg-white"
-                  }`}
+                    }`}
                 >
                   <span className="text-xs font-bold">Help Article</span>
                   <span className="text-[10px] text-[#78716C] mt-0.5">User-facing</span>
@@ -929,11 +951,10 @@ Instruction: [1-2 sentences of specific instructions]
                 <button
                   type="button"
                   onClick={() => setOutputStyle("checklist")}
-                  className={`flex flex-col items-center justify-center rounded-xl border p-2.5 text-center transition ${
-                    outputStyle === "checklist"
+                  className={`flex flex-col items-center justify-center rounded-xl border p-2.5 text-center transition ${outputStyle === "checklist"
                       ? "border-blue-600 bg-blue-50/50 text-blue-950 font-bold ring-1 ring-blue-600"
                       : "border-[#D6CCB5] bg-[#FAF7F0] text-[#4A4740] hover:border-blue-300 hover:bg-white"
-                  }`}
+                    }`}
                 >
                   <span className="text-xs font-bold">Checklist</span>
                   <span className="text-[10px] text-[#78716C] mt-0.5">Quick actions</span>
@@ -1126,11 +1147,10 @@ Instruction: [1-2 sentences of specific instructions]
                         onPointerMove={(e) => handlePinPointerMove(idx, e)}
                         onPointerUp={(e) => handlePinPointerUp(idx, e)}
                         onPointerCancel={(e) => handlePinPointerUp(idx, e)}
-                        className={`relative touch-none overflow-hidden rounded-2xl border bg-black shadow-sm group/img ${
-                          activeDragStep === idx
+                        className={`relative touch-none overflow-hidden rounded-2xl border bg-black shadow-sm group/img ${activeDragStep === idx
                             ? "cursor-grabbing border-blue-500 ring-2 ring-blue-400/40"
                             : "cursor-crosshair border-[#D6CCB5]"
-                        }`}
+                          }`}
                         title="Click or drag freely anywhere to position the highlight pin"
                       >
                         <img
@@ -1143,7 +1163,7 @@ Instruction: [1-2 sentences of specific instructions]
                         {/* Interactive Highlight Pin & Crosshair Guide */}
                         {step.annotation && (() => {
                           const ann = step.annotation;
-                          const col = HOTSPOT_COLORS[ann.color || "blue"];
+                          const col = resolveHotspotColor(ann.color);
                           const shape = ann.shape || "circle";
                           const size = ann.size || "md";
                           const pulse = ann.pulse ?? true;
@@ -1170,7 +1190,9 @@ Instruction: [1-2 sentences of specific instructions]
                           const themeStyles = {
                             dark: "bg-black/90 text-white border-white/20 hover:border-blue-400 focus:border-blue-500",
                             light: "bg-white/95 text-[#1A1917] border-[#D6CCB5] shadow-lg hover:border-blue-500 focus:border-blue-600",
-                            match: `${col.bg}/90 text-white border-white/30 hover:border-white focus:border-white shadow-lg`,
+                            match: col.isCustom
+                              ? "text-white border-white/30 hover:border-white focus:border-white shadow-lg"
+                              : `${col.bg}/90 text-white border-white/30 hover:border-white focus:border-white shadow-lg`,
                           }[theme];
 
                           return (
@@ -1204,15 +1226,21 @@ Instruction: [1-2 sentences of specific instructions]
                                   <span className={`relative flex ${sizeStyles.ring} items-center justify-center shrink-0`}>
                                     {pulse && (
                                       <span
-                                        className={`absolute inline-flex h-full w-full rounded-full ${col.bg} ${
+                                        className={`absolute inline-flex h-full w-full rounded-full ${
+                                          col.isCustom ? "" : col.bg
+                                        } ${
                                           activeDragStep === idx
                                             ? "animate-none opacity-40 ring-4 ring-white"
                                             : "animate-ping opacity-75"
                                         }`}
+                                        style={col.isCustom ? { backgroundColor: col.hex } : undefined}
                                       />
                                     )}
                                     <span
-                                      className={`relative inline-flex ${sizeStyles.pin} items-center justify-center rounded-full ${col.bg} border-2 border-white text-white font-black shadow-xl`}
+                                      className={`relative inline-flex ${sizeStyles.pin} items-center justify-center rounded-full ${
+                                        col.isCustom ? "" : col.bg
+                                      } border-2 border-white text-white font-black shadow-xl`}
+                                      style={col.isCustom ? { backgroundColor: col.hex } : undefined}
                                     >
                                       {showNum ? step.stepNumber : <span className="h-1.5 w-1.5 rounded-full bg-white" />}
                                     </span>
@@ -1222,10 +1250,24 @@ Instruction: [1-2 sentences of specific instructions]
                                 {/* SHAPE 2: FOCUS BOX */}
                                 {shape === "box" && (
                                   <div
-                                    className={`pointer-events-none relative rounded-xl border-2 border-dashed ${col.border} ${col.bg}/15 backdrop-blur-xs flex items-center justify-center p-1 shadow-lg ring-1 ${col.ring}/40 ${sizeStyles.box} shrink-0`}
+                                    className={`pointer-events-none relative rounded-xl border-2 border-dashed ${
+                                      col.isCustom ? "" : `${col.border} ${col.bg}/15 ring-1 ${col.ring}/40`
+                                    } backdrop-blur-xs flex items-center justify-center p-1 shadow-lg ${sizeStyles.box} shrink-0`}
+                                    style={
+                                      col.isCustom
+                                        ? {
+                                            borderColor: col.hex,
+                                            backgroundColor: `${col.hex}22`,
+                                            boxShadow: `0 0 10px ${col.hex}33`,
+                                          }
+                                        : undefined
+                                    }
                                   >
                                     <span
-                                      className={`absolute -top-2.5 -left-2.5 inline-flex ${sizeStyles.pin} items-center justify-center rounded-full ${col.bg} border-2 border-white text-white font-black shadow-md`}
+                                      className={`absolute -top-2.5 -left-2.5 inline-flex ${sizeStyles.pin} items-center justify-center rounded-full ${
+                                        col.isCustom ? "" : col.bg
+                                      } border-2 border-white text-white font-black shadow-md`}
+                                      style={col.isCustom ? { backgroundColor: col.hex } : undefined}
                                     >
                                       {showNum ? step.stepNumber : <span className="h-1.5 w-1.5 rounded-full bg-white" />}
                                     </span>
@@ -1237,11 +1279,17 @@ Instruction: [1-2 sentences of specific instructions]
                                   <div className="relative flex items-center justify-center shrink-0">
                                     {pulse && (
                                       <span
-                                        className={`absolute inline-flex ${sizeStyles.ring} rounded-full ${col.bg} animate-ping opacity-60`}
+                                        className={`absolute inline-flex ${sizeStyles.ring} rounded-full ${
+                                          col.isCustom ? "" : col.bg
+                                        } animate-ping opacity-60`}
+                                        style={col.isCustom ? { backgroundColor: col.hex } : undefined}
                                       />
                                     )}
                                     <span
-                                      className={`relative inline-flex ${sizeStyles.pin} items-center justify-center rounded-full ${col.bg} border-2 border-white text-white font-black shadow-xl`}
+                                      className={`relative inline-flex ${sizeStyles.pin} items-center justify-center rounded-full ${
+                                        col.isCustom ? "" : col.bg
+                                      } border-2 border-white text-white font-black shadow-xl`}
+                                      style={col.isCustom ? { backgroundColor: col.hex } : undefined}
                                     >
                                       <ArrowUpRight className={`${sizeStyles.icon} text-white stroke-[2.5]`} />
                                     </span>
@@ -1254,15 +1302,24 @@ Instruction: [1-2 sentences of specific instructions]
                                     {pulse && (
                                       <>
                                         <span
-                                          className={`absolute inline-flex h-full w-full rounded-full ${col.bg} animate-ping opacity-85`}
+                                          className={`absolute inline-flex h-full w-full rounded-full ${
+                                            col.isCustom ? "" : col.bg
+                                          } animate-ping opacity-85`}
+                                          style={col.isCustom ? { backgroundColor: col.hex } : undefined}
                                         />
                                         <span
-                                          className={`absolute inline-flex h-4/5 w-4/5 rounded-full ${col.bg} opacity-50 ring-2 ${col.ring}`}
+                                          className={`absolute inline-flex h-4/5 w-4/5 rounded-full ${
+                                            col.isCustom ? "" : `${col.bg} opacity-50 ring-2 ${col.ring}`
+                                          }`}
+                                          style={col.isCustom ? { backgroundColor: col.hex, opacity: 0.5 } : undefined}
                                         />
                                       </>
                                     )}
                                     <span
-                                      className={`relative inline-flex ${sizeStyles.pin} items-center justify-center rounded-full ${col.bg} border-2 border-white shadow-xl text-white font-black`}
+                                      className={`relative inline-flex ${sizeStyles.pin} items-center justify-center rounded-full ${
+                                        col.isCustom ? "" : col.bg
+                                      } border-2 border-white shadow-xl text-white font-black`}
+                                      style={col.isCustom ? { backgroundColor: col.hex } : undefined}
                                     >
                                       {showNum ? step.stepNumber : <span className="h-2 w-2 rounded-full bg-white" />}
                                     </span>
@@ -1289,6 +1346,7 @@ Instruction: [1-2 sentences of specific instructions]
                                       onMouseDown={(e) => e.stopPropagation()}
                                       onKeyDown={(e) => e.stopPropagation()}
                                       className={`cursor-text rounded-md px-2 py-0.5 text-[11px] font-bold shadow-md backdrop-blur border focus:outline-none w-28 sm:w-36 text-left transition select-text ${themeStyles}`}
+                                      style={theme === "match" && col.isCustom ? { backgroundColor: `${col.hex}e6` } : undefined}
                                       title="Click to edit highlight label text"
                                       placeholder={`Action ${step.stepNumber}...`}
                                     />
@@ -1315,237 +1373,311 @@ Instruction: [1-2 sentences of specific instructions]
                       </div>
 
                       {/* Hotspot & Label Properties Inspector */}
-                      {step.annotation ? (
-                        <div className="rounded-xl border border-[#D6CCB5] bg-[#F7F4EE] p-2.5 print:hidden select-text text-xs space-y-2">
-                          {/* Row 1: Quick Properties Controls */}
-                          <div className="flex flex-wrap items-center justify-between gap-2">
-                            {/* Label text input */}
-                            <div className="flex items-center gap-1.5 flex-1 min-w-[200px]">
-                              <Tag className="h-3.5 w-3.5 text-[#78716C] shrink-0" />
-                              <span className="font-semibold text-[#1A1917] text-[11px] shrink-0">Label:</span>
-                              <input
-                                type="text"
-                                value={step.annotation.label ?? ""}
-                                onChange={(e) => updateStepAnnotation(idx, { label: e.target.value })}
-                                placeholder={`Action ${step.stepNumber}...`}
-                                className="flex-1 rounded-md border border-[#D6CCB5] bg-white px-2 py-1 text-xs font-medium text-[#1A1917] focus:border-blue-600 focus:outline-none min-w-[120px]"
-                              />
-                            </div>
+                      {step.annotation ? (() => {
+                        const annColor = step.annotation.color || "blue";
+                        const colObj = resolveHotspotColor(annColor);
+                        const isCustomColor = colObj.isCustom;
+                        const activeHex = colObj.hex;
 
-                            {/* Quick Color Swatches */}
-                            <div className="flex items-center gap-1.5" title="Hotspot Color Theme">
-                              {(Object.keys(HOTSPOT_COLORS) as HotspotColor[]).map((cKey) => {
-                                const c = HOTSPOT_COLORS[cKey];
-                                const isActive = (step.annotation?.color || "blue") === cKey;
-                                return (
-                                  <button
-                                    key={cKey}
-                                    type="button"
-                                    onClick={() => updateStepAnnotation(idx, { color: cKey })}
-                                    className={`h-4.5 w-4.5 rounded-full ${c.bg} transition-all ${
-                                      isActive
-                                        ? "ring-2 ring-offset-1 ring-[#1A1917] scale-110"
-                                        : "opacity-75 hover:opacity-100 hover:scale-105"
+                        return (
+                          <div className="rounded-2xl border border-[#D6CCB5] bg-[#F7F4EE] p-3 print:hidden select-text text-xs space-y-2.5 shadow-2xs">
+                            {/* Row 1: Label Input + Color Presets + Color Wheel + Properties Toggle */}
+                            <div className="flex flex-wrap items-center justify-between gap-2.5">
+                              {/* Label text input */}
+                              <div className="flex items-center gap-2 flex-1 min-w-[200px]">
+                                <Tag className="h-3.5 w-3.5 text-[#78716C] shrink-0" />
+                                <span className="font-semibold text-[#1A1917] text-xs shrink-0">Label:</span>
+                                <input
+                                  type="text"
+                                  value={step.annotation.label ?? ""}
+                                  onChange={(e) => updateStepAnnotation(idx, { label: e.target.value })}
+                                  placeholder={`Action ${step.stepNumber}...`}
+                                  className="flex-1 rounded-lg border border-[#D6CCB5] bg-white px-2.5 py-1 text-xs font-medium text-[#1A1917] focus:border-blue-600 focus:outline-none min-w-[120px]"
+                                />
+                              </div>
+
+                              {/* Right side: Color Presets + Color Selector Wheel + Properties Button */}
+                              <div className="flex items-center gap-2 shrink-0">
+                                {/* Color Presets & Color Selector Wheel Container */}
+                                <div className="flex items-center gap-1.5 bg-white border border-[#D6CCB5] rounded-xl px-2 py-1 shadow-2xs">
+                                  {(Object.keys(HOTSPOT_COLORS) as HotspotPresetColor[]).map((cKey) => {
+                                    const c = HOTSPOT_COLORS[cKey];
+                                    const isActive = annColor === cKey;
+                                    return (
+                                      <button
+                                        key={cKey}
+                                        type="button"
+                                        onClick={() => updateStepAnnotation(idx, { color: cKey })}
+                                        className={`h-5 w-5 rounded-full ${c.bg} transition-all relative ${
+                                          isActive
+                                            ? "ring-2 ring-offset-1 ring-[#1A1917] scale-110 shadow-xs"
+                                            : "opacity-75 hover:opacity-100 hover:scale-105"
+                                        }`}
+                                        title={`Color: ${c.name}`}
+                                      />
+                                    );
+                                  })}
+
+                                  {/* Subtle Divider */}
+                                  <div className="h-4 w-px bg-[#D6CCB5] mx-0.5" />
+
+                                  {/* COLOR SELECTOR WHEEL */}
+                                  <div
+                                    className="relative flex items-center group/wheel"
+                                    title="Color Selector Wheel (Pick any custom color)"
+                                  >
+                                    <div
+                                      className={`h-5 w-5 rounded-full transition-all cursor-pointer relative shadow-xs flex items-center justify-center overflow-hidden ${
+                                        isCustomColor
+                                          ? "ring-2 ring-offset-1 ring-[#1A1917] scale-115"
+                                          : "opacity-85 hover:opacity-100 hover:scale-110"
+                                      }`}
+                                      style={{
+                                        background:
+                                          "conic-gradient(from 90deg, #ff0000, #ff8000, #ffff00, #00ff00, #00ffff, #0000ff, #8000ff, #ff0080, #ff0000)",
+                                      }}
+                                    >
+                                      {/* Center dot reflecting active color */}
+                                      <span
+                                        className="h-2 w-2 rounded-full border border-white shadow-xs"
+                                        style={{ backgroundColor: activeHex }}
+                                      />
+                                      <input
+                                        type="color"
+                                        value={activeHex}
+                                        onChange={(e) => updateStepAnnotation(idx, { color: e.target.value })}
+                                        className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                                        title="Pick custom color"
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Properties Drawer Toggle */}
+                                <button
+                                  type="button"
+                                  onClick={() => setExpandedPropsStep(expandedPropsStep === idx ? null : idx)}
+                                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition shadow-2xs ${
+                                    expandedPropsStep === idx
+                                      ? "bg-blue-600 border-blue-600 text-white shadow-xs"
+                                      : "bg-white border-[#D6CCB5] text-[#1A1917] hover:border-[#1A1917]"
+                                  }`}
+                                  title="Open Hotspot & Label properties panel"
+                                >
+                                  <Sliders className="h-3.5 w-3.5" />
+                                  <span>Properties</span>
+                                  <ChevronDown
+                                    className={`h-3.5 w-3.5 transition-transform duration-200 ${
+                                      expandedPropsStep === idx ? "rotate-180" : ""
                                     }`}
-                                    title={`Color: ${c.name}`}
                                   />
-                                );
-                              })}
-                            </div>
-
-                            {/* Quick Shape Selector */}
-                            <div className="flex items-center rounded-lg border border-[#D6CCB5] bg-white p-0.5 text-[10px] font-semibold text-[#1A1917]">
-                              {[
-                                { id: "circle", label: "Dot", icon: Circle },
-                                { id: "box", label: "Box", icon: Square },
-                                { id: "arrow", label: "Arrow", icon: ArrowUpRight },
-                                { id: "beacon", label: "Beacon", icon: Radio },
-                              ].map((s) => {
-                                const isActive = (step.annotation?.shape || "circle") === s.id;
-                                const IconComp = s.icon;
-                                return (
-                                  <button
-                                    key={s.id}
-                                    type="button"
-                                    onClick={() => updateStepAnnotation(idx, { shape: s.id as HotspotShape })}
-                                    className={`flex items-center gap-1 px-2 py-0.5 rounded-md transition ${
-                                      isActive
-                                        ? "bg-[#1A1917] text-white shadow-xs"
-                                        : "text-[#78716C] hover:text-[#1A1917] hover:bg-stone-100"
-                                    }`}
-                                    title={`Shape: ${s.label}`}
-                                  >
-                                    <IconComp className="h-3 w-3" />
-                                    <span className="hidden sm:inline">{s.label}</span>
-                                  </button>
-                                );
-                              })}
-                            </div>
-
-                            {/* Toggle Detailed Properties Button */}
-                            <button
-                              type="button"
-                              onClick={() => setExpandedPropsStep(expandedPropsStep === idx ? null : idx)}
-                              className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-semibold border transition ${
-                                expandedPropsStep === idx
-                                  ? "bg-blue-50 border-blue-400 text-blue-700 shadow-xs"
-                                  : "bg-white border-[#D6CCB5] text-[#4A4740] hover:border-[#1A1917] hover:text-[#1A1917]"
-                              }`}
-                              title="Open Hotspot & Label properties panel"
-                            >
-                              <Sliders className="h-3 w-3" />
-                              <span>Properties</span>
-                              <ChevronDown
-                                className={`h-3 w-3 transition-transform duration-200 ${
-                                  expandedPropsStep === idx ? "rotate-180" : ""
-                                }`}
-                              />
-                            </button>
-                          </div>
-
-                          {/* Row 2: Expanded Properties Drawer */}
-                          {expandedPropsStep === idx && (
-                            <div className="pt-2 border-t border-[#D6CCB5]/80 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-[11px]">
-                              {/* Property 1: Label Placement */}
-                              <div className="space-y-1">
-                                <span className="font-semibold text-[#1A1917] block">Label Position</span>
-                                <div className="grid grid-cols-4 gap-1 bg-white border border-[#D6CCB5] rounded-md p-0.5 text-center font-medium">
-                                  {(["left", "top", "bottom", "right"] as LabelPosition[]).map((pos) => {
-                                    const isAct = (step.annotation?.labelPosition || "right") === pos;
-                                    return (
-                                      <button
-                                        key={pos}
-                                        type="button"
-                                        onClick={() => updateStepAnnotation(idx, { labelPosition: pos })}
-                                        className={`py-0.5 rounded text-[10px] capitalize transition ${
-                                          isAct ? "bg-[#1A1917] text-white font-bold" : "text-[#78716C] hover:bg-stone-100"
-                                        }`}
-                                      >
-                                        {pos}
-                                      </button>
-                                    );
-                                  })}
-                                </div>
+                                </button>
                               </div>
+                            </div>
 
-                              {/* Property 2: Label Theme Style */}
-                              <div className="space-y-1">
-                                <span className="font-semibold text-[#1A1917] block">Label Theme</span>
-                                <div className="grid grid-cols-3 gap-1 bg-white border border-[#D6CCB5] rounded-md p-0.5 text-center font-medium">
+                            {/* Row 2: Shape Selector & Quick Position Bar */}
+                            <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-[#D6CCB5]/50">
+                              {/* Shape Pills */}
+                              <div className="flex items-center gap-1.5">
+                                <span className="font-semibold text-[#78716C] text-[11px]">Shape:</span>
+                                <div className="flex items-center rounded-xl border border-[#D6CCB5] bg-white p-0.5 text-xs font-medium text-[#1A1917]">
                                   {[
-                                    { id: "dark", label: "Dark" },
-                                    { id: "light", label: "Light" },
-                                    { id: "match", label: "Color" },
-                                  ].map((th) => {
-                                    const isAct = (step.annotation?.labelTheme || "dark") === th.id;
+                                    { id: "circle", label: "Dot", icon: Circle },
+                                    { id: "box", label: "Box", icon: Square },
+                                    { id: "arrow", label: "Arrow", icon: ArrowUpRight },
+                                    { id: "beacon", label: "Beacon", icon: Radio },
+                                  ].map((s) => {
+                                    const isActive = (step.annotation?.shape || "circle") === s.id;
+                                    const IconComp = s.icon;
                                     return (
                                       <button
-                                        key={th.id}
+                                        key={s.id}
                                         type="button"
-                                        onClick={() => updateStepAnnotation(idx, { labelTheme: th.id as LabelTheme })}
-                                        className={`py-0.5 rounded text-[10px] transition ${
-                                          isAct ? "bg-[#1A1917] text-white font-bold" : "text-[#78716C] hover:bg-stone-100"
+                                        onClick={() => updateStepAnnotation(idx, { shape: s.id as HotspotShape })}
+                                        className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg transition ${
+                                          isActive
+                                            ? "bg-[#1A1917] text-white font-semibold shadow-xs"
+                                            : "text-[#78716C] hover:text-[#1A1917] hover:bg-stone-100"
                                         }`}
+                                        title={`Shape: ${s.label}`}
                                       >
-                                        {th.label}
+                                        <IconComp className="h-3 w-3" />
+                                        <span>{s.label}</span>
                                       </button>
                                     );
                                   })}
                                 </div>
                               </div>
 
-                              {/* Property 3: Hotspot Size */}
-                              <div className="space-y-1">
-                                <span className="font-semibold text-[#1A1917] block">Hotspot Size</span>
-                                <div className="grid grid-cols-3 gap-1 bg-white border border-[#D6CCB5] rounded-md p-0.5 text-center font-medium">
-                                  {[
-                                    { id: "sm", label: "Small" },
-                                    { id: "md", label: "Medium" },
-                                    { id: "lg", label: "Large" },
-                                  ].map((sz) => {
-                                    const isAct = (step.annotation?.size || "md") === sz.id;
-                                    return (
+                              {/* Pin Coordinates & Quick Actions */}
+                              <div className="flex items-center gap-2 text-[11px] text-[#78716C]">
+                                <span className="font-mono bg-white px-2 py-0.5 rounded-md border border-[#D6CCB5] text-[10px]">
+                                  Pin: ({step.annotation.x}%, {step.annotation.y}%)
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => updateStepAnnotation(idx, { x: 50, y: 50 })}
+                                  className="text-stone-700 hover:text-black hover:underline font-medium transition"
+                                  title="Reset to image center (50%, 50%)"
+                                >
+                                  Center Hotspot
+                                </button>
+                                <span>•</span>
+                                <button
+                                  type="button"
+                                  onClick={() => toggleHotspot(idx)}
+                                  className="text-red-600 hover:text-red-700 hover:underline font-medium transition"
+                                  title="Remove hotspot from this step"
+                                >
+                                  Remove Hotspot
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Expanded Properties Drawer: 2 spacious cards, no text clipping! */}
+                            {expandedPropsStep === idx && (
+                              <div className="pt-2.5 border-t border-[#D6CCB5]/80 grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                                {/* Card 1: Label Configuration */}
+                                <div className="space-y-2.5 bg-white p-3 rounded-xl border border-[#D6CCB5]/80 shadow-2xs">
+                                  {/* Label Placement */}
+                                  <div className="space-y-1">
+                                    <span className="font-semibold text-[#1A1917] flex items-center justify-between">
+                                      <span>Label Position</span>
+                                      <span className="text-[10px] text-[#78716C] font-normal">Placement relative to pin</span>
+                                    </span>
+                                    <div className="grid grid-cols-4 gap-1 bg-[#FAF7F0] border border-[#D6CCB5] rounded-lg p-0.5 text-center font-medium">
+                                      {[
+                                        { id: "left", label: "Left", icon: "←" },
+                                        { id: "top", label: "Top", icon: "↑" },
+                                        { id: "bottom", label: "Bottom", icon: "↓" },
+                                        { id: "right", label: "Right", icon: "→" },
+                                      ].map((pos) => {
+                                        const isAct = (step.annotation?.labelPosition || "right") === pos.id;
+                                        return (
+                                          <button
+                                            key={pos.id}
+                                            type="button"
+                                            onClick={() => updateStepAnnotation(idx, { labelPosition: pos.id as LabelPosition })}
+                                            className={`py-1 rounded-md text-xs transition flex items-center justify-center gap-1 ${
+                                              isAct
+                                                ? "bg-[#1A1917] text-white font-bold shadow-xs"
+                                                : "text-[#4A4740] hover:bg-white hover:text-black"
+                                            }`}
+                                          >
+                                            <span className="text-[10px] opacity-75">{pos.icon}</span>
+                                            <span>{pos.label}</span>
+                                          </button>
+                                        );
+                                      })}
+                                    </div>
+                                  </div>
+
+                                  {/* Label Theme Style */}
+                                  <div className="space-y-1">
+                                    <span className="font-semibold text-[#1A1917] block">Label Theme</span>
+                                    <div className="grid grid-cols-3 gap-1 bg-[#FAF7F0] border border-[#D6CCB5] rounded-lg p-0.5 text-center font-medium">
+                                      {[
+                                        { id: "dark", label: "🌙 Dark" },
+                                        { id: "light", label: "☀️ Light" },
+                                        { id: "match", label: "🎨 Color" },
+                                      ].map((th) => {
+                                        const isAct = (step.annotation?.labelTheme || "dark") === th.id;
+                                        return (
+                                          <button
+                                            key={th.id}
+                                            type="button"
+                                            onClick={() => updateStepAnnotation(idx, { labelTheme: th.id as LabelTheme })}
+                                            className={`py-1 rounded-md text-xs transition ${
+                                              isAct
+                                                ? "bg-[#1A1917] text-white font-bold shadow-xs"
+                                                : "text-[#4A4740] hover:bg-white hover:text-black"
+                                            }`}
+                                          >
+                                            {th.label}
+                                          </button>
+                                        );
+                                      })}
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Card 2: Hotspot Sizing & Animation */}
+                                <div className="space-y-2.5 bg-white p-3 rounded-xl border border-[#D6CCB5]/80 shadow-2xs">
+                                  {/* Hotspot Size */}
+                                  <div className="space-y-1">
+                                    <span className="font-semibold text-[#1A1917] flex items-center justify-between">
+                                      <span>Hotspot Size</span>
+                                      <span className="text-[10px] text-[#78716C] font-normal">Diameter</span>
+                                    </span>
+                                    <div className="grid grid-cols-3 gap-1 bg-[#FAF7F0] border border-[#D6CCB5] rounded-lg p-0.5 text-center font-medium">
+                                      {[
+                                        { id: "sm", label: "Small (24px)" },
+                                        { id: "md", label: "Medium (28px)" },
+                                        { id: "lg", label: "Large (36px)" },
+                                      ].map((sz) => {
+                                        const isAct = (step.annotation?.size || "md") === sz.id;
+                                        return (
+                                          <button
+                                            key={sz.id}
+                                            type="button"
+                                            onClick={() => updateStepAnnotation(idx, { size: sz.id as HotspotSize })}
+                                            className={`py-1 rounded-md text-xs transition ${
+                                              isAct
+                                                ? "bg-[#1A1917] text-white font-bold shadow-xs"
+                                                : "text-[#4A4740] hover:bg-white hover:text-black"
+                                            }`}
+                                          >
+                                            {sz.label}
+                                          </button>
+                                        );
+                                      })}
+                                    </div>
+                                  </div>
+
+                                  {/* Animation & Numbering Badges */}
+                                  <div className="space-y-1">
+                                    <span className="font-semibold text-[#1A1917] block">Animation & Badges</span>
+                                    <div className="grid grid-cols-2 gap-1.5">
                                       <button
-                                        key={sz.id}
                                         type="button"
-                                        onClick={() => updateStepAnnotation(idx, { size: sz.id as HotspotSize })}
-                                        className={`py-0.5 rounded text-[10px] transition ${
-                                          isAct ? "bg-[#1A1917] text-white font-bold" : "text-[#78716C] hover:bg-stone-100"
+                                        onClick={() => updateStepAnnotation(idx, { pulse: !(step.annotation?.pulse ?? true) })}
+                                        className={`py-1.5 px-2 rounded-lg border text-xs font-semibold transition flex items-center justify-center gap-1.5 ${
+                                          step.annotation?.pulse ?? true
+                                            ? "bg-emerald-50 border-emerald-300 text-emerald-800 shadow-2xs"
+                                            : "bg-[#FAF7F0] border-[#D6CCB5] text-[#78716C]"
                                         }`}
                                       >
-                                        {sz.label}
+                                        <Zap className="h-3 w-3" />
+                                        <span>{(step.annotation?.pulse ?? true) ? "Pulse Beacon: ON" : "Pulse Beacon: OFF"}</span>
                                       </button>
-                                    );
-                                  })}
+
+                                      <button
+                                        type="button"
+                                        onClick={() =>
+                                          updateStepAnnotation(idx, {
+                                            showStepNumber: !(step.annotation?.showStepNumber ?? true),
+                                          })
+                                        }
+                                        className={`py-1.5 px-2 rounded-lg border text-xs font-semibold transition flex items-center justify-center gap-1.5 ${
+                                          step.annotation?.showStepNumber ?? true
+                                            ? "bg-blue-50 border-blue-300 text-blue-800 shadow-2xs"
+                                            : "bg-[#FAF7F0] border-[#D6CCB5] text-[#78716C]"
+                                        }`}
+                                      >
+                                        <span>{(step.annotation?.showStepNumber ?? true) ? `# Step ${step.stepNumber}` : "• Plain Pinpoint"}</span>
+                                      </button>
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
-
-                              {/* Property 4: Pulse & Number Toggles */}
-                              <div className="space-y-1">
-                                <span className="font-semibold text-[#1A1917] block">Animation & Badges</span>
-                                <div className="flex items-center gap-1.5 pt-0.5">
-                                  <button
-                                    type="button"
-                                    onClick={() => updateStepAnnotation(idx, { pulse: !(step.annotation?.pulse ?? true) })}
-                                    className={`flex-1 py-1 px-1.5 rounded border text-[10px] font-semibold transition flex items-center justify-center gap-1 ${
-                                      step.annotation?.pulse ?? true
-                                        ? "bg-emerald-50 border-emerald-300 text-emerald-800"
-                                        : "bg-white border-[#D6CCB5] text-[#78716C]"
-                                    }`}
-                                  >
-                                    <Zap className="h-2.5 w-2.5" />
-                                    {(step.annotation?.pulse ?? true) ? "Pulse ON" : "Pulse OFF"}
-                                  </button>
-
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      updateStepAnnotation(idx, {
-                                        showStepNumber: !(step.annotation?.showStepNumber ?? true),
-                                      })
-                                    }
-                                    className={`flex-1 py-1 px-1.5 rounded border text-[10px] font-semibold transition flex items-center justify-center gap-1 ${
-                                      step.annotation?.showStepNumber ?? true
-                                        ? "bg-blue-50 border-blue-300 text-blue-800"
-                                        : "bg-white border-[#D6CCB5] text-[#78716C]"
-                                    }`}
-                                  >
-                                    {(step.annotation?.showStepNumber ?? true) ? "# Number" : "• Plain"}
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Row 3: Coordinate Readout & Quick Actions */}
-                          <div className="flex flex-wrap items-center justify-between text-[10px] text-[#78716C] pt-1 border-t border-[#D6CCB5]/60">
-                            <span>
-                              Hotspot at ({step.annotation.x}%, {step.annotation.y}%) • Drag freely on image to relocate
-                            </span>
-                            <div className="flex items-center gap-2">
-                              <button
-                                type="button"
-                                onClick={() => updateStepAnnotation(idx, { x: 50, y: 50 })}
-                                className="hover:text-[#1A1917] underline decoration-dotted"
-                              >
-                                Center Hotspot
-                              </button>
-                              <span>•</span>
-                              <button
-                                type="button"
-                                onClick={() => toggleHotspot(idx)}
-                                className="text-red-600 hover:text-red-800 hover:underline"
-                              >
-                                Remove Hotspot
-                              </button>
-                            </div>
+                            )}
                           </div>
-                        </div>
-                      ) : (
+                        );
+                      })() : (
                         <button
                           type="button"
                           onClick={() => toggleHotspot(idx)}
-                          className="w-full py-2 rounded-xl border border-dashed border-[#D6CCB5] bg-white text-xs font-semibold text-[#4A4740] hover:border-blue-500 hover:text-blue-600 flex items-center justify-center gap-1.5 transition print:hidden"
+                          className="w-full py-2.5 rounded-xl border border-dashed border-[#D6CCB5] bg-white text-xs font-semibold text-[#4A4740] hover:border-blue-500 hover:text-blue-600 flex items-center justify-center gap-1.5 transition print:hidden shadow-2xs"
                         >
                           <Plus className="h-3.5 w-3.5" />
                           <span>Add Hotspot & Label to Screenshot</span>
