@@ -32,14 +32,29 @@ const LANGUAGES = [
   { code: "hi", label: "Hindi" },
 ];
 
-const TONES = [
-  { id: "formal", label: "Formal", icon: "💼" },
-  { id: "casual", label: "Casual", icon: "☕" },
+export interface ToneOption {
+  id: string;
+  label: string;
+  icon: string;
+}
+
+const TONES: ToneOption[] = [
+  { id: "formal", label: "Formal", icon: "👔" },
+  { id: "friendly", label: "Friendly", icon: "😊" },
+  { id: "casual", label: "Casual", icon: "😎" },
+  { id: "professional", label: "Professional", icon: "💼" },
+  { id: "diplomatic", label: "Diplomatic", icon: "🤝" },
+  { id: "confident", label: "Confident", icon: "💪" },
+  { id: "middle-school", label: "Middle school", icon: "📕" },
+  { id: "high-school", label: "High school", icon: "📗" },
+  { id: "academic", label: "Academic", icon: "🎓" },
+  { id: "simplified", label: "Simplified", icon: "📖" },
+  { id: "vivid", label: "Vivid", icon: "🦄" },
+  { id: "empathetic", label: "Empathetic", icon: "🤗" },
+  { id: "luxury", label: "Luxury", icon: "💎" },
+  { id: "engaging", label: "Engaging", icon: "👍" },
+  { id: "direct", label: "Direct", icon: "➡️" },
   { id: "persuasive", label: "Persuasive", icon: "🎯" },
-  { id: "enthusiastic", label: "Enthusiastic", icon: "🔥" },
-  { id: "luxury", label: "Luxury", icon: "✨" },
-  { id: "minimalist", label: "Minimalist", icon: "🌿" },
-  { id: "bold", label: "Bold & Direct", icon: "⚡" },
 ];
 
 const WRITE_FORMATS = [
@@ -75,6 +90,8 @@ export function ProductDescriptionGenerator() {
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [selectedTone, setSelectedTone] = useState(TONES[0]); // Formal
   const [isToneOpen, setIsToneOpen] = useState(false);
+  const [isCustomMode, setIsCustomMode] = useState(false);
+  const [customToneText, setCustomToneText] = useState("");
   const [writeLength, setWriteLength] = useState("1 paragraph");
   const [isWriteOpen, setIsWriteOpen] = useState(false);
   const [makeStyle, setMakeStyle] = useState<"concise" | "detailed">("concise");
@@ -450,23 +467,91 @@ Bullets:
                 <span className="block mt-1 text-[11px] text-[#78716C]">Writing tone</span>
 
                 {isToneOpen && (
-                  <div className="absolute left-0 bottom-full mb-2 z-30 w-44 rounded-2xl border border-[#D6CCB5] bg-white p-1.5 shadow-xl animate-in fade-in duration-150">
-                    {TONES.map((t) => (
+                  <div className="absolute left-0 bottom-full mb-2 z-40 w-56 md:w-60 rounded-2xl border border-[#D6CCB5] bg-white p-1.5 shadow-2xl animate-in fade-in duration-150">
+                    <div className="max-h-72 overflow-y-auto pr-0.5 space-y-0.5">
+                      {TONES.map((t) => {
+                        const isSelected = selectedTone.id === t.id;
+                        return (
+                          <button
+                            key={t.id}
+                            type="button"
+                            onClick={() => {
+                              setSelectedTone(t);
+                              setIsToneOpen(false);
+                              setIsCustomMode(false);
+                            }}
+                            className={`w-full flex items-center justify-between rounded-xl px-3 py-2 text-left text-xs md:text-sm transition ${
+                              isSelected
+                                ? "font-bold text-[#000000] bg-[#FAF7F0]"
+                                : "text-[#4A4740] hover:bg-[#FAF7F0] hover:text-[#000000]"
+                            }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <span className="text-base shrink-0 leading-none">{t.icon}</span>
+                              <span className="truncate">{t.label}</span>
+                            </div>
+                            {isSelected && <Check className="h-3.5 w-3.5 text-[#000000] shrink-0" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Divider before Custom */}
+                    <div className="my-1 border-t border-[#D6CCB5]/60" />
+
+                    {/* Custom Tone Option */}
+                    {isCustomMode ? (
+                      <div className="flex items-center gap-1.5 p-1 animate-in fade-in duration-100">
+                        <span className="text-base pl-1 shrink-0">🧠</span>
+                        <input
+                          type="text"
+                          autoFocus
+                          value={customToneText}
+                          onChange={(e) => setCustomToneText(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" && customToneText.trim()) {
+                              setSelectedTone({ id: "custom", label: customToneText.trim(), icon: "🧠" });
+                              setIsToneOpen(false);
+                              setIsCustomMode(false);
+                            }
+                          }}
+                          placeholder="e.g. Quirky & bold..."
+                          className="flex-1 min-w-0 rounded-lg border border-[#D6CCB5] bg-white px-2 py-1 text-xs text-[#1A1917] placeholder:text-[#9E988D] focus:outline-none focus:border-[#000000]"
+                        />
+                        <button
+                          type="button"
+                          disabled={!customToneText.trim()}
+                          onClick={() => {
+                            if (customToneText.trim()) {
+                              setSelectedTone({ id: "custom", label: customToneText.trim(), icon: "🧠" });
+                              setIsToneOpen(false);
+                              setIsCustomMode(false);
+                            }
+                          }}
+                          className="rounded-lg bg-[#000000] px-2.5 py-1 text-xs font-bold text-white hover:bg-[#1A1917] disabled:opacity-40 transition"
+                        >
+                          Set
+                        </button>
+                      </div>
+                    ) : (
                       <button
-                        key={t.id}
                         type="button"
-                        onClick={() => {
-                          setSelectedTone(t);
-                          setIsToneOpen(false);
-                        }}
-                        className={`w-full flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-left text-xs transition hover:bg-[#FAF7F0] ${
-                          selectedTone.id === t.id ? "font-bold text-[#000000] bg-[#FAF7F0]" : "text-[#4A4740]"
+                        onClick={() => setIsCustomMode(true)}
+                        className={`w-full flex items-center justify-between rounded-xl px-3 py-2 text-left text-xs md:text-sm transition ${
+                          selectedTone.id === "custom"
+                            ? "font-bold text-[#000000] bg-[#FAF7F0]"
+                            : "text-[#4A4740] hover:bg-[#FAF7F0] hover:text-[#000000]"
                         }`}
                       >
-                        <span>{t.icon}</span>
-                        <span>{t.label}</span>
+                        <div className="flex items-center gap-3">
+                          <span className="text-base shrink-0 leading-none">🧠</span>
+                          <span className="truncate">
+                            {selectedTone.id === "custom" ? selectedTone.label : "Custom..."}
+                          </span>
+                        </div>
+                        {selectedTone.id === "custom" && <Check className="h-3.5 w-3.5 text-[#000000] shrink-0" />}
                       </button>
-                    ))}
+                    )}
                   </div>
                 )}
               </div>
