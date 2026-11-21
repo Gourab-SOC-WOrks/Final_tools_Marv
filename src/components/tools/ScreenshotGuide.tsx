@@ -971,10 +971,10 @@ Instruction: [1-2 sentences of specific instructions]
                 type="button"
                 disabled={busy || !shots.length}
                 onClick={handleGenerate}
-                className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 px-5 py-3.5 text-sm font-bold text-white shadow-md transition active:scale-98 disabled:opacity-50"
+                className="w-full relative flex items-center justify-center gap-2.5 rounded-2xl bg-gradient-to-b from-[#2563EB] to-[#1D4ED8] hover:from-[#1D4ED8] hover:to-[#1E40AF] px-6 py-3.5 text-sm font-semibold tracking-[-0.01em] text-white shadow-[0_2px_4px_rgba(37,99,235,0.2),0_6px_14px_rgba(37,99,235,0.25),inset_0_1px_0.5px_rgba(255,255,255,0.35)] hover:shadow-[0_4px_8px_rgba(37,99,235,0.25),0_8px_18px_rgba(37,99,235,0.3),inset_0_1px_0.5px_rgba(255,255,255,0.4)] active:scale-[0.985] active:brightness-95 transition-all duration-150 ease-out disabled:opacity-45 disabled:cursor-not-allowed disabled:active:scale-100 disabled:shadow-none"
               >
-                <Sparkles className={`h-4 w-4 ${busy ? "animate-spin" : ""}`} />
-                <span>{busy ? "Analyzing UI & Writing Steps..." : "✨ Generate Guide"}</span>
+                <Sparkles className={`h-4 w-4 text-white/90 ${busy ? "animate-spin" : ""}`} />
+                <span>{busy ? "Analyzing UI & Writing Steps..." : "Generate Guide"}</span>
               </button>
 
               <button
@@ -989,9 +989,9 @@ Instruction: [1-2 sentences of specific instructions]
                   ]);
                   showToast("Loaded instant 3-step domain sample guide!");
                 }}
-                className="w-full text-center text-xs font-semibold text-blue-600 hover:underline"
+                className="w-full text-center text-xs font-medium text-[#78716C] hover:text-[#1A1917] transition-colors py-1"
               >
-                Reload instant 3-step sample demo →
+                Reset to instant 3-step sample demo →
               </button>
             </div>
           </div>
