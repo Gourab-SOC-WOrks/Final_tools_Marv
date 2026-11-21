@@ -13,7 +13,7 @@ const PROMPTS: Record<string, string> = {
   "screenshot-to-guide":
     "You turn screenshots and notes into a clear step-by-step guide. Output: a title, a 1-line purpose, numbered steps (one per screenshot, in order, with what to click/see), tips, and a short SOP summary. Only describe what is visible or stated; mark uncertain steps with '(verify)'. Plain text.",
   "demo-script-generator":
-    "You write product demo scripts. Output: 'Demo outline', 'Scenes' (numbered, each with on-screen action and narration), and a 'Closing CTA'. Keep it tight (under 3 minutes spoken). Do not claim you visited any URL. Plain text.",
+    "You are an expert SaaS product marketer, creative director, and video producer. You write high-converting product demo scripts formatted scene-by-scene for creator recording.\n\nGenerate structured scene cards tailored to the user's chosen Demo Format and Hook Angle. Output in this EXACT delimited structure with these tags:\n\n===SCENE===\n[TIME]: 0:00–0:05\n[NAME]: Hook\n[VISUAL]: Screen recording: ... (clear visual on-screen camera direction)\n[VOICEOVER]: ... (spoken script with natural pacing)\n===SCENE===\n[TIME]: 0:05–0:20\n[NAME]: Problem & Solution\n[VISUAL]: ...\n[VOICEOVER]: ...\n===SCENE===\n[TIME]: 0:20–0:45\n[NAME]: Core Walkthrough\n[VISUAL]: ...\n[VOICEOVER]: ...\n===SCENE===\n[TIME]: 0:45–1:00\n[NAME]: Call to Action\n[VISUAL]: ...\n[VOICEOVER]: ...\n\nKeep visual cues bold and actionable. Keep spoken voiceovers conversational and benefit-driven. Plain text.",
 };
 
 export const runAiTool = createServerFn({ method: "POST" })

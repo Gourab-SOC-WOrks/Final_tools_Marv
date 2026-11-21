@@ -23,6 +23,7 @@ const VideoSummarizer = lazy(() => import("./AiTools").then((m) => ({ default: m
 const YoutubeTitleGenerator = lazy(() => import("./AiTools").then((m) => ({ default: m.YoutubeTitleGenerator })));
 const ContentRepurposer = lazy(() => import("./AiTools").then((m) => ({ default: m.ContentRepurposer })));
 const ProductDescriptionGenerator = lazy(() => import("./ProductDescriptionGenerator").then((m) => ({ default: m.ProductDescriptionGenerator })));
+const DemoScriptGenerator = lazy(() => import("./DemoScriptGenerator").then((m) => ({ default: m.DemoScriptGenerator })));
 
 // Loading spinner shown while a tool chunk loads
 function ToolFallback() {
@@ -54,6 +55,7 @@ export function ToolWorkspace({ slug }: { slug: string }): ReactNode {
       case "youtube-title-generator": return <YoutubeTitleGenerator />;
       case "content-repurposer":   return <ContentRepurposer />;
       case "product-description-generator": return <ProductDescriptionGenerator />;
+      case "demo-script-generator": return <DemoScriptGenerator />;
       default:                     return <AiTextTool slug={slug} />;    }
   })();
 

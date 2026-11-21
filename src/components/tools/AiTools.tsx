@@ -1576,4 +1576,5 @@ export function SubtitleGenerator() {
 export { ContentRepurposer } from "./ContentRepurposer";
 export { ProductDescriptionGenerator } from "./ProductDescriptionGenerator";
 export { VoiceoverGenerator } from "./VoiceoverGenerator";
+export { DemoScriptGenerator } from "./DemoScriptGenerator";
 
