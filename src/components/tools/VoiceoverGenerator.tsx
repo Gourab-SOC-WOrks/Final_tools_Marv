@@ -22,13 +22,23 @@ import narrationUrl from "@/assets/samples/narration.mp3";
 import { runVoiceover } from "@/lib/ai.functions";
 import { useServerFn } from "@tanstack/react-start";
 
+export type VoiceGender = "male" | "female";
+export type VoiceAge = "youth" | "young_adult" | "mature" | "senior";
+export type AccentCode = "us" | "uk" | "au" | "in" | "es";
+
 export interface VoiceOption {
   id: string;
   name: string;
   geminiVoice: string;
   tag: string;
   description: string;
-  gender: "male" | "female";
+  gender: VoiceGender;
+  age: VoiceAge;
+  ageLabel: string;
+  accent: AccentCode;
+  accentLabel: string;
+  flag: string;
+  langCode: string;
   previewQuote: string;
 }
 
@@ -40,6 +50,12 @@ export const CURATED_VOICES: VoiceOption[] = [
     tag: "Deep & Documentary",
     description: "Authoritative & cinematic narration",
     gender: "male",
+    age: "mature",
+    ageLabel: "Mature · 40s",
+    accent: "us",
+    accentLabel: "American",
+    flag: "🇺🇸",
+    langCode: "en-US",
     previewQuote: "I'm Marcus. Deep, authoritative narration built for documentaries and long-form stories.",
   },
   {
@@ -49,6 +65,12 @@ export const CURATED_VOICES: VoiceOption[] = [
     tag: "Energetic Shorts",
     description: "Punchy, fast-paced & vibrant",
     gender: "female",
+    age: "young_adult",
+    ageLabel: "Young Adult · 20s",
+    accent: "us",
+    accentLabel: "American",
+    flag: "🇺🇸",
+    langCode: "en-US",
     previewQuote: "Hey, I'm Maya! Upbeat and high-energy, perfect for TikToks, Reels, and viral promos.",
   },
   {
@@ -56,9 +78,15 @@ export const CURATED_VOICES: VoiceOption[] = [
     name: "Liam",
     geminiVoice: "Kore",
     tag: "Calm Explainer",
-    description: "Smooth, measured & tutorial-ready",
+    description: "Refined, measured British tutorial pacing",
     gender: "male",
-    previewQuote: "Hello, I'm Liam. Clear and measured pacing for software tutorials and product walkthroughs.",
+    age: "young_adult",
+    ageLabel: "Young Adult · 30s",
+    accent: "uk",
+    accentLabel: "British",
+    flag: "🇬🇧",
+    langCode: "en-GB",
+    previewQuote: "Hello, I'm Liam. Clear and measured British pacing for software tutorials and product walkthroughs.",
   },
   {
     id: "elena",
@@ -67,7 +95,73 @@ export const CURATED_VOICES: VoiceOption[] = [
     tag: "Warm Promo",
     description: "Inviting, friendly & brand story",
     gender: "female",
+    age: "mature",
+    ageLabel: "Mature · 30s",
+    accent: "us",
+    accentLabel: "American",
+    flag: "🇺🇸",
+    langCode: "en-US",
     previewQuote: "Hi there, I'm Elena. Warm, friendly delivery designed to bring your brand story to life.",
+  },
+  {
+    id: "oliver",
+    name: "Oliver",
+    geminiVoice: "Charon",
+    tag: "Distinguished British",
+    description: "Sophisticated, classical & wise",
+    gender: "male",
+    age: "senior",
+    ageLabel: "Senior · 50s+",
+    accent: "uk",
+    accentLabel: "British",
+    flag: "🇬🇧",
+    langCode: "en-GB",
+    previewQuote: "Good day, I'm Oliver. A distinguished British cadence for heritage and classical narratives.",
+  },
+  {
+    id: "aria",
+    name: "Aria",
+    geminiVoice: "Leda",
+    tag: "Upbeat Australian",
+    description: "Crisp, sunny & modern Aussie vibe",
+    gender: "female",
+    age: "youth",
+    ageLabel: "Youth · 20s",
+    accent: "au",
+    accentLabel: "Australian",
+    flag: "🇦🇺",
+    langCode: "en-AU",
+    previewQuote: "G'day, I'm Aria! Sunny, crisp Australian energy for modern podcasts and dynamic ads.",
+  },
+  {
+    id: "rohan",
+    name: "Rohan",
+    geminiVoice: "Fenrir",
+    tag: "Tech & Global",
+    description: "Clear, dynamic tech explainer voice",
+    gender: "male",
+    age: "young_adult",
+    ageLabel: "Young Adult · 20s",
+    accent: "in",
+    accentLabel: "Indian",
+    flag: "🇮🇳",
+    langCode: "en-IN",
+    previewQuote: "Namaste, I'm Rohan. Clear, articulate Indian English for tech demos and global corporate explainers.",
+  },
+  {
+    id: "sofia",
+    name: "Sofia",
+    geminiVoice: "Aoede",
+    tag: "Warm Spanish / Global",
+    description: "Smooth, expressive & international",
+    gender: "female",
+    age: "young_adult",
+    ageLabel: "Young Adult · 20s",
+    accent: "es",
+    accentLabel: "Spanish",
+    flag: "🇪🇸",
+    langCode: "es-ES",
+    previewQuote: "Hola, soy Sofia. Smooth, expressive delivery with warm Spanish inflection for global audiences.",
   },
   {
     id: "jordan",
@@ -76,6 +170,12 @@ export const CURATED_VOICES: VoiceOption[] = [
     tag: "Bold & Dynamic",
     description: "Commanding trailer & launch tone",
     gender: "male",
+    age: "mature",
+    ageLabel: "Mature · 30s",
+    accent: "us",
+    accentLabel: "American",
+    flag: "🇺🇸",
+    langCode: "en-US",
     previewQuote: "Jordan here. High-impact inflection for launch announcements and product reveals.",
   },
   {
@@ -83,9 +183,15 @@ export const CURATED_VOICES: VoiceOption[] = [
     name: "Chloe",
     geminiVoice: "Leda",
     tag: "Youthful & Crisp",
-    description: "Natural, relatable & modern pacing",
+    description: "Natural, relatable & social-first",
     gender: "female",
-    previewQuote: "Hi, I'm Chloe! Crisp, relatable, and modern pacing for everyday engaging content.",
+    age: "youth",
+    ageLabel: "Youth · 18–24",
+    accent: "us",
+    accentLabel: "American",
+    flag: "🇺🇸",
+    langCode: "en-US",
+    previewQuote: "Hi, I'm Chloe! Crisp, relatable, and modern pacing for everyday engaging social content.",
   },
 ];
 
@@ -120,6 +226,11 @@ export function VoiceoverGenerator() {
   const [speed, setSpeed] = useState<SpeedPreset>(1.0);
   const [tone, setTone] = useState<ToneStyle>("natural");
 
+  // Filter states: Gender, Age & Accent
+  const [genderFilter, setGenderFilter] = useState<"all" | VoiceGender>("all");
+  const [ageFilter, setAgeFilter] = useState<"all" | VoiceAge>("all");
+  const [accentFilter, setAccentFilter] = useState<"all" | AccentCode>("all");
+
   // Audio output state
   const [audioUrl, setAudioUrl] = useState<string>(narrationUrl);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
@@ -147,6 +258,16 @@ export function VoiceoverGenerator() {
     () => CURATED_VOICES.find((v) => v.id === selectedVoiceId) ?? CURATED_VOICES[0]!,
     [selectedVoiceId]
   );
+
+  // Filtered voice roster based on gender, age, and accent
+  const filteredVoices = useMemo(() => {
+    return CURATED_VOICES.filter((v) => {
+      if (genderFilter !== "all" && v.gender !== genderFilter) return false;
+      if (ageFilter !== "all" && v.age !== ageFilter) return false;
+      if (accentFilter !== "all" && v.accent !== accentFilter) return false;
+      return true;
+    });
+  }, [genderFilter, ageFilter, accentFilter]);
 
   // Keep player playback speed in sync with audio element
   useEffect(() => {
@@ -265,7 +386,7 @@ export function VoiceoverGenerator() {
     }
   };
 
-  // Instant 2-second voice audition preview
+  // Instant 2-second voice audition preview with regional accent
   const handlePreviewVoice = (v: VoiceOption, e: React.MouseEvent) => {
     e.stopPropagation();
 
@@ -283,8 +404,26 @@ export function VoiceoverGenerator() {
       window.speechSynthesis.cancel();
 
       const utterance = new SpeechSynthesisUtterance(v.previewQuote);
-      utterance.rate = v.id === "maya" ? 1.15 : v.id === "marcus" ? 0.9 : 1.0;
-      utterance.pitch = v.gender === "female" ? 1.1 : 0.85;
+      utterance.lang = v.langCode;
+      utterance.rate =
+        v.id === "maya" || v.id === "aria" || v.id === "chloe" ? 1.08 :
+        v.id === "marcus" || v.id === "oliver" ? 0.92 : 1.0;
+      utterance.pitch =
+        v.gender === "female"
+          ? (v.age === "youth" ? 1.15 : 1.05)
+          : (v.age === "senior" ? 0.82 : v.age === "mature" ? 0.88 : 0.95);
+
+      if (typeof window.speechSynthesis.getVoices === "function") {
+        const voices = window.speechSynthesis.getVoices();
+        const matched = voices.find((sv) =>
+          sv.lang.toLowerCase().replace("_", "-") === v.langCode.toLowerCase()
+        ) || voices.find((sv) =>
+          sv.lang.toLowerCase().startsWith(v.langCode.slice(0, 2).toLowerCase())
+        );
+        if (matched) {
+          utterance.voice = matched;
+        }
+      }
 
       utterance.onstart = () => setPreviewingVoiceId(v.id);
       utterance.onend = () => setPreviewingVoiceId(null);
@@ -449,85 +588,195 @@ export function VoiceoverGenerator() {
               </div>
             </div>
 
-            {/* Voice Selector Cards (4–6 Curated Voices - Apple Grid) */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
+            {/* Voice Selector Cards with Accent, Gender & Age Controls (Apple HIG) */}
+            <div className="space-y-3.5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <label className="text-[11px] font-semibold text-[#86868B] uppercase tracking-wider">
-                  Curated Studio Voices
+                  Curated Studio Voices ({filteredVoices.length})
                 </label>
                 <span className="text-[11px] text-[#86868B]">
-                  6 neural personas · Tap ▶ to audition
+                  Filter by accent, gender & age · Tap ▶ to audition
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
-                {CURATED_VOICES.map((v) => {
-                  const isSelected = selectedVoiceId === v.id;
-                  const isPreviewing = previewingVoiceId === v.id;
-
-                  return (
-                    <div
-                      key={v.id}
-                      role="button"
-                      tabIndex={0}
-                      onClick={() => setSelectedVoiceId(v.id)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          setSelectedVoiceId(v.id);
-                        }
-                      }}
-                      className={`group relative flex flex-col justify-between rounded-2xl border p-3.5 text-left transition-all duration-200 cursor-pointer active:scale-[0.98] ${
-                        isSelected
-                          ? "border-[#0071E3] bg-[#0071E3]/[0.03] shadow-[0_2px_12px_rgba(0,113,227,0.12),inset_0_1px_0.5px_rgba(255,255,255,0.9)] ring-1 ring-[#0071E3]"
-                          : "border-black/[0.08] bg-white hover:border-black/[0.18] hover:shadow-xs"
-                      }`}
-                    >
-                      {/* Top Row: Name, Subtle Metadata Tag & Apple Audition Button */}
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-sm font-semibold tracking-tight text-[#1D1D1F]">
-                              {v.name}
-                            </span>
-                            <span className="text-[10px] font-medium text-[#86868B] bg-black/[0.04] px-1.5 py-0.5 rounded-md capitalize">
-                              {v.gender}
-                            </span>
-                          </div>
-                          <p className="text-xs font-medium text-[#0071E3] mt-0.5">
-                            {v.tag}
-                          </p>
-                        </div>
-
-                        {/* Apple-style circular preview button */}
+              {/* Apple-style Filter Toolbar */}
+              <div className="space-y-2 rounded-2xl bg-black/[0.02] border border-black/[0.05] p-2.5">
+                {/* Row 1: Gender & Age Segmented Controls */}
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  {/* Gender Filter */}
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[11px] font-semibold text-[#86868B]">Gender:</span>
+                    <div className="flex p-0.5 rounded-lg bg-black/[0.04] border border-black/[0.04]">
+                      {(["all", "male", "female"] as const).map((g) => (
                         <button
+                          key={g}
                           type="button"
-                          onClick={(e) => handlePreviewVoice(v, e)}
-                          title={`Audition voice sample for ${v.name}`}
-                          className={`flex h-7 w-7 items-center justify-center rounded-full transition-all active:scale-90 ${
-                            isPreviewing
-                              ? "bg-[#0071E3] text-white shadow-sm animate-pulse"
-                              : isSelected
-                              ? "bg-[#0071E3]/10 text-[#0071E3] hover:bg-[#0071E3]/20"
-                              : "bg-black/[0.04] text-[#1D1D1F] hover:bg-black/[0.08]"
+                          onClick={() => setGenderFilter(g)}
+                          className={`px-2.5 py-1 text-[11px] font-medium rounded-md capitalize transition-all active:scale-95 ${
+                            genderFilter === g
+                              ? "bg-white text-[#1D1D1F] shadow-xs font-semibold"
+                              : "text-[#86868B] hover:text-[#1D1D1F]"
                           }`}
                         >
-                          {isPreviewing ? (
-                            <Pause className="h-3 w-3 fill-current" />
-                          ) : (
-                            <Play className="h-3 w-3 fill-current translate-x-0.5" />
-                          )}
+                          {g === "all" ? "All" : g}
                         </button>
-                      </div>
-
-                      {/* Description footnote */}
-                      <p className="text-[11px] text-[#86868B] mt-2 line-clamp-1">
-                        {v.description}
-                      </p>
+                      ))}
                     </div>
-                  );
-                })}
+                  </div>
+
+                  {/* Age Filter */}
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[11px] font-semibold text-[#86868B]">Age:</span>
+                    <div className="flex p-0.5 rounded-lg bg-black/[0.04] border border-black/[0.04]">
+                      {[
+                        { id: "all", label: "All Ages" },
+                        { id: "youth", label: "Youth (18–24)" },
+                        { id: "young_adult", label: "25–35" },
+                        { id: "mature", label: "36–50" },
+                        { id: "senior", label: "50s+" },
+                      ].map((a) => (
+                        <button
+                          key={a.id}
+                          type="button"
+                          onClick={() => setAgeFilter(a.id as any)}
+                          className={`px-2 py-1 text-[11px] font-medium rounded-md transition-all active:scale-95 ${
+                            ageFilter === a.id
+                              ? "bg-white text-[#1D1D1F] shadow-xs font-semibold"
+                              : "text-[#86868B] hover:text-[#1D1D1F]"
+                          }`}
+                        >
+                          {a.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Row 2: Accent / Regional Language Filter Pills */}
+                <div className="flex items-center gap-1.5 overflow-x-auto pt-1 pb-0.5 scrollbar-none border-t border-black/[0.04]">
+                  <span className="text-[11px] font-semibold text-[#86868B] shrink-0 mr-0.5">Accent:</span>
+                  {[
+                    { id: "all", label: "All Accents", flag: "🌐" },
+                    { id: "us", label: "American", flag: "🇺🇸" },
+                    { id: "uk", label: "British", flag: "🇬🇧" },
+                    { id: "au", label: "Australian", flag: "🇦🇺" },
+                    { id: "in", label: "Indian", flag: "🇮🇳" },
+                    { id: "es", label: "Spanish", flag: "🇪🇸" },
+                  ].map((acc) => (
+                    <button
+                      key={acc.id}
+                      type="button"
+                      onClick={() => setAccentFilter(acc.id as any)}
+                      className={`flex items-center gap-1 shrink-0 px-2.5 py-1 text-[11px] font-medium rounded-full transition-all active:scale-95 ${
+                        accentFilter === acc.id
+                          ? "bg-[#0071E3] text-white shadow-2xs font-semibold"
+                          : "bg-white text-[#555] hover:bg-black/[0.04] hover:text-[#1D1D1F] border border-black/[0.06]"
+                      }`}
+                    >
+                      <span className="text-xs">{acc.flag}</span>
+                      <span>{acc.label}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
+
+              {/* Grid of Filtered Voices */}
+              {filteredVoices.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-black/[0.1] bg-black/[0.015] p-6 text-center space-y-2">
+                  <p className="text-xs font-medium text-[#86868B]">
+                    No voices match the selected combination of gender, age, and accent.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setGenderFilter("all");
+                      setAgeFilter("all");
+                      setAccentFilter("all");
+                    }}
+                    className="text-xs font-semibold text-[#0071E3] hover:underline"
+                  >
+                    Reset all filters →
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                  {filteredVoices.map((v) => {
+                    const isSelected = selectedVoiceId === v.id;
+                    const isPreviewing = previewingVoiceId === v.id;
+
+                    return (
+                      <div
+                        key={v.id}
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => setSelectedVoiceId(v.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            setSelectedVoiceId(v.id);
+                          }
+                        }}
+                        className={`group relative flex flex-col justify-between rounded-2xl border p-3.5 text-left transition-all duration-200 cursor-pointer active:scale-[0.98] ${
+                          isSelected
+                            ? "border-[#0071E3] bg-[#0071E3]/[0.03] shadow-[0_2px_12px_rgba(0,113,227,0.12),inset_0_1px_0.5px_rgba(255,255,255,0.9)] ring-1 ring-[#0071E3]"
+                            : "border-black/[0.08] bg-white hover:border-black/[0.18] hover:shadow-xs"
+                        }`}
+                      >
+                        {/* Top Row: Name, Accent Flag & Audition Button */}
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-sm font-semibold tracking-tight text-[#1D1D1F]">
+                                {v.name}
+                              </span>
+                              <span className="text-[10px] font-medium text-[#555] bg-black/[0.04] px-1.5 py-0.5 rounded-md flex items-center gap-1">
+                                <span>{v.flag}</span>
+                                <span>{v.accentLabel}</span>
+                              </span>
+                            </div>
+
+                            {/* Gender & Age Subtitle */}
+                            <div className="flex items-center gap-1 mt-1 text-[10px] text-[#86868B] font-medium">
+                              <span className="capitalize">{v.gender}</span>
+                              <span>·</span>
+                              <span>{v.ageLabel}</span>
+                            </div>
+
+                            <p className="text-xs font-medium text-[#0071E3] mt-0.5">
+                              {v.tag}
+                            </p>
+                          </div>
+
+                          {/* Apple-style circular preview button */}
+                          <button
+                            type="button"
+                            onClick={(e) => handlePreviewVoice(v, e)}
+                            title={`Audition voice sample for ${v.name} (${v.accentLabel})`}
+                            className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-all active:scale-90 ${
+                              isPreviewing
+                                ? "bg-[#0071E3] text-white shadow-sm animate-pulse"
+                                : isSelected
+                                ? "bg-[#0071E3]/10 text-[#0071E3] hover:bg-[#0071E3]/20"
+                                : "bg-black/[0.04] text-[#1D1D1F] hover:bg-black/[0.08]"
+                            }`}
+                          >
+                            {isPreviewing ? (
+                              <Pause className="h-3 w-3 fill-current" />
+                            ) : (
+                              <Play className="h-3 w-3 fill-current translate-x-0.5" />
+                            )}
+                          </button>
+                        </div>
+
+                        {/* Description footnote */}
+                        <p className="text-[11px] text-[#86868B] mt-2 line-clamp-1">
+                          {v.description}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             {/* Quick Delivery Controls (Apple Segmented Controls) */}
@@ -641,9 +890,12 @@ export function VoiceoverGenerator() {
                 <span className="text-[11px] font-semibold tracking-widest text-[#86868B] uppercase">
                   MASTER AUDIO OUTPUT
                 </span>
-                <h3 className="text-base font-semibold text-[#1D1D1F] mt-0.5 flex items-center gap-2">
+                <h3 className="text-base font-semibold text-[#1D1D1F] mt-0.5 flex items-center gap-1.5 flex-wrap">
+                  <span>{activeVoice.flag}</span>
                   <span>{activeVoice.name}</span>
-                  <span className="text-xs font-normal text-[#86868B]">· {activeVoice.tag}</span>
+                  <span className="text-xs font-normal text-[#86868B]">
+                    · {activeVoice.accentLabel} ({activeVoice.gender}, {activeVoice.ageLabel})
+                  </span>
                 </h3>
               </div>
 
