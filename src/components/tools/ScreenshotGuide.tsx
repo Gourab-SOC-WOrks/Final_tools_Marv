@@ -105,6 +105,7 @@ export function ScreenshotGuide() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [draggedShotIdx, setDraggedShotIdx] = useState<number | null>(null);
+  const [activeDragStep, setActiveDragStep] = useState<number | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dropzoneRef = useRef<HTMLDivElement>(null);
@@ -194,11 +195,12 @@ export function ScreenshotGuide() {
     setDraggedShotIdx(null);
   };
 
-  // Click on image to move / set highlight pin
-  const handleImagePinClick = (stepIndex: number, e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = Math.round(((e.clientX - rect.left) / rect.width) * 100);
-    const y = Math.round(((e.clientY - rect.top) / rect.height) * 100);
+  // Free cursor dragging for highlight pins
+  const updatePinCoordinates = (stepIndex: number, clientX: number, clientY: number, containerRect: DOMRect) => {
+    const rawX = ((clientX - containerRect.left) / containerRect.width) * 100;
+    const rawY = ((clientY - containerRect.top) / containerRect.height) * 100;
+    const x = Math.max(3, Math.min(97, Math.round(rawX)));
+    const y = Math.max(4, Math.min(96, Math.round(rawY)));
 
     setGuide((prev) => {
       const copy = { ...prev };
@@ -206,12 +208,37 @@ export function ScreenshotGuide() {
       if (updatedSteps[stepIndex]) {
         updatedSteps[stepIndex] = {
           ...updatedSteps[stepIndex],
-          annotation: { x, y, label: `Action ${stepIndex + 1}` },
+          annotation: {
+            x,
+            y,
+            label: updatedSteps[stepIndex].annotation?.label || `Action ${stepIndex + 1}`,
+          },
         };
       }
       return { ...copy, steps: updatedSteps };
     });
-    showToast(`Highlight pin moved to (${x}%, ${y}%)`);
+  };
+
+  const handlePinPointerDown = (stepIndex: number, e: React.PointerEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.currentTarget.setPointerCapture(e.pointerId);
+    setActiveDragStep(stepIndex);
+    updatePinCoordinates(stepIndex, e.clientX, e.clientY, e.currentTarget.getBoundingClientRect());
+  };
+
+  const handlePinPointerMove = (stepIndex: number, e: React.PointerEvent<HTMLDivElement>) => {
+    if (activeDragStep !== stepIndex) return;
+    updatePinCoordinates(stepIndex, e.clientX, e.clientY, e.currentTarget.getBoundingClientRect());
+  };
+
+  const handlePinPointerUp = (stepIndex: number, e: React.PointerEvent<HTMLDivElement>) => {
+    if (activeDragStep === stepIndex) {
+      setActiveDragStep(null);
+      try {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+      } catch {}
+      showToast(`Highlight pin placed!`);
+    }
   };
 
   // Add / Delete step controls
@@ -859,48 +886,89 @@ Instruction: [1-2 sentences of specific instructions]
                     </div>
                   </div>
 
-                  {/* Annotated Screenshot Preview with Click-to-Move Pin */}
+                  {/* Annotated Screenshot Preview with Free Cursor Dragging Pin */}
                   {step.imageUrl && (
                     <div className="space-y-1.5 ml-10">
                       <div
-                        onClick={(e) => handleImagePinClick(idx, e)}
-                        className="relative cursor-crosshair overflow-hidden rounded-2xl border border-[#D6CCB5] bg-black shadow-sm group/img"
-                        title="Click anywhere on the screenshot to reposition the highlight pin"
+                        onPointerDown={(e) => handlePinPointerDown(idx, e)}
+                        onPointerMove={(e) => handlePinPointerMove(idx, e)}
+                        onPointerUp={(e) => handlePinPointerUp(idx, e)}
+                        onPointerCancel={(e) => handlePinPointerUp(idx, e)}
+                        className={`relative touch-none select-none overflow-hidden rounded-2xl border bg-black shadow-sm group/img ${
+                          activeDragStep === idx
+                            ? "cursor-grabbing border-blue-500 ring-2 ring-blue-400/40"
+                            : "cursor-crosshair border-[#D6CCB5]"
+                        }`}
+                        title="Click or drag freely anywhere to position the highlight pin"
                       >
                         <img
                           src={step.imageUrl}
                           alt={step.heading}
-                          className="w-full h-auto max-h-[440px] object-contain bg-white"
+                          draggable={false}
+                          className="w-full h-auto max-h-[460px] object-contain bg-white pointer-events-none select-none"
                         />
 
-                        {/* Highlight Pin / Dot */}
+                        {/* Interactive Highlight Pin & Crosshair Guide */}
                         {step.annotation && (
-                          <div
-                            className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 flex items-center gap-1.5 animate-in zoom-in-75 duration-150"
-                            style={{
-                              left: `${step.annotation.x}%`,
-                              top: `${step.annotation.y}%`,
-                            }}
-                          >
-                            {/* Pulsing ring */}
-                            <span className="relative flex h-8 w-8 items-center justify-center">
-                              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-500 opacity-75" />
-                              <span className="relative inline-flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 border-2 border-white text-white text-xs font-black shadow-lg">
-                                {step.stepNumber}
-                              </span>
-                            </span>
-                            {step.annotation.label && (
-                              <span className="rounded-md bg-black/80 px-2 py-0.5 text-[10px] font-bold text-white shadow-md backdrop-blur">
-                                {step.annotation.label}
-                              </span>
+                          <>
+                            {/* Crosshair guide lines while dragging */}
+                            {activeDragStep === idx && (
+                              <>
+                                <div
+                                  className="pointer-events-none absolute inset-y-0 w-px border-l border-dashed border-blue-400/70"
+                                  style={{ left: `${step.annotation.x}%` }}
+                                />
+                                <div
+                                  className="pointer-events-none absolute inset-x-0 h-px border-t border-dashed border-blue-400/70"
+                                  style={{ top: `${step.annotation.y}%` }}
+                                />
+                              </>
                             )}
-                          </div>
+
+                            {/* The Highlight Pin */}
+                            <div
+                              className={`pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 flex items-center gap-1.5 transition-transform duration-75 ${
+                                activeDragStep === idx ? "scale-125 z-30" : "scale-100 z-10"
+                              }`}
+                              style={{
+                                left: `${step.annotation.x}%`,
+                                top: `${step.annotation.y}%`,
+                              }}
+                            >
+                              {/* Pulsing ring */}
+                              <span className="relative flex h-8 w-8 items-center justify-center">
+                                <span
+                                  className={`absolute inline-flex h-full w-full rounded-full bg-blue-500 ${
+                                    activeDragStep === idx ? "animate-none opacity-40 ring-4 ring-blue-400" : "animate-ping opacity-75"
+                                  }`}
+                                />
+                                <span className="relative inline-flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 border-2 border-white text-white text-xs font-black shadow-xl">
+                                  {step.stepNumber}
+                                </span>
+                              </span>
+
+                              {/* Label badge */}
+                              <span className="rounded-md bg-black/85 px-2 py-0.5 text-[10px] font-bold text-white shadow-md backdrop-blur border border-white/20 whitespace-nowrap">
+                                {activeDragStep === idx
+                                  ? `${step.annotation.x}%, ${step.annotation.y}%`
+                                  : step.annotation.label || `Step ${step.stepNumber}`}
+                              </span>
+                            </div>
+                          </>
                         )}
 
                         {/* Hover guidance overlay */}
-                        <div className="absolute inset-x-0 bottom-0 bg-black/60 py-1 px-3 text-center text-[10px] font-medium text-white opacity-0 group-hover/img:opacity-100 transition-opacity backdrop-blur-xs flex items-center justify-center gap-1.5 print:hidden">
+                        <div
+                          className={`absolute inset-x-0 bottom-0 bg-black/60 py-1.5 px-3 text-center text-[10px] font-medium text-white transition-opacity backdrop-blur-xs flex items-center justify-center gap-1.5 print:hidden pointer-events-none ${
+                            activeDragStep === idx ? "opacity-100" : "opacity-0 group-hover/img:opacity-100"
+                          }`}
+                        >
                           <Crosshair className="h-3 w-3 text-blue-400" />
-                          <span>Click anywhere on screenshot to move action pin</span>
+                          <span>
+                            {activeDragStep === idx
+                              ? "Dragging highlight pin freely across image..."
+                              : "Drag freely or click anywhere on screenshot to position highlight pin"}
+                          </span>
                         </div>
                       </div>
                     </div>
