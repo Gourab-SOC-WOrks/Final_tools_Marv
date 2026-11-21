@@ -16,7 +16,7 @@ const PdfTool = lazy(() => import("./ImageTools").then((m) => ({ default: m.PdfT
 const LinkShortener = lazy(() => import("./LinkShortener").then((m) => ({ default: m.LinkShortener })));
 
 const AiTextTool = lazy(() => import("./AiTools").then((m) => ({ default: m.AiTextTool })));
-const ScreenshotGuide = lazy(() => import("./AiTools").then((m) => ({ default: m.ScreenshotGuide })));
+const ScreenshotGuide = lazy(() => import("./ScreenshotGuide").then((m) => ({ default: m.ScreenshotGuide })));
 const SubtitleGenerator = lazy(() => import("./AiTools").then((m) => ({ default: m.SubtitleGenerator })));
 const VoiceoverGenerator = lazy(() => import("./AiTools").then((m) => ({ default: m.VoiceoverGenerator })));
 const VideoSummarizer = lazy(() => import("./AiTools").then((m) => ({ default: m.VideoSummarizer })));
