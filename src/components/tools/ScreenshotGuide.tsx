@@ -918,49 +918,67 @@ Instruction: [1-2 sentences of specific instructions]
               />
             </div>
 
-            {/* Output Style Pills (3 quick toggles) */}
+            {/* Output Style Pills (Apple Segmented Control) */}
             <div className="mt-5">
               <label className="block text-xs font-bold text-[#1A1917] mb-2 uppercase tracking-wider">
                 Output Style
               </label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-1.5 p-1 rounded-2xl bg-[#EFECE6]/85 border border-[#DDD7CC] shadow-inner">
                 {/* SOP */}
                 <button
                   type="button"
                   onClick={() => setOutputStyle("sop")}
-                  className={`flex flex-col items-center justify-center rounded-xl border p-2.5 text-center transition ${outputStyle === "sop"
-                      ? "border-blue-600 bg-blue-50/50 text-blue-950 font-bold ring-1 ring-blue-600"
-                      : "border-[#D6CCB5] bg-[#FAF7F0] text-[#4A4740] hover:border-blue-300 hover:bg-white"
-                    }`}
+                  className={`flex flex-col items-center justify-center rounded-xl py-2.5 px-2 text-center transition-all duration-150 active:scale-[0.97] ${
+                    outputStyle === "sop"
+                      ? "bg-white text-[#1A1917] shadow-[0_2px_8px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04),inset_0_1px_0.5px_rgba(255,255,255,0.95)] border border-black/[0.04]"
+                      : "text-[#57534E] hover:text-[#1A1917] hover:bg-white/50 border border-transparent"
+                  }`}
                 >
-                  <span className="text-xs font-bold">SOP / Doc</span>
-                  <span className="text-[10px] text-[#78716C] mt-0.5">Direct steps</span>
+                  <div className="flex items-center justify-center gap-1.5">
+                    <FileText className={`h-3.5 w-3.5 transition-colors ${outputStyle === "sop" ? "text-blue-600" : "text-[#78716C]"}`} />
+                    <span className="text-xs font-semibold tracking-tight">SOP / Doc</span>
+                  </div>
+                  <span className={`text-[10px] mt-0.5 transition-colors ${outputStyle === "sop" ? "text-[#78716C] font-medium" : "text-[#9E988D]"}`}>
+                    Direct steps
+                  </span>
                 </button>
 
                 {/* Help Center */}
                 <button
                   type="button"
                   onClick={() => setOutputStyle("help-center")}
-                  className={`flex flex-col items-center justify-center rounded-xl border p-2.5 text-center transition ${outputStyle === "help-center"
-                      ? "border-blue-600 bg-blue-50/50 text-blue-950 font-bold ring-1 ring-blue-600"
-                      : "border-[#D6CCB5] bg-[#FAF7F0] text-[#4A4740] hover:border-blue-300 hover:bg-white"
-                    }`}
+                  className={`flex flex-col items-center justify-center rounded-xl py-2.5 px-2 text-center transition-all duration-150 active:scale-[0.97] ${
+                    outputStyle === "help-center"
+                      ? "bg-white text-[#1A1917] shadow-[0_2px_8px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04),inset_0_1px_0.5px_rgba(255,255,255,0.95)] border border-black/[0.04]"
+                      : "text-[#57534E] hover:text-[#1A1917] hover:bg-white/50 border border-transparent"
+                  }`}
                 >
-                  <span className="text-xs font-bold">Help Article</span>
-                  <span className="text-[10px] text-[#78716C] mt-0.5">User-facing</span>
+                  <div className="flex items-center justify-center gap-1.5">
+                    <BookOpen className={`h-3.5 w-3.5 transition-colors ${outputStyle === "help-center" ? "text-blue-600" : "text-[#78716C]"}`} />
+                    <span className="text-xs font-semibold tracking-tight">Help Article</span>
+                  </div>
+                  <span className={`text-[10px] mt-0.5 transition-colors ${outputStyle === "help-center" ? "text-[#78716C] font-medium" : "text-[#9E988D]"}`}>
+                    User-facing
+                  </span>
                 </button>
 
                 {/* Checklist */}
                 <button
                   type="button"
                   onClick={() => setOutputStyle("checklist")}
-                  className={`flex flex-col items-center justify-center rounded-xl border p-2.5 text-center transition ${outputStyle === "checklist"
-                      ? "border-blue-600 bg-blue-50/50 text-blue-950 font-bold ring-1 ring-blue-600"
-                      : "border-[#D6CCB5] bg-[#FAF7F0] text-[#4A4740] hover:border-blue-300 hover:bg-white"
-                    }`}
+                  className={`flex flex-col items-center justify-center rounded-xl py-2.5 px-2 text-center transition-all duration-150 active:scale-[0.97] ${
+                    outputStyle === "checklist"
+                      ? "bg-white text-[#1A1917] shadow-[0_2px_8px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04),inset_0_1px_0.5px_rgba(255,255,255,0.95)] border border-black/[0.04]"
+                      : "text-[#57534E] hover:text-[#1A1917] hover:bg-white/50 border border-transparent"
+                  }`}
                 >
-                  <span className="text-xs font-bold">Checklist</span>
-                  <span className="text-[10px] text-[#78716C] mt-0.5">Quick actions</span>
+                  <div className="flex items-center justify-center gap-1.5">
+                    <CheckCircle2 className={`h-3.5 w-3.5 transition-colors ${outputStyle === "checklist" ? "text-blue-600" : "text-[#78716C]"}`} />
+                    <span className="text-xs font-semibold tracking-tight">Checklist</span>
+                  </div>
+                  <span className={`text-[10px] mt-0.5 transition-colors ${outputStyle === "checklist" ? "text-[#78716C] font-medium" : "text-[#9E988D]"}`}>
+                    Quick actions
+                  </span>
                 </button>
               </div>
             </div>
