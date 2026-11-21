@@ -4,6 +4,13 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  NITRO_PRESET = "netlify"
+
+# Redirects: forward all non-static requests to the SSR function
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/server"
+  status = 200
 
 # Cache static assets aggressively
 [[headers]]
@@ -28,6 +35,16 @@
 
 [[headers]]
   for = "/*.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/*.webp"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/*.svg"
   [headers.values]
     Cache-Control = "public, max-age=86400"
 
