@@ -1746,4 +1746,5 @@ export function VoiceoverGenerator() {
 }
 
 export { ContentRepurposer } from "./ContentRepurposer";
+export { ProductDescriptionGenerator } from "./ProductDescriptionGenerator";
 
