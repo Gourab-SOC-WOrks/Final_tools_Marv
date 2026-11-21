@@ -18,7 +18,7 @@ const LinkShortener = lazy(() => import("./LinkShortener").then((m) => ({ defaul
 const AiTextTool = lazy(() => import("./AiTools").then((m) => ({ default: m.AiTextTool })));
 const ScreenshotGuide = lazy(() => import("./ScreenshotGuide").then((m) => ({ default: m.ScreenshotGuide })));
 const SubtitleGenerator = lazy(() => import("./AiTools").then((m) => ({ default: m.SubtitleGenerator })));
-const VoiceoverGenerator = lazy(() => import("./AiTools").then((m) => ({ default: m.VoiceoverGenerator })));
+const VoiceoverGenerator = lazy(() => import("./VoiceoverGenerator").then((m) => ({ default: m.VoiceoverGenerator })));
 const VideoSummarizer = lazy(() => import("./AiTools").then((m) => ({ default: m.VideoSummarizer })));
 const YoutubeTitleGenerator = lazy(() => import("./AiTools").then((m) => ({ default: m.YoutubeTitleGenerator })));
 const ContentRepurposer = lazy(() => import("./AiTools").then((m) => ({ default: m.ContentRepurposer })));
