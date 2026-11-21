@@ -1,9 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import {
   Link2,
-  Youtube,
-  HardDrive,
-  Upload,
   ArrowRight,
   ArrowLeft,
   Sparkles,
@@ -12,12 +9,9 @@ import {
   Play,
   Pause,
   Copy,
-  Check,
   Download,
-  RotateCcw,
   Volume2,
   VolumeX,
-  FileVideo,
   CheckCircle2,
 } from "lucide-react";
 import clipUrl from "@/assets/samples/clip.webm";
@@ -87,11 +81,152 @@ function formatTime(seconds: number): string {
   return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
 }
 
+// 12 Supported Sources mapped to row-major order for 3-column layout
+interface SourceOption {
+  id: string;
+  label: string;
+  url?: string;
+  isUpload?: boolean;
+  icon: JSX.Element;
+}
+
+const SOURCES: SourceOption[] = [
+  // Row 1
+  {
+    id: "youtube",
+    label: "YouTube",
+    url: "https://www.youtube.com/watch?v=saas-blueprint-10k",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-4 w-4 fill-white" aria-hidden="true">
+        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+      </svg>
+    ),
+  },
+  {
+    id: "vimeo",
+    label: "Vimeo",
+    url: "https://vimeo.com/894210345",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-4 w-4 fill-white" aria-hidden="true">
+        <path d="M23.977 6.416c-.105 2.338-1.739 5.543-4.894 9.609-3.268 4.247-6.026 6.37-8.29 6.37-1.409 0-2.578-1.294-3.553-3.881L5.322 11.4C4.603 8.816 3.834 7.525 3.01 7.525c-.179 0-.806.378-1.881 1.131L0 7.234c1.183-1.042 2.383-2.083 3.6-3.125 1.688-1.464 2.946-2.238 3.773-2.324 1.954-.18 3.161 1.157 3.621 4.01.55 3.393.914 5.518 1.092 6.374.526 2.502 1.107 3.753 1.742 3.753.493 0 1.23-.787 2.21-2.361.984-1.575 1.516-2.775 1.597-3.6.148-1.423-.404-2.135-1.657-2.135-.615 0-1.25.138-1.905.414 1.255-4.108 3.642-6.109 7.16-6.002 2.607.078 3.844 1.484 3.709 4.218z" />
+      </svg>
+    ),
+  },
+  {
+    id: "x",
+    label: "X",
+    url: "https://x.com/indiehackers/status/1782390142",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-4 w-4 fill-white" aria-hidden="true">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+      </svg>
+    ),
+  },
+
+  // Row 2
+  {
+    id: "facebook",
+    label: "Facebook",
+    url: "https://facebook.com/watch/?v=9876543210",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-4 w-4 fill-white" aria-hidden="true">
+        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+      </svg>
+    ),
+  },
+  {
+    id: "twitch",
+    label: "Twitch",
+    url: "https://www.twitch.tv/videos/2048591823",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-4 w-4 fill-white" aria-hidden="true">
+        <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z" />
+      </svg>
+    ),
+  },
+  {
+    id: "rumble",
+    label: "Rumble",
+    url: "https://rumble.com/v4abcde-founders-playbook.html",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-4 w-4 fill-white" aria-hidden="true">
+        <path d="M21.57 9.87c-.36-.93-1.09-1.63-2.02-1.92-2.82-.9-9.5-.9-12.32 0-.93.29-1.66.99-2.02 1.92-.89 2.29-.89 6.22 0 8.51.36.93 1.09 1.63 2.02 1.92 2.82.9 9.5.9 12.32 0 .93-.29 1.66-.99 2.02-1.92.89-2.29.89-6.22 0-8.51zM10.12 15.68V8.32L15.88 12l-5.76 3.68z" />
+      </svg>
+    ),
+  },
+
+  // Row 3
+  {
+    id: "loom",
+    label: "Loom",
+    url: "https://www.loom.com/share/9a8b7c6d5e4f",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-4 w-4 fill-none stroke-white stroke-[2.2]" aria-hidden="true">
+        <circle cx="12" cy="12" r="3" fill="white" />
+        <path d="M12 2v3m0 14v3M2 12h3m14 0h3m-3.07-6.93l-2.12 2.12m-9.62 9.62l-2.12 2.12m0-13.86l2.12 2.12m9.62 9.62l2.12 2.12" />
+      </svg>
+    ),
+  },
+  {
+    id: "linkedin",
+    label: "LinkedIn",
+    url: "https://www.linkedin.com/posts/saas-launch-video",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-4 w-4 fill-white" aria-hidden="true">
+        <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" />
+      </svg>
+    ),
+  },
+  {
+    id: "zoom",
+    label: "Zoom",
+    url: "https://zoom.us/rec/play/xyz789",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-4 w-4 fill-white" aria-hidden="true">
+        <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h8A2.5 2.5 0 0 1 17 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-8A2.5 2.5 0 0 1 4 17.5v-11zm14 2.8l4.4-3.3A1 1 0 0 1 24 6.8v10.4a1 1 0 0 1-1.6.8L18 14.7V9.3z" />
+      </svg>
+    ),
+  },
+
+  // Row 4
+  {
+    id: "gdrive",
+    label: "Google Drive",
+    url: "https://drive.google.com/file/d/1A2b3C4d5E6F7G8/view",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-4 w-4 fill-white" aria-hidden="true">
+        <path d="M8.27 2.5L2.73 12.09l4.55 7.88 5.54-9.59L8.27 2.5zm7.46 0H8.27l4.55 7.88h7.46L15.73 2.5zm1.54 9.59H9.82l-2.54 4.41h14.91l-4.91-8.5v4.09z" />
+      </svg>
+    ),
+  },
+  {
+    id: "dropbox",
+    label: "Dropbox",
+    url: "https://www.dropbox.com/s/rec4920/demo.mp4?dl=0",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-4 w-4 fill-white" aria-hidden="true">
+        <path d="M6 2L0 6.5l6 4.5 6-4.5L6 2zm12 0l-6 4.5 6 4.5 6-4.5L18 2zM0 15.5l6 4.5 6-4.5-6-4.5-6 4.5zm18-4.5l-6 4.5 6 4.5 6-4.5-6-4.5zM6 18.5l6 4.5 6-4.5-6-4.5-6 4.5z" />
+      </svg>
+    ),
+  },
+  {
+    id: "upload",
+    label: "Upload a file",
+    isUpload: true,
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-4 w-4 fill-none stroke-white stroke-[2.2]" aria-hidden="true">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+        <polyline points="17 8 12 3 7 8" />
+        <line x1="12" y1="3" x2="12" y2="15" />
+      </svg>
+    ),
+  },
+];
+
 export function ContentRepurposer() {
   const [viewState, setViewState] = useState<"entry" | "scanning" | "results">("entry");
   const [urlInput, setUrlInput] = useState("");
   const [isFocused, setIsFocused] = useState(false);
-  const [selectedSource, setSelectedSource] = useState<string | null>(null);
   const [scanStep, setScanStep] = useState(0);
   const [videoTitle, setVideoTitle] = useState("How to Build a $10K/mo Micro-SaaS Solo (Full Blueprint)");
   const [videoDuration] = useState("14:28");
@@ -156,22 +291,15 @@ export function ContentRepurposer() {
     }, 650);
   };
 
-  const handleSourceSelect = (source: string) => {
-    setSelectedSource(source);
-    if (source === "youtube") {
-      const demoUrl = "https://www.youtube.com/watch?v=saas-blueprint-10k";
-      setUrlInput(demoUrl);
-      setTimeout(() => {
-        handleStartScan("How to Build a $10K/mo Micro-SaaS Solo (Full Blueprint)");
-      }, 300);
-    } else if (source === "drive") {
-      const demoUrl = "https://drive.google.com/file/d/1A2b3C4d5E6F7G8/view";
-      setUrlInput(demoUrl);
-      setTimeout(() => {
-        handleStartScan("Q3_Product_Growth_Keynote_Recording.mp4");
-      }, 300);
-    } else if (source === "upload") {
+  const handleSourceSelect = (src: SourceOption) => {
+    if (src.isUpload) {
       fileInputRef.current?.click();
+      return;
+    }
+    if (src.url) {
+      setUrlInput(src.url);
+      setIsFocused(false);
+      showToast(`Selected ${src.label}`);
     }
   };
 
@@ -216,7 +344,7 @@ export function ContentRepurposer() {
     showToast("Downloading 9:16 vertical clip (.mp4)...");
   };
 
-  const hasValidInput = urlInput.trim().length > 5;
+  const hasValidInput = urlInput.trim().length > 3;
 
   return (
     <div className="relative mx-auto max-w-6xl w-full px-4 py-8">
@@ -239,35 +367,36 @@ export function ContentRepurposer() {
 
       {/* 1. THE ENTRY VIEW */}
       {viewState === "entry" && (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
+        <div className="flex flex-col items-center justify-center py-12 md:py-16 text-center">
           {/* Header pill badge */}
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#D6CCB5] bg-[#FAF7F0] px-4 py-1.5 text-xs font-semibold tracking-wide text-[#4A4740] shadow-sm">
             <Sparkles className="h-3.5 w-3.5 text-[#7895B2]" />
             AI CONTENT REPURPOSER
           </div>
 
-          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-[#000000] max-w-2xl mb-4 font-serif">
+          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-[#000000] max-w-2xl mb-3 font-serif">
             Turn long videos into viral vertical clips in seconds.
           </h1>
-          <p className="text-sm md:text-base text-[#4A4740] max-w-lg mb-10">
-            Paste any YouTube video, Drive recording, or upload an MP4. Our AI auto-frames 9:16 clips, writes hooks, and adds animated captions.
+          <p className="text-sm md:text-base text-[#4A4740] max-w-xl mb-10 leading-relaxed">
+            Auto-framing 9:16 vertical clips, retention-backed virality scores, dynamic subtitles, hashtags, and optimal scheduling.
           </p>
 
-          {/* Single Pill-Shaped Input Bar with Popover */}
-          <div ref={containerRef} className="relative w-full max-w-2xl">
+          {/* Centered Search/Input Box with Popover */}
+          <div ref={containerRef} className="relative w-full max-w-xl">
+            {/* The Input Bar */}
             <div
-              className={`flex items-center rounded-full border bg-white p-2 shadow-lg transition-all duration-200 ${
+              className={`flex items-center rounded-2xl border bg-white px-3 py-2.5 shadow-sm transition-all duration-200 ${
                 isFocused
-                  ? "border-[#000000] ring-2 ring-[#7895B2]/30 shadow-xl"
+                  ? "border-[#000000] ring-2 ring-[#7895B2]/20 shadow-md"
                   : "border-[#D6CCB5] hover:border-[#7895B2]"
               }`}
             >
-              {/* Link Icon */}
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FAF7F0] text-[#4A4740] ml-1">
-                <Link2 className="h-5 w-5 text-[#7895B2]" />
+              {/* Link Icon (🔗) */}
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center text-[#78716C] pl-1">
+                <Link2 className="h-5 w-5 stroke-[2]" />
               </div>
 
-              {/* Input */}
+              {/* Text Input */}
               <input
                 ref={inputRef}
                 type="text"
@@ -279,8 +408,8 @@ export function ContentRepurposer() {
                     handleStartScan();
                   }
                 }}
-                placeholder="Drop a video link or paste a YouTube URL..."
-                className="flex-1 bg-transparent px-4 py-2 text-sm md:text-base font-medium text-[#000000] placeholder:text-[#9E988D] focus:outline-none"
+                placeholder="Drop a video link"
+                className="flex-1 bg-transparent px-3 py-1 text-sm md:text-base font-normal text-[#1A1917] placeholder:text-[#8C867A] focus:outline-none"
               />
 
               {/* Inline Action Trigger: "Get Clips →" slides in when valid */}
@@ -288,84 +417,53 @@ export function ContentRepurposer() {
                 <button
                   type="button"
                   onClick={() => handleStartScan()}
-                  className="flex items-center gap-1.5 rounded-full bg-[#000000] px-5 py-2.5 text-sm font-bold text-[#FAF7F0] transition hover:bg-[#1A1917] active:scale-95 animate-in fade-in slide-in-from-right-3 duration-200"
+                  className="flex items-center gap-1.5 rounded-xl bg-[#000000] px-4 py-2 text-xs md:text-sm font-bold text-[#FAF7F0] transition hover:bg-[#1A1917] active:scale-95 animate-in fade-in slide-in-from-right-3 duration-200 shadow-sm"
                 >
                   <span>Get Clips</span>
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-3.5 w-3.5" />
                 </button>
               )}
             </div>
 
-            {/* Smart Focus Popover */}
+            {/* Smart Focus Popover - Matches exact layout from reference image */}
             {isFocused && (
-              <div className="absolute left-0 right-0 top-full mt-3 z-30 rounded-2xl border border-[#000000] bg-[#1A1917] p-5 text-left text-white shadow-2xl animate-in fade-in zoom-in-95 duration-150">
-                <p className="text-xs font-semibold tracking-wider uppercase text-[#AEBDCA] mb-3">
-                  Supported Sources (MVP)
-                </p>
+              <div className="absolute left-0 right-0 top-full mt-2 z-40 rounded-2xl border border-[#2A2926] bg-[#1E1E1E] p-5 text-left text-white shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+                {/* Header text */}
+                <h3 className="text-sm font-bold text-white tracking-tight mb-4">
+                  Import a video from any of these
+                </h3>
 
-                {/* Grid of Sources */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mb-4">
-                  {/* YouTube */}
-                  <button
-                    type="button"
-                    onClick={() => handleSourceSelect("youtube")}
-                    className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3 text-left transition hover:border-[#7895B2] hover:bg-white/10 group"
-                  >
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-600/20 text-red-500 group-hover:scale-105 transition-transform">
-                      <Youtube className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold text-white">YouTube</div>
-                      <div className="text-[11px] text-[#AEBDCA]">Pastes link & clips</div>
-                    </div>
-                  </button>
-
-                  {/* Google Drive */}
-                  <button
-                    type="button"
-                    onClick={() => handleSourceSelect("drive")}
-                    className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3 text-left transition hover:border-[#7895B2] hover:bg-white/10 group"
-                  >
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-400 group-hover:scale-105 transition-transform">
-                      <HardDrive className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold text-white">Google Drive</div>
-                      <div className="text-[11px] text-[#AEBDCA]">Shared video file</div>
-                    </div>
-                  </button>
-
-                  {/* Upload File */}
-                  <button
-                    type="button"
-                    onClick={() => handleSourceSelect("upload")}
-                    className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3 text-left transition hover:border-[#7895B2] hover:bg-white/10 group"
-                  >
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-500/20 text-blue-400 group-hover:scale-105 transition-transform">
-                      <Upload className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold text-white">Upload File</div>
-                      <div className="text-[11px] text-[#AEBDCA]">MP4, MOV up to 2GB</div>
-                    </div>
-                  </button>
+                {/* 3-Column x 4-Row Grid of 12 Supported Services */}
+                <div className="grid grid-cols-3 gap-x-4 sm:gap-x-8 gap-y-3.5">
+                  {SOURCES.map((source) => (
+                    <button
+                      key={source.id}
+                      type="button"
+                      onClick={() => handleSourceSelect(source)}
+                      className="group flex items-center gap-2.5 rounded-lg py-1 px-1.5 text-left transition hover:bg-white/10 active:scale-95"
+                    >
+                      <div className="flex h-5 w-5 shrink-0 items-center justify-center opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all">
+                        {source.icon}
+                      </div>
+                      <span className="truncate text-xs sm:text-sm font-medium text-white/90 group-hover:text-white">
+                        {source.label}
+                      </span>
+                    </button>
+                  ))}
                 </div>
 
-                {/* Trust / Friction-Reducer Footer */}
-                <div className="flex items-center justify-between border-t border-white/10 pt-3 text-xs text-[#AEBDCA]">
-                  <span className="flex items-center gap-1.5 font-medium">
-                    <Sparkles className="h-3.5 w-3.5 text-[#7895B2]" />
-                    Free to try. No login required. Max 20 mins.
-                  </span>
+                {/* Footer text from reference image */}
+                <div className="mt-5 pt-3 border-t border-white/10 flex items-center justify-between text-[11px] sm:text-xs text-[#AEBDCA]">
+                  <span>On every plan, free included. Desktop and mobile.</span>
                   <button
                     type="button"
                     onClick={() => {
                       setUrlInput("https://www.youtube.com/watch?v=saas-blueprint-10k");
                       handleStartScan("How to Build a $10K/mo Micro-SaaS Solo (Full Blueprint)");
                     }}
-                    className="text-xs font-semibold text-[#7895B2] hover:underline"
+                    className="font-semibold text-white/80 hover:text-white hover:underline transition"
                   >
-                    Try sample video →
+                    Quick demo →
                   </button>
                 </div>
               </div>
