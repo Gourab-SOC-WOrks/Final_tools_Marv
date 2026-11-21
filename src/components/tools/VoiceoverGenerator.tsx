@@ -365,32 +365,32 @@ export function VoiceoverGenerator() {
         {/* 1. INPUT & VOICE CONTROLS (Left / Top Column - 7 Cols) */}
         {/* ==================================================================== */}
         <div className="lg:col-span-7 space-y-6">
-          <div className="rounded-3xl border border-[#D6CCB5] bg-white p-6 md:p-8 shadow-sm space-y-6">
+          <div className="rounded-3xl border border-black/[0.08] bg-white p-6 md:p-8 shadow-[0_4px_24px_rgba(0,0,0,0.03)] space-y-6">
             {/* Header with Title and Fast Sample Buttons */}
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#EFECE6] pb-4">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-black/[0.06] pb-4">
               <div>
-                <span className="text-[11px] font-bold tracking-widest text-[#78716C] uppercase">
+                <span className="text-[11px] font-semibold tracking-widest text-[#86868B] uppercase">
                   NARRATION STUDIO
                 </span>
-                <h2 className="text-xl font-bold tracking-tight text-[#1A1917] mt-0.5">
+                <h2 className="text-xl font-semibold tracking-tight text-[#1D1D1F] mt-0.5">
                   AI Voiceover Generator
                 </h2>
               </div>
 
               {/* Sample Script Quick Pills */}
               <div className="flex items-center gap-1.5">
-                <span className="text-xs text-[#78716C] hidden sm:inline">Try sample:</span>
+                <span className="text-xs text-[#86868B] hidden sm:inline">Try sample:</span>
                 <button
                   type="button"
                   onClick={() => setScript(SAMPLE_SCRIPTS[0])}
-                  className="rounded-lg border border-[#D6CCB5] bg-[#FAF7F0] px-2.5 py-1 text-[11px] font-semibold text-[#4A4740] hover:border-[#1A1917] hover:bg-white transition active:scale-95"
+                  className="rounded-lg border border-black/[0.08] bg-black/[0.02] px-2.5 py-1 text-[11px] font-medium text-[#1D1D1F] hover:bg-black/[0.06] transition active:scale-95"
                 >
                   Product Tour
                 </button>
                 <button
                   type="button"
                   onClick={() => setScript(SAMPLE_SCRIPTS[1])}
-                  className="rounded-lg border border-[#D6CCB5] bg-[#FAF7F0] px-2.5 py-1 text-[11px] font-semibold text-[#4A4740] hover:border-[#1A1917] hover:bg-white transition active:scale-95"
+                  className="rounded-lg border border-black/[0.08] bg-black/[0.02] px-2.5 py-1 text-[11px] font-medium text-[#1D1D1F] hover:bg-black/[0.06] transition active:scale-95"
                 >
                   3-Step SOP
                 </button>
@@ -400,7 +400,7 @@ export function VoiceoverGenerator() {
             {/* Script Text Area with Character Counter */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-[#1A1917] uppercase tracking-wider">
+                <label className="text-[11px] font-semibold text-[#86868B] uppercase tracking-wider">
                   Script Text Area
                 </label>
                 <span
@@ -409,7 +409,7 @@ export function VoiceoverGenerator() {
                       ? "text-amber-600 font-bold"
                       : script.length >= 1000
                       ? "text-red-600 font-bold"
-                      : "text-[#78716C]"
+                      : "text-[#86868B]"
                   }`}
                 >
                   {script.length.toLocaleString()} / 1,000 characters
@@ -423,14 +423,14 @@ export function VoiceoverGenerator() {
                   value={script}
                   onChange={(e) => setScript(e.target.value)}
                   placeholder="Paste or type your video narration, explainer script, or social audio hook here..."
-                  className="w-full rounded-2xl border border-[#D6CCB5] bg-[#FAF7F0]/40 p-4 text-sm text-[#1A1917] placeholder:text-[#9E988D] focus:border-blue-600 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600 transition resize-y leading-relaxed"
+                  className="w-full rounded-2xl border border-black/[0.08] bg-black/[0.015] p-4 text-sm text-[#1D1D1F] placeholder:text-[#86868B]/60 focus:border-[#0071E3] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0071E3]/20 transition resize-y leading-relaxed"
                 />
 
                 {/* Quick copy button */}
                 <button
                   type="button"
                   onClick={handleCopyScript}
-                  className="absolute right-3 bottom-3 flex items-center gap-1 rounded-lg border border-[#D6CCB5]/80 bg-white/90 px-2 py-1 text-[11px] font-medium text-[#78716C] hover:text-[#1A1917] hover:border-[#1A1917] transition shadow-2xs backdrop-blur-xs"
+                  className="absolute right-3 bottom-3 flex items-center gap-1 rounded-lg border border-black/[0.08] bg-white/90 px-2 py-1 text-[11px] font-medium text-[#86868B] hover:text-[#1D1D1F] hover:border-black/[0.2] transition shadow-2xs backdrop-blur-xs"
                   title="Copy script to clipboard"
                 >
                   {copiedScript ? <Check className="h-3 w-3 text-emerald-600" /> : <Copy className="h-3 w-3" />}
@@ -439,28 +439,28 @@ export function VoiceoverGenerator() {
               </div>
 
               {/* Pause Tip Hint */}
-              <div className="flex items-center gap-2 px-1 text-xs text-[#78716C]">
-                <Info className="h-3.5 w-3.5 text-blue-600 shrink-0" />
+              <div className="flex items-center gap-2 px-1 text-xs text-[#86868B]">
+                <Info className="h-3.5 w-3.5 text-[#0071E3] shrink-0" />
                 <span>
-                  <strong className="text-[#4A4740]">Tip:</strong> Use commas (
-                  <code className="rounded bg-[#EFECE6] px-1 py-0.5 text-[11px] text-[#1A1917]">,</code>) or ellipses (
-                  <code className="rounded bg-[#EFECE6] px-1 py-0.5 text-[11px] text-[#1A1917]">...</code>) for natural breathing pauses.
+                  <strong className="text-[#1D1D1F]">Tip:</strong> Use commas (
+                  <code className="rounded bg-black/[0.04] px-1 py-0.5 text-[11px] text-[#1D1D1F]">,</code>) or ellipses (
+                  <code className="rounded bg-black/[0.04] px-1 py-0.5 text-[11px] text-[#1D1D1F]">...</code>) for natural breathing pauses.
                 </span>
               </div>
             </div>
 
-            {/* Voice Selector Cards (4–6 Curated Voices) */}
+            {/* Voice Selector Cards (4–6 Curated Voices - Apple Grid) */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-[#1A1917] uppercase tracking-wider">
-                  Select Curated Studio Voice
+                <label className="text-[11px] font-semibold text-[#86868B] uppercase tracking-wider">
+                  Curated Studio Voices
                 </label>
-                <span className="text-[11px] text-[#78716C]">
-                  6 neural voices · Click ▶ to preview tone
+                <span className="text-[11px] text-[#86868B]">
+                  6 neural personas · Tap ▶ to audition
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
                 {CURATED_VOICES.map((v) => {
                   const isSelected = selectedVoiceId === v.id;
                   const isPreviewing = previewingVoiceId === v.id;
@@ -477,41 +477,39 @@ export function VoiceoverGenerator() {
                           setSelectedVoiceId(v.id);
                         }
                       }}
-                      className={`relative flex flex-col justify-between rounded-2xl border p-3.5 text-left transition-all duration-150 cursor-pointer active:scale-[0.98] ${
+                      className={`group relative flex flex-col justify-between rounded-2xl border p-3.5 text-left transition-all duration-200 cursor-pointer active:scale-[0.98] ${
                         isSelected
-                          ? "border-blue-600 bg-white ring-2 ring-blue-600/20 shadow-[0_4px_12px_rgba(37,99,235,0.12),inset_0_1px_0.5px_rgba(255,255,255,0.9)]"
-                          : "border-[#D6CCB5] bg-[#FAF7F0] hover:border-[#1A1917] hover:bg-white"
+                          ? "border-[#0071E3] bg-[#0071E3]/[0.03] shadow-[0_2px_12px_rgba(0,113,227,0.12),inset_0_1px_0.5px_rgba(255,255,255,0.9)] ring-1 ring-[#0071E3]"
+                          : "border-black/[0.08] bg-white hover:border-black/[0.18] hover:shadow-xs"
                       }`}
                     >
-                      {/* Top Row: Name, Tag, and Audition Button */}
+                      {/* Top Row: Name, Subtle Metadata Tag & Apple Audition Button */}
                       <div className="flex items-start justify-between gap-2">
                         <div>
                           <div className="flex items-center gap-1.5">
-                            <span className="text-sm font-bold text-[#1A1917]">{v.name}</span>
-                            <span
-                              className={`rounded-full px-1.5 py-0.2 text-[9px] font-semibold uppercase tracking-wider ${
-                                v.gender === "female"
-                                  ? "bg-purple-100 text-purple-800"
-                                  : "bg-blue-100 text-blue-800"
-                              }`}
-                            >
+                            <span className="text-sm font-semibold tracking-tight text-[#1D1D1F]">
+                              {v.name}
+                            </span>
+                            <span className="text-[10px] font-medium text-[#86868B] bg-black/[0.04] px-1.5 py-0.5 rounded-md capitalize">
                               {v.gender}
                             </span>
                           </div>
-                          <p className="text-[11px] font-semibold text-blue-600 mt-0.5">{v.tag}</p>
+                          <p className="text-xs font-medium text-[#0071E3] mt-0.5">
+                            {v.tag}
+                          </p>
                         </div>
 
-                        {/* Tiny ▶ Preview Button */}
+                        {/* Apple-style circular preview button */}
                         <button
                           type="button"
                           onClick={(e) => handlePreviewVoice(v, e)}
-                          title={`Listen to 2-second voice audition for ${v.name}`}
-                          className={`flex h-7 w-7 items-center justify-center rounded-full transition-all active:scale-90 shadow-2xs ${
+                          title={`Audition voice sample for ${v.name}`}
+                          className={`flex h-7 w-7 items-center justify-center rounded-full transition-all active:scale-90 ${
                             isPreviewing
-                              ? "bg-blue-600 text-white animate-pulse"
+                              ? "bg-[#0071E3] text-white shadow-sm animate-pulse"
                               : isSelected
-                              ? "bg-blue-100 text-blue-700 hover:bg-blue-200"
-                              : "bg-white border border-[#D6CCB5] text-[#4A4740] hover:text-[#1A1917] hover:border-[#1A1917]"
+                              ? "bg-[#0071E3]/10 text-[#0071E3] hover:bg-[#0071E3]/20"
+                              : "bg-black/[0.04] text-[#1D1D1F] hover:bg-black/[0.08]"
                           }`}
                         >
                           {isPreviewing ? (
@@ -523,7 +521,7 @@ export function VoiceoverGenerator() {
                       </div>
 
                       {/* Description footnote */}
-                      <p className="text-[11px] text-[#78716C] mt-2 line-clamp-1">
+                      <p className="text-[11px] text-[#86868B] mt-2 line-clamp-1">
                         {v.description}
                       </p>
                     </div>
@@ -532,20 +530,20 @@ export function VoiceoverGenerator() {
               </div>
             </div>
 
-            {/* Quick Delivery Controls (Inline Pills) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-              {/* Speed Toggle: 0.9x | 1.0x | 1.15x | 1.25x */}
+            {/* Quick Delivery Controls (Apple Segmented Controls) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+              {/* Speed Multiplier */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-[#1A1917] uppercase tracking-wider">
+                  <label className="text-[11px] font-semibold text-[#86868B] uppercase tracking-wider">
                     Speed Multiplier
                   </label>
-                  <span className="text-[10px] text-blue-600 font-semibold">
-                    {speed === 1.15 ? "🔥 Best for Shorts/Reels" : `${speed}x`}
+                  <span className="text-[10px] text-[#0071E3] font-semibold">
+                    {speed === 1.15 ? "Best for Shorts / Reels" : `${speed}x`}
                   </span>
                 </div>
 
-                <div className="grid grid-cols-4 gap-1 p-1 rounded-2xl bg-[#EFECE6]/85 border border-[#DDD7CC] shadow-inner">
+                <div className="grid grid-cols-4 gap-1 p-1 rounded-xl bg-black/[0.04] border border-black/[0.04]">
                   {SPEED_PRESETS.map((s) => (
                     <button
                       key={s}
@@ -554,10 +552,10 @@ export function VoiceoverGenerator() {
                         setSpeed(s);
                         setPlayerSpeed(s);
                       }}
-                      className={`py-1.5 text-xs font-semibold rounded-xl text-center transition-all duration-150 active:scale-[0.96] ${
+                      className={`py-1.5 text-xs font-medium rounded-lg text-center transition-all duration-150 active:scale-[0.96] ${
                         speed === s
-                          ? "bg-white text-[#1A1917] shadow-[0_2px_6px_rgba(0,0,0,0.06),inset_0_1px_0.5px_rgba(255,255,255,0.95)] border border-black/[0.04]"
-                          : "text-[#57534E] hover:text-[#1A1917] hover:bg-white/50 border border-transparent"
+                          ? "bg-white text-[#1D1D1F] shadow-[0_1px_3px_rgba(0,0,0,0.08),0_1px_1px_rgba(0,0,0,0.04)] font-semibold"
+                          : "text-[#86868B] hover:text-[#1D1D1F] hover:bg-white/50"
                       }`}
                     >
                       {s}x
@@ -566,22 +564,22 @@ export function VoiceoverGenerator() {
                 </div>
               </div>
 
-              {/* Tone / Style Pill: Natural | Energetic | Calm | Dramatic */}
+              {/* Tone & Delivery Style */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#1A1917] uppercase tracking-wider block">
+                <label className="text-[11px] font-semibold text-[#86868B] uppercase tracking-wider block">
                   Tone & Delivery Style
                 </label>
 
-                <div className="grid grid-cols-4 gap-1 p-1 rounded-2xl bg-[#EFECE6]/85 border border-[#DDD7CC] shadow-inner">
+                <div className="grid grid-cols-4 gap-1 p-1 rounded-xl bg-black/[0.04] border border-black/[0.04]">
                   {TONE_STYLES.map((t) => (
                     <button
                       key={t.id}
                       type="button"
                       onClick={() => setTone(t.id)}
-                      className={`py-1.5 text-[11px] font-semibold rounded-xl text-center transition-all duration-150 active:scale-[0.96] ${
+                      className={`py-1.5 text-xs font-medium rounded-lg text-center transition-all duration-150 active:scale-[0.96] ${
                         tone === t.id
-                          ? "bg-white text-[#1A1917] shadow-[0_2px_6px_rgba(0,0,0,0.06),inset_0_1px_0.5px_rgba(255,255,255,0.95)] border border-black/[0.04]"
-                          : "text-[#57534E] hover:text-[#1A1917] hover:bg-white/50 border border-transparent"
+                          ? "bg-white text-[#1D1D1F] shadow-[0_1px_3px_rgba(0,0,0,0.08),0_1px_1px_rgba(0,0,0,0.04)] font-semibold"
+                          : "text-[#86868B] hover:text-[#1D1D1F] hover:bg-white/50"
                       }`}
                     >
                       {t.label}
@@ -636,16 +634,16 @@ export function VoiceoverGenerator() {
         {/* 2. AUDIO OUTPUT PLAYER & CONTROLS (Right / Bottom Column - 5 Cols) */}
         {/* ==================================================================== */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="rounded-3xl border border-[#D6CCB5] bg-white p-6 md:p-8 shadow-sm space-y-6">
+          <div className="rounded-3xl border border-black/[0.08] bg-white p-6 md:p-8 shadow-[0_4px_24px_rgba(0,0,0,0.03)] space-y-6">
             {/* Player Header */}
-            <div className="flex items-center justify-between border-b border-[#EFECE6] pb-4">
+            <div className="flex items-center justify-between border-b border-black/[0.06] pb-4">
               <div>
-                <span className="text-[11px] font-bold tracking-widest text-[#78716C] uppercase">
+                <span className="text-[11px] font-semibold tracking-widest text-[#86868B] uppercase">
                   MASTER AUDIO OUTPUT
                 </span>
-                <h3 className="text-base font-bold text-[#1A1917] mt-0.5 flex items-center gap-2">
+                <h3 className="text-base font-semibold text-[#1D1D1F] mt-0.5 flex items-center gap-2">
                   <span>{activeVoice.name}</span>
-                  <span className="text-xs font-normal text-[#78716C]">· {activeVoice.tag}</span>
+                  <span className="text-xs font-normal text-[#86868B]">· {activeVoice.tag}</span>
                 </h3>
               </div>
 
@@ -655,7 +653,7 @@ export function VoiceoverGenerator() {
                 disabled={busy || !script.trim()}
                 onClick={handleGenerate}
                 title="Quick Regenerate: Re-roll inflection with one click"
-                className="flex items-center gap-1.5 rounded-xl border border-[#D6CCB5] bg-[#FAF7F0] px-3 py-1.5 text-xs font-semibold text-[#1A1917] hover:border-[#1A1917] hover:bg-white transition active:scale-95 disabled:opacity-50 shadow-2xs"
+                className="flex items-center gap-1.5 rounded-xl border border-black/[0.08] bg-white px-3 py-1.5 text-xs font-medium text-[#1D1D1F] hover:bg-black/[0.03] transition active:scale-95 disabled:opacity-50 shadow-2xs"
               >
                 <RotateCcw className={`h-3.5 w-3.5 ${busy ? "animate-spin" : ""}`} />
                 <span className="hidden sm:inline">Re-roll</span>
@@ -663,7 +661,7 @@ export function VoiceoverGenerator() {
             </div>
 
             {/* Waveform Audio Player Box */}
-            <div className="rounded-2xl border border-[#E5E0D5] bg-[#FAF7F0]/70 p-5 space-y-4">
+            <div className="rounded-2xl border border-black/[0.06] bg-black/[0.02] p-5 space-y-4">
               {/* Top bar with Play/Pause & Time */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -671,27 +669,27 @@ export function VoiceoverGenerator() {
                   <button
                     type="button"
                     onClick={togglePlay}
-                    className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-b from-[#2563EB] to-[#1D4ED8] hover:from-[#1D4ED8] hover:to-[#1E40AF] text-white shadow-[0_2px_4px_rgba(37,99,235,0.25),inset_0_1px_0.5px_rgba(255,255,255,0.35)] active:scale-95 transition-all"
+                    className="flex h-11 w-11 items-center justify-center rounded-full bg-[#0071E3] hover:bg-[#0077ED] text-white shadow-[0_2px_8px_rgba(0,113,227,0.25),inset_0_1px_0.5px_rgba(255,255,255,0.35)] active:scale-95 transition-all"
                   >
                     {isPlaying ? (
-                      <Pause className="h-5 w-5 fill-current" />
+                      <Pause className="h-4.5 w-4.5 fill-current" />
                     ) : (
-                      <Play className="h-5 w-5 fill-current translate-x-0.5" />
+                      <Play className="h-4.5 w-4.5 fill-current translate-x-0.5" />
                     )}
                   </button>
 
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-[#78716C] tracking-wider block">
+                    <span className="text-[10px] uppercase font-semibold text-[#86868B] tracking-wider block">
                       Playback
                     </span>
-                    <span className="text-base font-mono font-bold text-[#1A1917]">
+                    <span className="text-sm font-mono font-semibold text-[#1D1D1F]">
                       {formatTime(currentTime)} / {formatTime(audioDuration)}
                     </span>
                   </div>
                 </div>
 
                 {/* Speed indicator & mute toggle */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                   <button
                     type="button"
                     onClick={() => {
@@ -700,7 +698,7 @@ export function VoiceoverGenerator() {
                       setIsMuted(nextMute);
                       audioRef.current.muted = nextMute;
                     }}
-                    className="p-1.5 rounded-lg text-[#78716C] hover:text-[#1A1917] hover:bg-white/80 transition"
+                    className="p-1.5 rounded-lg text-[#86868B] hover:text-[#1D1D1F] hover:bg-black/[0.04] transition"
                     title={isMuted ? "Unmute" : "Mute"}
                   >
                     {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
@@ -713,7 +711,7 @@ export function VoiceoverGenerator() {
                 <div
                   ref={waveformRef}
                   onClick={handleWaveformClick}
-                  className="relative flex items-center justify-between h-14 w-full cursor-pointer rounded-xl bg-white/80 p-2 border border-[#E5E0D5] hover:border-blue-400 transition-colors select-none group"
+                  className="relative flex items-center justify-between h-14 w-full cursor-pointer rounded-xl bg-white p-2 border border-black/[0.06] hover:border-[#0071E3]/50 transition-colors select-none group"
                   title="Click anywhere to seek"
                 >
                   {WAVEFORM_BAR_HEIGHTS.map((heightPercent, index) => {
@@ -726,8 +724,8 @@ export function VoiceoverGenerator() {
                         style={{ height: `${heightPercent}%` }}
                         className={`w-1 rounded-full transition-all duration-75 ${
                           isPassed
-                            ? "bg-gradient-to-t from-blue-600 to-indigo-600 shadow-2xs"
-                            : "bg-[#D6CCB5]/80 group-hover:bg-[#C9BEA4]"
+                            ? "bg-[#0071E3] shadow-2xs"
+                            : "bg-black/[0.08] group-hover:bg-black/[0.14]"
                         }`}
                       />
                     );
@@ -736,32 +734,32 @@ export function VoiceoverGenerator() {
                   {/* Playhead line */}
                   <div
                     style={{ left: `${progressFraction * 100}%` }}
-                    className="absolute top-1 bottom-1 w-0.5 bg-blue-600 pointer-events-none transition-all duration-75"
+                    className="absolute top-1 bottom-1 w-0.5 bg-[#0071E3] pointer-events-none transition-all duration-75"
                   >
-                    <div className="h-2 w-2 rounded-full bg-blue-600 -translate-x-[3px] -translate-y-0.5 shadow-sm" />
+                    <div className="h-2 w-2 rounded-full bg-[#0071E3] -translate-x-[3px] -translate-y-0.5 shadow-xs" />
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between text-[11px] text-[#78716C] px-1 font-mono">
+                <div className="flex items-center justify-between text-[11px] text-[#86868B] px-1 font-mono">
                   <span>00:00</span>
-                  <span className="text-[10px] font-sans text-blue-600">Click waveform to seek</span>
+                  <span className="text-[10px] font-sans text-[#0071E3]">Click waveform to seek</span>
                   <span>{formatTime(audioDuration)}</span>
                 </div>
               </div>
 
               {/* Playback speed preview toggle right on player */}
-              <div className="flex items-center justify-between pt-2 border-t border-[#EAE5D9]">
-                <span className="text-xs font-medium text-[#78716C]">Playback Audition Speed:</span>
+              <div className="flex items-center justify-between pt-2 border-t border-black/[0.05]">
+                <span className="text-xs font-medium text-[#86868B]">Audition Speed:</span>
                 <div className="flex items-center gap-1">
                   {[0.9, 1.0, 1.15, 1.25, 1.5].map((rate) => (
                     <button
                       key={rate}
                       type="button"
                       onClick={() => setPlayerSpeed(rate)}
-                      className={`px-2 py-0.5 text-xs font-semibold rounded-md transition ${
+                      className={`px-2 py-0.5 text-xs font-medium rounded-md transition ${
                         playerSpeed === rate
-                          ? "bg-blue-600 text-white"
-                          : "text-[#57534E] hover:text-[#1A1917] hover:bg-white"
+                          ? "bg-[#0071E3] text-white"
+                          : "text-[#86868B] hover:text-[#1D1D1F] hover:bg-black/[0.04]"
                       }`}
                     >
                       {rate}x
@@ -773,50 +771,50 @@ export function VoiceoverGenerator() {
 
             {/* Direct Download Buttons */}
             <div className="space-y-3">
-              <label className="text-xs font-bold text-[#1A1917] uppercase tracking-wider block">
+              <label className="text-[11px] font-semibold text-[#86868B] uppercase tracking-wider block">
                 Export Production Audio
               </label>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {/* Download .mp3 (Primary button) */}
                 <button
                   type="button"
                   onClick={() => handleDownload("mp3")}
-                  className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-b from-[#1A1917] to-[#2E2B27] hover:from-[#2E2B27] hover:to-[#3F3B35] text-white px-4 py-3.5 text-xs font-bold tracking-wide shadow-sm active:scale-[0.98] transition-all"
+                  className="flex items-center justify-center gap-2 rounded-xl bg-[#1D1D1F] hover:bg-[#2D2D2F] text-white px-4 py-3 text-xs font-semibold tracking-tight shadow-[0_1px_3px_rgba(0,0,0,0.12),inset_0_1px_0.5px_rgba(255,255,255,0.2)] active:scale-[0.985] transition-all"
                 >
-                  <Download className="h-4 w-4" />
-                  <span>Download .mp3 (Fast)</span>
+                  <Download className="h-3.5 w-3.5" />
+                  <span>Download .mp3 · Fast</span>
                 </button>
 
                 {/* Download .wav (Secondary option for video editors) */}
                 <button
                   type="button"
                   onClick={() => handleDownload("wav")}
-                  className="flex items-center justify-center gap-2 rounded-2xl border border-[#D6CCB5] bg-white hover:border-[#1A1917] hover:bg-[#FAF7F0] text-[#1A1917] px-4 py-3.5 text-xs font-bold tracking-wide shadow-2xs active:scale-[0.98] transition-all"
+                  className="flex items-center justify-center gap-2 rounded-xl border border-black/[0.1] bg-white hover:bg-black/[0.02] text-[#1D1D1F] px-4 py-3 text-xs font-semibold tracking-tight shadow-[0_1px_2px_rgba(0,0,0,0.04)] active:scale-[0.985] transition-all"
                 >
-                  <FileAudio className="h-4 w-4 text-[#78716C]" />
-                  <span>Download .wav (Studio)</span>
+                  <FileAudio className="h-3.5 w-3.5 text-[#86868B]" />
+                  <span>Download .wav · Studio</span>
                 </button>
               </div>
 
-              <p className="text-center text-[11px] text-[#78716C]">
+              <p className="text-center text-[11px] text-[#86868B]">
                 Pristine 48kHz neural synthesis · Ready for Premiere, Final Cut, CapCut & DaVinci
               </p>
             </div>
 
             {/* Quick Specs Cards */}
-            <div className="grid grid-cols-3 gap-2 rounded-2xl bg-[#FAF7F0] p-3 text-center border border-[#E5E0D5]">
+            <div className="grid grid-cols-3 gap-2 rounded-xl bg-black/[0.03] p-3 text-center border border-black/[0.04]">
               <div>
-                <span className="block text-[10px] text-[#78716C] uppercase font-bold">Bitrate</span>
-                <span className="text-xs font-bold text-[#1A1917]">320 kbps</span>
+                <span className="block text-[10px] text-[#86868B] uppercase font-semibold">Bitrate</span>
+                <span className="text-xs font-semibold text-[#1D1D1F]">320 kbps</span>
               </div>
-              <div className="border-x border-[#E5E0D5]">
-                <span className="block text-[10px] text-[#78716C] uppercase font-bold">Sample Rate</span>
-                <span className="text-xs font-bold text-[#1A1917]">48 kHz</span>
+              <div className="border-x border-black/[0.06]">
+                <span className="block text-[10px] text-[#86868B] uppercase font-semibold">Sample Rate</span>
+                <span className="text-xs font-semibold text-[#1D1D1F]">48 kHz</span>
               </div>
               <div>
-                <span className="block text-[10px] text-[#78716C] uppercase font-bold">License</span>
-                <span className="text-xs font-bold text-emerald-700">Commercial</span>
+                <span className="block text-[10px] text-[#86868B] uppercase font-semibold">License</span>
+                <span className="text-xs font-semibold text-emerald-600">Commercial</span>
               </div>
             </div>
           </div>
