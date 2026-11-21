@@ -451,21 +451,6 @@ export function ContentRepurposer() {
                     </button>
                   ))}
                 </div>
-
-                {/* Footer text from reference image */}
-                <div className="mt-5 pt-3 border-t border-white/10 flex items-center justify-between text-[11px] sm:text-xs text-[#AEBDCA]">
-                  <span>On every plan, free included. Desktop and mobile.</span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setUrlInput("https://www.youtube.com/watch?v=saas-blueprint-10k");
-                      handleStartScan("How to Build a $10K/mo Micro-SaaS Solo (Full Blueprint)");
-                    }}
-                    className="font-semibold text-white/80 hover:text-white hover:underline transition"
-                  >
-                    Quick demo →
-                  </button>
-                </div>
               </div>
             )}
           </div>
