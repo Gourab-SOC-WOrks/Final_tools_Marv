@@ -1460,7 +1460,7 @@ Instruction: [1-2 sentences of specific instructions]
                                 <button
                                   type="button"
                                   onClick={() => setExpandedPropsStep(expandedPropsStep === idx ? null : idx)}
-                                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition shadow-2xs ${
+                                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition duration-150 active:scale-[0.96] shadow-2xs ${
                                     expandedPropsStep === idx
                                       ? "bg-blue-600 border-blue-600 text-white shadow-xs"
                                       : "bg-white border-[#D6CCB5] text-[#1A1917] hover:border-[#1A1917]"
@@ -1483,7 +1483,7 @@ Instruction: [1-2 sentences of specific instructions]
                               {/* Shape Pills */}
                               <div className="flex items-center gap-1.5">
                                 <span className="font-semibold text-[#78716C] text-[11px]">Shape:</span>
-                                <div className="flex items-center rounded-xl border border-[#D6CCB5] bg-white p-0.5 text-xs font-medium text-[#1A1917]">
+                                <div className="flex items-center rounded-full border border-[#D6CCB5] bg-white p-0.5 text-xs font-medium text-[#1A1917]">
                                   {[
                                     { id: "circle", label: "Dot", icon: Circle },
                                     { id: "box", label: "Box", icon: Square },
@@ -1497,7 +1497,7 @@ Instruction: [1-2 sentences of specific instructions]
                                         key={s.id}
                                         type="button"
                                         onClick={() => updateStepAnnotation(idx, { shape: s.id as HotspotShape })}
-                                        className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg transition ${
+                                        className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full transition duration-150 active:scale-[0.96] ${
                                           isActive
                                             ? "bg-[#1A1917] text-white font-semibold shadow-xs"
                                             : "text-[#78716C] hover:text-[#1A1917] hover:bg-stone-100"
@@ -1512,24 +1512,26 @@ Instruction: [1-2 sentences of specific instructions]
                                 </div>
                               </div>
 
-                              {/* Quick Actions (Center & Remove) */}
-                              <div className="flex items-center gap-2 text-xs text-[#78716C]">
+                              {/* Quick Actions (Apple-style Capsule Buttons) */}
+                              <div className="flex items-center gap-1.5">
                                 <button
                                   type="button"
                                   onClick={() => updateStepAnnotation(idx, { x: 50, y: 50 })}
-                                  className="text-stone-700 hover:text-black hover:underline font-medium transition"
+                                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white hover:bg-stone-50 text-stone-700 hover:text-stone-900 border border-[#D6CCB5] shadow-[0_1px_2px_rgba(0,0,0,0.04)] text-xs font-medium active:scale-[0.96] transition-all duration-150"
                                   title="Reset to image center (50%, 50%)"
                                 >
-                                  Center Hotspot
+                                  <Crosshair className="h-3 w-3 text-stone-500" />
+                                  <span>Center Hotspot</span>
                                 </button>
-                                <span>•</span>
+
                                 <button
                                   type="button"
                                   onClick={() => toggleHotspot(idx)}
-                                  className="text-red-600 hover:text-red-700 hover:underline font-medium transition"
+                                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50/90 hover:bg-rose-100/90 text-rose-600 hover:text-rose-700 border border-rose-200/80 shadow-[0_1px_2px_rgba(244,63,94,0.05)] text-xs font-medium active:scale-[0.96] transition-all duration-150"
                                   title="Remove hotspot from this step"
                                 >
-                                  Remove Hotspot
+                                  <Trash2 className="h-3 w-3 text-rose-500" />
+                                  <span>Remove Hotspot</span>
                                 </button>
                               </div>
                             </div>
