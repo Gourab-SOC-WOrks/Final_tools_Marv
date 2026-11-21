@@ -724,16 +724,16 @@ export function DemoScriptGenerator() {
                           type="text"
                           value={scene.name}
                           onChange={(e) => updateScene(scene.id, "name", e.target.value)}
-                          style={{ width: `${Math.max(4, scene.name.length + 1)}ch` }}
-                          className="font-semibold text-xs text-[#1D1D1F] bg-transparent hover:bg-black/[0.04] focus:bg-white focus:ring-1 focus:ring-[#0071E3]/30 rounded-md px-1.5 py-0.5 focus:outline-none transition-all"
+                          style={{ width: `${Math.max(6, scene.name.length + 2)}ch` }}
+                          className="font-semibold text-xs text-[#1D1D1F] bg-transparent hover:bg-black/[0.04] focus:bg-white focus:ring-1 focus:ring-[#0071E3]/30 rounded-md px-1.5 py-0.5 focus:outline-none transition-all max-w-[220px]"
                           title="Click to edit scene name"
                         />
                         <input
                           type="text"
                           value={scene.timeRange}
                           onChange={(e) => updateScene(scene.id, "timeRange", e.target.value)}
-                          style={{ width: `${Math.max(9, scene.timeRange.length + 1)}ch` }}
-                          className="text-[11px] font-mono font-medium text-[#86868B] bg-black/[0.04] hover:bg-black/[0.08] focus:bg-white focus:text-[#1D1D1F] focus:ring-1 focus:ring-[#0071E3]/30 px-2.5 py-0.5 rounded-full border border-black/[0.06] text-center focus:outline-none transition-all shrink-0"
+                          style={{ width: `${Math.max(13, scene.timeRange.length + 3)}ch` }}
+                          className="min-w-[108px] text-[11px] font-mono font-medium text-[#86868B] bg-black/[0.04] hover:bg-black/[0.08] focus:bg-white focus:text-[#1D1D1F] focus:ring-1 focus:ring-[#0071E3]/30 px-3 py-0.5 rounded-full border border-black/[0.06] text-center focus:outline-none transition-all shrink-0"
                           title="Click to edit timestamp range"
                         />
                       </div>
