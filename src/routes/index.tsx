@@ -333,8 +333,8 @@ function Index() {
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           {/* Eyebrow Chip */}
           <div className="flex justify-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#D6CCB5] bg-[#FFFFFF] px-4 py-1.5 text-xs font-semibold tracking-wider text-[#000000] shadow-sm">
-              <img src={marvedgeLogo} alt="" className="h-3.5 w-3.5 object-contain" />
+            <div className="inline-flex items-center gap-2.5 rounded-full border border-[#D6CCB5] bg-[#FFFFFF] px-4 py-1.5 text-xs font-semibold tracking-wider text-[#000000] shadow-sm">
+              <img src={marvedgeLogo} alt="" className="h-4 w-auto object-contain" />
               <span>19 BROWSER & AI TOOLS · ZERO SERVER UPLOADS</span>
             </div>
           </div>

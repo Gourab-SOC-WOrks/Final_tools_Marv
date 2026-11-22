@@ -107,7 +107,7 @@ export function SiteFooter() {
           <img
             src={marvedgeLogo}
             alt="Marvedge Logo"
-            className="h-6 w-6 object-contain"
+            className="h-7 w-auto object-contain"
           />
           <p className="text-xs text-[#000000]/70">
             © {new Date().getFullYear()} Marvedge Inc. 19 Browser-Native & AI Media Tools.

@@ -92,16 +92,16 @@ export function SiteHeader() {
         {/* Brand Monogram & Title */}
         <Link
           to="/"
-          className={`group flex items-center gap-2.5 rounded-full pr-1 transition-transform active:scale-[0.98] ${focusRing}`}
+          className={`group flex items-center gap-3 rounded-full pr-1 transition-transform active:scale-[0.98] ${focusRing}`}
         >
           <img
             src={marvedgeLogo}
             alt="Marvedge Logo"
-            className="h-8 w-8 object-contain transition-transform group-hover:scale-105"
+            className="h-9 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
           />
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-[16px] font-bold tracking-tight text-[#000000]">Marvedge</span>
-            <span className="rounded-md bg-[#D6CCB5]/60 px-1.5 py-0.5 text-[11px] font-medium text-[#000000]/75">
+          <div className="flex items-center gap-2">
+            <span className="text-[17px] font-bold tracking-tight text-[#000000]">Marvedge</span>
+            <span className="rounded-md bg-[#D6CCB5]/70 px-1.5 py-0.5 text-[11px] font-semibold text-[#000000]/80">
               Tools
             </span>
           </div>
