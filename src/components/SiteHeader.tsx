@@ -14,9 +14,9 @@ function ToolDropdownContent({ onPick }: { onPick?: () => void }) {
   return (
     <div className="grid gap-6 p-6 md:grid-cols-2">
       <div>
-        <div className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-widest text-[#4A4740]">
+        <div className="mb-3 flex items-center gap-2 text-xs font-semibold text-[#4A4740]">
           <Wrench className="h-3.5 w-3.5 text-[#537190]" aria-hidden="true" />
-          <span>Free Utilities</span>
+          <span>Free utilities</span>
         </div>
         <div className="space-y-1">
           {utilities.map((t) => (
@@ -36,9 +36,9 @@ function ToolDropdownContent({ onPick }: { onPick?: () => void }) {
       </div>
 
       <div>
-        <div className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-widest text-[#4A4740]">
+        <div className="mb-3 flex items-center gap-2 text-xs font-semibold text-[#4A4740]">
           <Sparkles className="h-3.5 w-3.5 text-[#537190]" aria-hidden="true" />
-          <span>AI Media &amp; Voice</span>
+          <span>AI studio</span>
         </div>
         <div className="space-y-1">
           {aiTools.map((t) => (

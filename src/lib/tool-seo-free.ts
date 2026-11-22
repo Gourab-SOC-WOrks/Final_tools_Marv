@@ -71,7 +71,7 @@ export const freeToolSeo: Record<string, ToolSeoData> = {
     specs: {
       heading: "Output specifications and encoding controls",
       intro:
-        "GIF uses indexed 256-color palettes rather than modern inter-frame video codecs. Knowing these control limits keeps documentation loops fast and sharp.",
+        "GIF uses indexed 256-color palettes. Video formats use modern inter-frame codecs. Knowing these control limits keeps documentation loops fast and sharp.",
       items: [
         {
           label: "Clip length cap",
@@ -309,7 +309,7 @@ export const freeToolSeo: Record<string, ToolSeoData> = {
         },
         {
           title: "Avoiding double-compression artifacts",
-          body: "Always compress from the original PNG or high-bitrate photo rather than re-saving an already crunchy 40% JPG, which amplifies block noise around text.",
+          body: "Compress directly from your high-resolution original. Compressing an already degraded 40% JPG amplifies block noise around text.",
         },
       ],
     },
@@ -449,7 +449,7 @@ export const freeToolSeo: Record<string, ToolSeoData> = {
     specs: {
       heading: "QR encoding specs, styles, and print tolerances",
       intro:
-        "Every design option respects ISO QR quiet-zone margins and Reed-Solomon error correction guarantees.",
+        "Every design option respects ISO QR boundary margins and Reed-Solomon error correction guarantees.",
       items: [
         {
           label: "Supported payloads",
@@ -494,7 +494,7 @@ export const freeToolSeo: Record<string, ToolSeoData> = {
           body: "As a rule of thumb, keep a minimum 1:10 ratio between code width and scan distance. Tabletop flyers scan fine at 25mm, whereas conference banners need 100mm+ or SVG export.",
         },
         {
-          title: "When you actually want dynamic links + QR",
+          title: "When you need dynamic links and QR codes",
           body: "If you need password locks, expiration timestamps, or shorter clean URLs that fit densely printed badges, generate a /go/ link in Marvedge Link Shortener along with its paired QR PNG.",
         },
       ],
@@ -725,7 +725,7 @@ export const freeToolSeo: Record<string, ToolSeoData> = {
       intro: "How to resolve playback, audio, or container issues quickly.",
       items: [
         {
-          issue: "Output file exported as .webm instead of .mp4",
+          issue: "Output file exported in .webm format",
           fix: "Your browser version did not advertise H.264 MediaRecorder support, so Marvedge automatically used WebM (VP9/VP8). WebM plays natively in Chrome, Firefox, Edge, Slack, and Discord. For strict .mp4 requirements on iOS/macOS, run the same clip in Safari or recent Chrome.",
         },
         {
@@ -734,7 +734,7 @@ export const freeToolSeo: Record<string, ToolSeoData> = {
         },
         {
           issue: "Output clip has missing audio",
-          fix: "Make sure your input file actually contains an audio track (screen captures without mic input are silent), and check that browser captureStream() is not restricted by strict privacy extensions.",
+          fix: "Verify that your input file contains an audio track (screen recordings without microphone input are silent), and check that browser captureStream() is not restricted by strict privacy extensions.",
         },
         {
           issue: "Final file size differed slightly from estimate",
@@ -821,7 +821,7 @@ export const freeToolSeo: Record<string, ToolSeoData> = {
     specs: {
       heading: "Compression controls and optimization mechanics",
       intro:
-        "Fine-tune the three levers that actually govern animated GIF size: pixel area, frame count, and color palette bits.",
+        "Adjust the three levers that govern animated GIF size: pixel area, frame count, and color palette bits.",
       items: [
         {
           label: "Scale slider",
@@ -920,7 +920,7 @@ export const freeToolSeo: Record<string, ToolSeoData> = {
         },
         {
           issue: "Couldn't read file as a GIF error",
-          fix: "Many Twitter/X and Giphy '.gif' downloads are actually muted MP4 files renamed with a .gif extension. Open MP4 to GIF instead if your file is secretly an MP4.",
+          fix: "Many Twitter/X and Giphy '.gif' downloads are muted MP4 files saved with a .gif extension. Open MP4 to GIF instead if your file is secretly an MP4.",
         },
         {
           issue: "Browser tab feels slow on huge 1920px GIFs",
@@ -956,7 +956,7 @@ export const freeToolSeo: Record<string, ToolSeoData> = {
     howItWorks: {
       heading: "How to resize an image to exact pixels and KB size",
       intro:
-        "Instead of guessing JPEG quality blindly until an exam or visa portal stops rejecting your file, let the binary size solver find the highest sharp quality under your KB limit.",
+        "Target exact file size limits for visa, passport, or government portals. The binary size solver finds the highest sharp quality under your KB limit.",
       steps: [
         {
           title: "Upload your photo or test the sample passport",
@@ -1095,7 +1095,7 @@ export const freeToolSeo: Record<string, ToolSeoData> = {
       items: [
         {
           issue: "Portal still complains file is over limit even when under target",
-          fix: "Some legacy portals measure size in kilobytes using 1,000 bytes instead of 1,024 (KiB). Set Target file size 2 KB lower (for instance 18 KB instead of 20 KB) to guarantee safety.",
+          fix: "Some legacy portals measure size in kilobytes using 1,000 bytes per KB. Set Target file size 2 KB lower (for instance 18 KB) to guarantee safety.",
         },
         {
           issue: "Warning says: quality below 25%, image will look soft",
@@ -1282,7 +1282,7 @@ export const freeToolSeo: Record<string, ToolSeoData> = {
           fix: "PNG uses lossless compression, so photographic noise expands cleanly compared to lossy JPG. Only pick PNG when you need alpha transparency or pixel-sharp diagrams; choose WebP or JPG for photography.",
         },
         {
-          issue: "Download all as ZIP button isn't shown",
+          issue: "Download all as ZIP button does not appear",
           fix: "The ZIP pack appears whenever 2 or more converted files are listed. Single-image runs show a direct Save button.",
         },
         {
@@ -1411,7 +1411,7 @@ export const freeToolSeo: Record<string, ToolSeoData> = {
       callouts: [
         {
           title: "Out-of-bounds numbers fail safely",
-          body: "If you enter `1-20` on a 12-page PDF, pages past page 12 are quietly clamped rather than crashing mid-extraction.",
+          body: "If you enter `1-20` on a 12-page PDF, pages clamp to the document bounds without error.",
         },
         {
           title: "Reorder multiple times before merging",
@@ -1463,7 +1463,7 @@ export const freeToolSeo: Record<string, ToolSeoData> = {
       items: [
         {
           issue: "Error: One of those files couldn't be read as a PDF",
-          fix: "Your file may be corrupted, require an open password, or actually be a non-PDF saved with a .pdf suffix (such as a raw HTML page). Open it in Chrome/Preview and Print -> Save as PDF to normalize it cleanly.",
+          fix: "Your file may be corrupted, password-protected, or a non-PDF saved with a .pdf suffix. Open it in Chrome or Preview and Print to PDF to normalize it.",
         },
         {
           issue: "Merge button is disabled after adding a file",
@@ -1507,7 +1507,7 @@ export const freeToolSeo: Record<string, ToolSeoData> = {
     howItWorks: {
       heading: "How to generate a production favicon pack in 20 seconds",
       intro:
-        "Modern browsers, iOS home screens, and Android PWAs expect specific icon dimensions rather than a single outdated .ico file.",
+        "Modern browsers, iOS home screens, and Android PWAs expect specific icon dimensions across devices.",
       steps: [
         {
           title: "Drop your brand mark or load the sample logo",
@@ -1726,7 +1726,7 @@ export const freeToolSeo: Record<string, ToolSeoData> = {
           title: "16:9 Landscape (1280 x 720)",
           steps: [
             "Rescue vertical iPhone captures into clean desktop widescreen 16:9 documentation embeds.",
-            "Blurs vertical side margins naturally instead of leaving harsh black pillars.",
+            "Blurs vertical side margins to complement widescreen displays.",
             "Exports clean 4 Mbps encoded streams with synchronized audio.",
           ],
         },
@@ -2000,7 +2000,7 @@ export const freeToolSeo: Record<string, ToolSeoData> = {
           target: "Editing destination after creation",
           status: "No",
           detail:
-            "Guest links lock their target on creation for safety; simply mint a fresh slug if the URL changes.",
+            "Guest links lock their target on creation for safety; mint a fresh slug if the URL changes.",
         },
       ],
     },

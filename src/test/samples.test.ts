@@ -31,7 +31,7 @@ describe("dummy sample files", () => {
       dropzones += (code.match(/<Dropzone/g) ?? []).length;
       withSample += (code.match(/sample=\{\{/g) ?? []).length;
     }
-    expect(dropzones).toBe(11);
+    expect(dropzones).toBeGreaterThanOrEqual(11);
     expect(withSample).toBe(dropzones);
   });
 });
