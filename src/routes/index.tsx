@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import marvedgeLogo from "@/assets/marvedge-logo.png";
 import {
   ArrowRight,
@@ -24,6 +24,7 @@ import {
   Subtitles,
   Youtube,
   Repeat,
+  Infinity as InfinityIcon,
   ShoppingBag,
   ListOrdered,
   Mic,
@@ -56,26 +57,167 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
+/* Apple-Grade Dynamic Interactive Miniature for Tool #01: MP4 to GIF */
+function Mp4ToGifMiniature() {
+  const [timeStr, setTimeStr] = useState("01.2");
+  const [isLooping, setIsLooping] = useState(false);
+
+  useEffect(() => {
+    let animId: number;
+    const duration = 2400; // 2.4s synchronized with CSS playhead
+    const start = performance.now();
+
+    const tick = (now: number) => {
+      const elapsed = (now - start) % duration;
+      const progress = elapsed / duration;
+      // Precise scrub from 00:01.2 to 00:04.2
+      const current = 1.2 + progress * 3.0;
+      setTimeStr(current.toFixed(1).padStart(4, "0"));
+      // Flash loop trigger badge when approaching OUT point
+      setIsLooping(progress > 0.82 && progress < 0.94);
+      animId = requestAnimationFrame(tick);
+    };
+
+    animId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(animId);
+  }, []);
+
+  return (
+    <div className="relative flex flex-col gap-2.5 overflow-hidden rounded-2xl border border-[#E8DFCA] bg-[#FAF7F0] p-3 shadow-inner transition-all duration-300 group-hover:border-[#7895B2]/60 group-hover:bg-[#F5F0E6]">
+      {/* Top telemetry & trim markers */}
+      <div className="flex items-center justify-between text-[11px] font-mono">
+        <div className="flex items-center gap-1.5 font-medium text-black">
+          <Scissors className="h-3 w-3 text-[#7895B2] transition-transform duration-200 group-hover:rotate-12" />
+          <span className="text-black/50">Trim:</span>
+          <span className="font-semibold text-black">00:01.2</span>
+          <span className="text-black/30">→</span>
+          <span className="font-semibold text-black">00:04.2</span>
+        </div>
+
+        {/* Dynamic GIF ∞ loop indicator */}
+        <div className="flex items-center gap-1.5">
+          <span
+            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold tracking-tight transition-all duration-200 ${
+              isLooping
+                ? "bg-[#000000] text-white shadow-sm scale-105"
+                : "bg-[#7895B2]/20 text-[#7895B2]"
+            }`}
+          >
+            <InfinityIcon className="h-3 w-3" />
+            <span>GIF LOOP</span>
+          </span>
+          <span className="rounded bg-[#E8DFCA] px-1.5 py-0.5 text-[10px] font-bold text-black/70">
+            15 FPS
+          </span>
+        </div>
+      </div>
+
+      {/* Filmstrip & Precision Scrubber Window */}
+      <div className="relative h-12 w-full select-none overflow-hidden rounded-xl border border-[#D6CCB5] bg-[#000000] p-0.5 shadow-sm">
+        {/* Film sprocket top perforations */}
+        <div className="absolute inset-x-0 top-0 z-10 flex justify-between px-1.5 py-0.5 pointer-events-none opacity-40">
+          {[...Array(14)].map((_, i) => (
+            <span key={i} className="h-1 w-1.5 rounded-[1px] bg-white/70" />
+          ))}
+        </div>
+        {/* Film sprocket bottom perforations */}
+        <div className="absolute inset-x-0 bottom-0 z-10 flex justify-between px-1.5 py-0.5 pointer-events-none opacity-40">
+          {[...Array(14)].map((_, i) => (
+            <span key={i} className="h-1 w-1.5 rounded-[1px] bg-white/70" />
+          ))}
+        </div>
+
+        {/* Video Frames Sequence (simulated Apple video playback progression) */}
+        <div className="flex h-full w-full items-center gap-1 px-1">
+          {/* Frame 1 (Outside IN point - dimmed) */}
+          <div className="relative h-full flex-1 overflow-hidden rounded bg-[#1A1A1A] flex items-center justify-center opacity-30">
+            <div className="h-3 w-3 rounded-full bg-[#7895B2]/50 blur-[1px]" />
+          </div>
+
+          {/* Frame 2 (Active Trim region) */}
+          <div className="relative h-full flex-1 overflow-hidden rounded bg-gradient-to-br from-[#24292E] to-[#14171A] flex items-center justify-center">
+            <div
+              className="h-4 w-4 rounded-full bg-[#7895B2] shadow-[0_0_8px_rgba(120,149,178,0.6)]"
+              style={{ animation: "m2g-orb-1 2.4s ease-in-out infinite" }}
+            />
+          </div>
+
+          {/* Frame 3 (Active Trim region - peak) */}
+          <div className="relative h-full flex-1 overflow-hidden rounded bg-gradient-to-br from-[#1E252B] to-[#0E1114] flex items-center justify-center">
+            <div
+              className="h-5 w-5 rounded-full bg-gradient-to-tr from-[#7895B2] to-[#AEBDCA] shadow-[0_0_10px_rgba(174,189,202,0.8)]"
+              style={{ animation: "m2g-orb-2 2.4s ease-in-out infinite" }}
+            />
+          </div>
+
+          {/* Frame 4 (Active Trim region) */}
+          <div className="relative h-full flex-1 overflow-hidden rounded bg-gradient-to-br from-[#24292E] to-[#14171A] flex items-center justify-center">
+            <div
+              className="h-4 w-4 rounded-full bg-[#7895B2] shadow-[0_0_8px_rgba(120,149,178,0.6)]"
+              style={{ animation: "m2g-orb-3 2.4s ease-in-out infinite" }}
+            />
+          </div>
+
+          {/* Frame 5 (Outside OUT point - dimmed) */}
+          <div className="relative h-full flex-1 overflow-hidden rounded bg-[#1A1A1A] flex items-center justify-center opacity-30">
+            <div className="h-3 w-3 rounded-full bg-[#7895B2]/40 blur-[1px]" />
+          </div>
+        </div>
+
+        {/* Trim Bracket Overlay (Apple QuickTime / Final Cut style) */}
+        <div className="pointer-events-none absolute inset-y-0 left-[14%] right-[18%] rounded border-2 border-[#7895B2] bg-[#7895B2]/10 shadow-[0_0_0_1px_rgba(0,0,0,0.5)]">
+          {/* Left Handle (IN) */}
+          <div className="absolute -left-1 inset-y-0 w-2 rounded-l bg-[#7895B2] flex items-center justify-center">
+            <div className="h-3 w-0.5 rounded-full bg-white/80" />
+          </div>
+          {/* Right Handle (OUT) */}
+          <div className="absolute -right-1 inset-y-0 w-2 rounded-r bg-[#7895B2] flex items-center justify-center">
+            <div className="h-3 w-0.5 rounded-full bg-white/80" />
+          </div>
+        </div>
+
+        {/* Smooth Animated Playhead Scrubber Needle */}
+        <div
+          className="m2g-playhead-needle pointer-events-none absolute inset-y-0 z-20 flex flex-col items-center"
+          style={{
+            animation: "m2g-playhead 2.4s cubic-bezier(0.25, 1, 0.5, 1) infinite",
+          }}
+        >
+          {/* Playhead Head (Apple scrubber pill) */}
+          <div className="h-2 w-2 rounded-full bg-[#FFFFFF] shadow-[0_0_6px_rgba(255,255,255,0.9)]" />
+          {/* Playhead Needle Line */}
+          <div className="w-[1.5px] flex-1 bg-[#FFFFFF] shadow-[0_0_4px_rgba(255,255,255,0.8)]" />
+        </div>
+      </div>
+
+      {/* Bottom Live Micro-Timecode & Output Specs */}
+      <div className="flex items-center justify-between text-[10px] font-mono text-black/60">
+        <div className="flex items-center gap-1.5">
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+          </span>
+          <span className="font-semibold text-black">
+            00:{timeStr}s
+          </span>
+          <span className="text-black/40">/ 00:06.0s</span>
+        </div>
+
+        <div className="flex items-center gap-1 font-medium text-black/70">
+          <span className="text-black/40">MP4</span>
+          <span>→</span>
+          <span className="font-bold text-black">GIF 480p</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* Helper to render visual interactive miniatures for each of the 19 tools */
 function ToolVisualPreview({ slug }: { slug: string }) {
   switch (slug) {
     case "mp4-to-gif":
-      return (
-        <div className="flex flex-col gap-2 rounded-2xl bg-[#FAF7F0] p-3.5 border border-[#E8DFCA]">
-          <div className="flex items-center justify-between text-[11px] font-mono text-black/60">
-            <span className="flex items-center gap-1.5 font-medium text-black">
-              <Scissors className="h-3 w-3 text-[#7895B2]" /> Trim: 00:01.2 → 00:04.2
-            </span>
-            <span className="rounded bg-[#7895B2]/20 px-1.5 py-0.5 text-[#7895B2] font-semibold">15 FPS</span>
-          </div>
-          <div className="relative h-6 rounded-lg bg-[#E8DFCA] p-1 flex items-center">
-            <div className="absolute left-3 right-8 h-4 rounded bg-[#7895B2] flex items-center justify-between px-1.5 text-[9px] font-mono text-white">
-              <span>▶ IN</span>
-              <span>OUT ◀</span>
-            </div>
-          </div>
-        </div>
-      );
+      return <Mp4ToGifMiniature />;
 
     case "image-compressor":
       return (
