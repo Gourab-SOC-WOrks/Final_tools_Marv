@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import marvedgeLogo from "@/assets/marvedge-logo.png";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -333,7 +334,7 @@ function Index() {
           {/* Eyebrow Chip */}
           <div className="flex justify-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-[#D6CCB5] bg-[#FFFFFF] px-4 py-1.5 text-xs font-semibold tracking-wider text-[#000000] shadow-sm">
-              <span className="h-2 w-2 rounded-full bg-[#2E7D32]" />
+              <img src={marvedgeLogo} alt="" className="h-3.5 w-3.5 object-contain" />
               <span>19 BROWSER & AI TOOLS · ZERO SERVER UPLOADS</span>
             </div>
           </div>

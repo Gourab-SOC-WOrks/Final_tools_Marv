@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Menu, X, ArrowUpRight, Wrench, Sparkles } from "lucide-react";
 import { tools, MARVEDGE_URL } from "@/lib/tools";
+import marvedgeLogo from "@/assets/marvedge-logo.png";
 
 const focusRing =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2] focus-visible:ring-offset-2 focus-visible:ring-offset-[#E8DFCA]";
@@ -91,11 +92,13 @@ export function SiteHeader() {
         {/* Brand Monogram & Title */}
         <Link
           to="/"
-          className={`flex items-center gap-2.5 rounded-full pr-1 transition-transform active:scale-[0.98] ${focusRing}`}
+          className={`group flex items-center gap-2.5 rounded-full pr-1 transition-transform active:scale-[0.98] ${focusRing}`}
         >
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#000000] text-xs font-semibold text-[#FFFFFF] shadow-sm">
-            M
-          </span>
+          <img
+            src={marvedgeLogo}
+            alt="Marvedge Logo"
+            className="h-8 w-8 object-contain transition-transform group-hover:scale-105"
+          />
           <div className="flex items-baseline gap-1.5">
             <span className="text-[16px] font-bold tracking-tight text-[#000000]">Marvedge</span>
             <span className="rounded-md bg-[#D6CCB5]/60 px-1.5 py-0.5 text-[11px] font-medium text-[#000000]/75">

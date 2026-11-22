@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight, Play, Sparkles } from "lucide-react";
 import { MARVEDGE_URL } from "@/lib/tools";
+import marvedgeLogo from "@/assets/marvedge-logo.png";
 
 export function MarvedgeCTA({ context }: { context?: string }) {
   return (
@@ -103,9 +104,11 @@ export function SiteFooter() {
     <footer className="border-t border-[#D6CCB5] bg-[#E8DFCA] py-12">
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-5 sm:px-8 md:flex-row">
         <div className="flex items-center gap-3">
-          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#000000] text-xs font-semibold text-[#FFFFFF]">
-            M
-          </span>
+          <img
+            src={marvedgeLogo}
+            alt="Marvedge Logo"
+            className="h-6 w-6 object-contain"
+          />
           <p className="text-xs text-[#000000]/70">
             © {new Date().getFullYear()} Marvedge Inc. 19 Browser-Native & AI Media Tools.
           </p>
