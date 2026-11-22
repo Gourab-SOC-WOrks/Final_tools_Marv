@@ -609,10 +609,10 @@ export function ContentRepurposer() {
                   setViewState("entry");
                   setUrlInput("");
                 }}
-                className="flex items-center gap-1.5 rounded-full border border-[#D6CCB5] bg-white px-4 py-2 text-xs font-bold text-[#000000] transition hover:border-[#000000] hover:bg-[#FAF7F0]"
+                className="flex items-center gap-1.5 rounded-full border border-[#D6CCB5] bg-white px-4 py-2 text-xs font-bold text-[#000000] transition hover:border-[#000000] hover:bg-[#FAF7F0] shadow-2xs active:scale-95"
               >
                 <ArrowLeft className="h-3.5 w-3.5" />
-                <span>← New Video</span>
+                <span>New Video</span>
               </button>
             </div>
           </div>
