@@ -7,14 +7,7 @@ import { ToolEditorialSections } from "./ToolSections";
 import { ToolFaqSection } from "./ToolFaq";
 
 export function ToolPage({ tool }: { tool: Tool }) {
-  const isUtility = tool.category === "Free utility";
   const seo = getToolSeo(tool.slug);
-  const statusCopy =
-    tool.slug === "link-shortener"
-      ? "Free utility · Instant short links"
-      : isUtility
-        ? "Free utility · Runs locally in your browser"
-        : "AI tool · Ephemeral cloud processing";
 
   return (
     <div className="min-h-screen bg-[#E8DFCA] text-[#000000]">
@@ -32,7 +25,7 @@ export function ToolPage({ tool }: { tool: Tool }) {
             <span className="text-[#D6CCB5]" aria-hidden="true">
               /
             </span>
-            <span>{statusCopy}</span>
+            <span>{tool.category}</span>
           </div>
 
           <h1 className="font-serif text-4xl font-normal leading-[1.06] tracking-tight text-balance text-[#000000] sm:text-5xl md:text-[3.5rem]">

@@ -365,21 +365,6 @@ function Index() {
                 <ArrowUpRight className="h-4 w-4" />
               </a>
             </div>
-
-            {/* Invariant Trust Strip */}
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-6 text-xs text-[#000000]/70 font-medium">
-              <span className="inline-flex items-center gap-1.5">
-                <ShieldCheck className="h-4 w-4 text-[#7895B2]" /> Local Browser & Private AI Privacy
-              </span>
-              <span>·</span>
-              <span className="inline-flex items-center gap-1.5">
-                <Zap className="h-4 w-4 text-[#7895B2]" /> In-Browser Canvas & Fast Neural Models
-              </span>
-              <span>·</span>
-              <span className="inline-flex items-center gap-1.5">
-                <Layers className="h-4 w-4 text-[#7895B2]" /> 19 Modular Single-Purpose Tools
-              </span>
-            </div>
           </div>
 
           {/* ====================================================================

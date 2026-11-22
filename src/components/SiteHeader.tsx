@@ -26,10 +26,9 @@ function ToolDropdownContent({ onPick }: { onPick?: () => void }) {
               onClick={onPick}
               activeOptions={{ exact: true }}
               activeProps={{ className: "bg-[#E8DFCA] text-[#000000]" }}
-              className="group flex items-center justify-between rounded-xl px-3 py-2 text-sm text-[#000000]/80 transition-colors duration-150 hover:bg-[#FAF7F0] hover:text-[#000000] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2]"
+              className="group flex items-center rounded-xl px-3 py-2 text-sm text-[#000000]/80 transition-colors duration-150 hover:bg-[#FAF7F0] hover:text-[#000000] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2]"
             >
               <span className="font-medium">{t.name}</span>
-              <span className="text-[11px] text-[#4A4740]/75 group-hover:text-[#000000]">Local</span>
             </Link>
           ))}
         </div>
@@ -49,10 +48,9 @@ function ToolDropdownContent({ onPick }: { onPick?: () => void }) {
               onClick={onPick}
               activeOptions={{ exact: true }}
               activeProps={{ className: "bg-[#E8DFCA] text-[#000000]" }}
-              className="group flex items-center justify-between rounded-xl px-3 py-2 text-sm text-[#000000]/80 transition-colors duration-150 hover:bg-[#FAF7F0] hover:text-[#000000] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2]"
+              className="group flex items-center rounded-xl px-3 py-2 text-sm text-[#000000]/80 transition-colors duration-150 hover:bg-[#FAF7F0] hover:text-[#000000] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2]"
             >
               <span className="font-medium">{t.name}</span>
-              <span className="text-[11px] font-medium text-[#537190]">AI Model</span>
             </Link>
           ))}
         </div>

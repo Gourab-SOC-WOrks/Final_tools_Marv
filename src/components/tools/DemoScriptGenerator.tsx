@@ -732,8 +732,8 @@ export function DemoScriptGenerator() {
                           type="text"
                           value={scene.timeRange}
                           onChange={(e) => updateScene(scene.id, "timeRange", e.target.value)}
-                          style={{ width: `${Math.max(13, scene.timeRange.length + 3)}ch` }}
-                          className="min-w-[108px] text-[11px] font-mono font-medium text-[#86868B] bg-black/[0.04] hover:bg-black/[0.08] focus:bg-white focus:text-[#1D1D1F] focus:ring-1 focus:ring-[#0071E3]/30 px-3 py-0.5 rounded-full border border-black/[0.06] text-center focus:outline-none transition-all shrink-0"
+                          style={{ width: `${Math.max(14, scene.timeRange.length + 3)}ch` }}
+                          className="min-w-[124px] text-[11px] font-mono font-medium text-[#86868B] bg-black/[0.04] hover:bg-black/[0.08] focus:bg-white focus:text-[#1D1D1F] focus:ring-1 focus:ring-[#0071E3]/30 px-2.5 py-0.5 rounded-full border border-black/[0.06] text-center focus:outline-none transition-all shrink-0"
                           title="Click to edit timestamp range"
                         />
                       </div>
