@@ -178,15 +178,6 @@ export function SiteHeader() {
             href={MARVEDGE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className={`hidden rounded-full px-2 py-1 text-xs font-semibold text-black/75 transition-colors hover:text-black sm:inline-block ${focusRing}`}
-          >
-            Log in
-          </a>
-
-          <a
-            href={MARVEDGE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
             className="btn-pure-black text-xs font-semibold tracking-wide"
           >
             Launch Marvedge
@@ -214,17 +205,9 @@ export function SiteHeader() {
               href={MARVEDGE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-warm-sand w-full text-center text-xs font-semibold"
-            >
-              Log in to Marvedge
-            </a>
-            <a
-              href={MARVEDGE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
               className="btn-pure-black w-full text-center text-xs font-semibold"
             >
-              Get Full Product Experience
+              Launch Marvedge Platform
             </a>
           </div>
         </div>
