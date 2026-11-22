@@ -20,7 +20,7 @@ export function ToolPage({ tool }: { tool: Tool }) {
               className="inline-flex items-center gap-1.5 font-medium text-[#000000] transition-colors hover:text-[#537190] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2]"
             >
               <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
-              All 19 tools
+              All tools
             </Link>
             <span className="text-[#D6CCB5]" aria-hidden="true">
               /

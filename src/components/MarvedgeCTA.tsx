@@ -29,7 +29,7 @@ export function MarvedgeCTA({ context }: { context?: string }) {
             </h2>
 
             <p className="mt-5 max-w-xl text-base leading-relaxed text-[#AEBDCA] sm:text-lg">
-              {context ?? "These 19 utilities are lightweight stepping stones."} Marvedge transforms your screen captures into click-through interactive showcases, auto-reframes to 9:16 mobile feeds, and translates voiceovers across 30 languages.
+              {context ?? "These focused utilities are lightweight stepping stones."} Marvedge transforms your screen captures into click-through interactive showcases, auto-reframes to 9:16 mobile feeds, and translates voiceovers across 30 languages.
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-4">
@@ -110,7 +110,7 @@ export function SiteFooter() {
             className="h-7 w-auto object-contain"
           />
           <p className="text-xs text-[#000000]/70">
-            © {new Date().getFullYear()} Marvedge Inc. 19 Browser-Native & AI Media Tools.
+            © {new Date().getFullYear()} Marvedge Inc. Browser-Native & AI Media Tools.
           </p>
         </div>
 
@@ -119,7 +119,7 @@ export function SiteFooter() {
             to="/"
             className="rounded transition-colors hover:text-[#000000] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7895B2]"
           >
-            All 19 Tools
+            All Tools
           </Link>
           <span className="text-[#D6CCB5]">·</span>
           <span className="text-[#000000]/70">Client-Side Wasm &amp; GPU</span>

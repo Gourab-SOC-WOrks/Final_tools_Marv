@@ -335,7 +335,7 @@ function Index() {
           <div className="flex justify-center">
             <div className="inline-flex items-center gap-2.5 rounded-full border border-[#D6CCB5] bg-[#FFFFFF] px-4 py-1.5 text-xs font-semibold tracking-wider text-[#000000] shadow-sm">
               <img src={marvedgeLogo} alt="" className="h-4 w-auto object-contain" />
-              <span>19 BROWSER & AI TOOLS · ZERO SERVER UPLOADS</span>
+              <span>BROWSER & AI MEDIA STUDIO · ZERO SERVER UPLOADS</span>
             </div>
           </div>
 
@@ -346,13 +346,13 @@ function Index() {
             </h1>
 
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-[#2D2A26] sm:text-xl font-normal transition-all duration-300">
-              Nineteen lightweight tools to trim clips, compress images, generate subtitles, and structure demo narratives. Processed instantly in your browser with zero latency.
+              Lightweight, single-purpose utilities to trim clips, compress images, generate subtitles, and structure demo narratives. Processed instantly in your browser with zero latency.
             </p>
 
             {/* Apple Pill Action Group */}
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3.5">
               <a href="#tools" className="btn-pure-black">
-                Explore the 19 Tools
+                Explore All Tools
                 <ArrowRight className="h-4 w-4" />
               </a>
 
@@ -484,7 +484,7 @@ function Index() {
                     : "text-[#000000]/70 hover:text-[#000000]"
                 }`}
               >
-                All 19 Tools
+                All Tools
               </button>
               <button
                 onClick={() => setFilter("Free utility")}
@@ -494,7 +494,7 @@ function Index() {
                     : "text-[#000000]/70 hover:text-[#000000]"
                 }`}
               >
-                Free Utilities (11)
+                Free Utilities
               </button>
               <button
                 onClick={() => setFilter("AI tool")}
@@ -504,7 +504,7 @@ function Index() {
                     : "text-[#000000]/70 hover:text-[#000000]"
                 }`}
               >
-                AI Studio & Voice (8)
+                AI Studio &amp; Voice
               </button>
             </div>
           </div>

@@ -16,7 +16,7 @@ function ToolDropdownContent({ onPick }: { onPick?: () => void }) {
       <div>
         <div className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-widest text-[#4A4740]">
           <Wrench className="h-3.5 w-3.5 text-[#537190]" aria-hidden="true" />
-          <span>Free Utilities ({utilities.length})</span>
+          <span>Free Utilities</span>
         </div>
         <div className="space-y-1">
           {utilities.map((t) => (
@@ -38,7 +38,7 @@ function ToolDropdownContent({ onPick }: { onPick?: () => void }) {
       <div>
         <div className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-widest text-[#4A4740]">
           <Sparkles className="h-3.5 w-3.5 text-[#537190]" aria-hidden="true" />
-          <span>AI Media &amp; Voice ({aiTools.length})</span>
+          <span>AI Media &amp; Voice</span>
         </div>
         <div className="space-y-1">
           {aiTools.map((t) => (
@@ -132,7 +132,7 @@ export function SiteHeader() {
               onClick={() => setOpen((prev) => !prev)}
               className={`flex items-center gap-1 rounded-full px-4 py-1.5 text-sm font-medium text-[#000000]/80 transition-colors hover:bg-[#D6CCB5]/40 hover:text-[#000000] ${focusRing}`}
             >
-              <span>19 Tools</span>
+              <span>Tools</span>
               <ChevronDown
                 aria-hidden="true"
                 className={`h-3.5 w-3.5 text-black/60 transition-transform duration-200 ${
