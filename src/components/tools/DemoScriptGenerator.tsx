@@ -682,6 +682,17 @@ export function DemoScriptGenerator() {
               <div className="flex items-center gap-2">
                 <button
                   type="button"
+                  disabled={busy || !productName.trim()}
+                  onClick={handleGenerate}
+                  className="flex items-center gap-1.5 rounded-xl border border-black/[0.08] bg-white px-3 py-1.5 text-xs font-semibold text-[#1D1D1F] hover:bg-black/[0.03] transition active:scale-95 shadow-2xs disabled:opacity-50"
+                  title="Regenerate full script with current options"
+                >
+                  <RotateCcw className={`h-3.5 w-3.5 ${busy ? "animate-spin text-[#0071E3]" : ""}`} />
+                  <span>Regenerate Script</span>
+                </button>
+
+                <button
+                  type="button"
                   onClick={copyVoiceoverOnly}
                   className="flex items-center gap-1.5 rounded-xl border border-black/[0.08] bg-white px-3 py-1.5 text-xs font-semibold text-[#1D1D1F] hover:bg-black/[0.03] transition active:scale-95 shadow-2xs"
                   title="Copy voiceover lines for teleprompter"

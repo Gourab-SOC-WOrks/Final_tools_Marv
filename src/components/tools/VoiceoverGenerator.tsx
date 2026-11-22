@@ -899,16 +899,16 @@ export function VoiceoverGenerator() {
                 </h3>
               </div>
 
-              {/* Quick Regenerate Icon */}
+              {/* Quick Regenerate Button */}
               <button
                 type="button"
                 disabled={busy || !script.trim()}
                 onClick={handleGenerate}
-                title="Quick Regenerate: Re-roll inflection with one click"
-                className="flex items-center gap-1.5 rounded-xl border border-black/[0.08] bg-white px-3 py-1.5 text-xs font-medium text-[#1D1D1F] hover:bg-black/[0.03] transition active:scale-95 disabled:opacity-50 shadow-2xs"
+                title="Regenerate voiceover with current voice & speed"
+                className="flex items-center gap-1.5 rounded-xl border border-black/[0.08] bg-white px-3.5 py-1.5 text-xs font-semibold text-[#1D1D1F] hover:bg-black/[0.03] transition active:scale-95 disabled:opacity-50 shadow-2xs"
               >
-                <RotateCcw className={`h-3.5 w-3.5 ${busy ? "animate-spin" : ""}`} />
-                <span className="hidden sm:inline">Re-roll</span>
+                <RotateCcw className={`h-3.5 w-3.5 ${busy ? "animate-spin text-[#0071E3]" : ""}`} />
+                <span>Regenerate Voiceover</span>
               </button>
             </div>
 

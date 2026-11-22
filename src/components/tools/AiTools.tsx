@@ -37,7 +37,17 @@ import { Btn, CopyBtn, DownloadBtn, Dropzone, ErrorNote, Field, Panel, download,
 
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : "Something went wrong. Please try again.");
 
-function Output({ text, presetLabel }: { text: string; presetLabel?: string }) {
+function Output({
+  text,
+  presetLabel,
+  onRegenerate,
+  busy,
+}: {
+  text: string;
+  presetLabel?: string;
+  onRegenerate?: () => void;
+  busy?: boolean;
+}) {
   if (!text) return null;
   return (
     <div aria-live="polite" className="grid gap-4 rounded-3xl border border-[#D6CCB5] bg-[#FAF7F0] p-6 shadow-sm">
@@ -58,6 +68,18 @@ function Output({ text, presetLabel }: { text: string; presetLabel?: string }) {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          {onRegenerate && (
+            <button
+              type="button"
+              disabled={busy}
+              onClick={onRegenerate}
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#D6CCB5] bg-white px-3 py-1.5 text-xs font-semibold text-[#000000] transition-colors hover:border-[#7895B2] hover:bg-[#FAF7F0] disabled:opacity-50 active:scale-95 shadow-2xs"
+              title="Regenerate with current settings"
+            >
+              <RotateCcw className={`h-3.5 w-3.5 ${busy ? "animate-spin text-[#7895B2]" : ""}`} />
+              <span>Regenerate</span>
+            </button>
+          )}
           <CopyBtn text={text} />
           <button
             type="button"
@@ -926,7 +948,12 @@ export function VideoSummarizer() {
       </div>
 
       <ErrorNote msg={err} />
-      <Output text={out} presetLabel={OUTPUT_PRESETS.find((p) => p.id === preset)?.label} />
+      <Output
+        text={out}
+        presetLabel={OUTPUT_PRESETS.find((p) => p.id === preset)?.label}
+        onRegenerate={handleSummarize}
+        busy={busy || isTranscribing}
+      />
     </Panel>
   );
 }
@@ -1252,7 +1279,19 @@ ${trimmed.slice(0, 1500)}`;
               <span className="text-xs font-bold uppercase tracking-wider text-[#000000]">
                 5 High-CTR YouTube Titles
               </span>
-              <span className="text-[11px] text-[#4A4740]">Under 70 chars to avoid mobile truncation</span>
+              <div className="flex items-center gap-3">
+                <span className="hidden sm:inline text-[11px] text-[#4A4740]">Under 70 chars to avoid mobile truncation</span>
+                <button
+                  type="button"
+                  disabled={!topic.trim() || busy}
+                  onClick={handleGenerate}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-[#D6CCB5] bg-white px-3 py-1 text-xs font-semibold text-[#000000] hover:border-[#7895B2] hover:bg-[#FAF7F0] transition-colors disabled:opacity-50 shadow-2xs active:scale-95"
+                  title="Regenerate titles and description"
+                >
+                  <RotateCcw className={`h-3.5 w-3.5 ${busy ? "animate-spin text-[#7895B2]" : ""}`} />
+                  <span>Regenerate Titles</span>
+                </button>
+              </div>
             </div>
 
             <div className="grid gap-2.5">
@@ -1324,23 +1363,35 @@ ${trimmed.slice(0, 1500)}`;
                 </p>
               </div>
 
-              <button
-                type="button"
-                onClick={handleCopyDesc}
-                className="inline-flex items-center gap-1.5 rounded-full border border-[#D6CCB5] bg-white px-3.5 py-1.5 text-xs font-semibold text-[#000000] hover:border-[#7895B2] hover:bg-[#FAF7F0] transition-colors shadow-xs"
-              >
-                {copiedDesc ? (
-                  <>
-                    <Check className="h-3.5 w-3.5 text-emerald-600" />
-                    <span className="text-emerald-700">Copied!</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="h-3.5 w-3.5 text-[#000000]" />
-                    <span>Copy Description</span>
-                  </>
-                )}
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  disabled={!topic.trim() || busy}
+                  onClick={handleGenerate}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-[#D6CCB5] bg-white px-3 py-1.5 text-xs font-semibold text-[#000000] hover:border-[#7895B2] hover:bg-[#FAF7F0] transition-colors disabled:opacity-50 shadow-2xs active:scale-95"
+                  title="Regenerate description"
+                >
+                  <RotateCcw className={`h-3.5 w-3.5 ${busy ? "animate-spin text-[#7895B2]" : ""}`} />
+                  <span>Regenerate</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCopyDesc}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-[#D6CCB5] bg-white px-3.5 py-1.5 text-xs font-semibold text-[#000000] hover:border-[#7895B2] hover:bg-[#FAF7F0] transition-colors shadow-xs"
+                >
+                  {copiedDesc ? (
+                    <>
+                      <Check className="h-3.5 w-3.5 text-emerald-600" />
+                      <span className="text-emerald-700">Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-3.5 w-3.5 text-[#000000]" />
+                      <span>Copy Description</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
 
             <textarea
@@ -1425,7 +1476,7 @@ export function AiTextTool({ slug }: { slug: string }) {
         </Btn>
       </div>
       <ErrorNote msg={err} />
-      <Output text={out} />
+      <Output text={out} onRegenerate={go} busy={busy} />
     </Panel>
   );
 }
@@ -1481,11 +1532,13 @@ export function SubtitleGenerator() {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [sampling, setSampling] = useState(false);
+  const [lastFile, setLastFile] = useState<File | null>(null);
   const run = useServerFn(runTranscribe);
   const pick = async (f?: File) => {
     if (!f) return;
     setErr(null);
     setCues([]);
+    setLastFile(f);
     if (f.size > 24 * 1024 * 1024) return setErr("Please use a file under 24 MB (trim long recordings first).");
     const u = URL.createObjectURL(f);
     setUrl(u);
@@ -1558,7 +1611,19 @@ export function SubtitleGenerator() {
               </div>
             ))}
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            {lastFile && (
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => pick(lastFile)}
+                className="inline-flex items-center gap-1.5 rounded-full border border-[#D6CCB5] bg-white px-3.5 py-2 text-xs font-semibold text-[#000000] hover:border-[#7895B2] hover:bg-[#FAF7F0] transition-colors disabled:opacity-50 active:scale-95 shadow-2xs"
+                title="Regenerate subtitles with AI"
+              >
+                <RotateCcw className={`h-3.5 w-3.5 ${busy ? "animate-spin text-[#7895B2]" : ""}`} />
+                <span>Regenerate Subtitles</span>
+              </button>
+            )}
             <DownloadBtn onClick={() => download(new Blob([srt()], { type: "text/plain" }), "subtitles.srt")}>
               Download SRT
             </DownloadBtn>

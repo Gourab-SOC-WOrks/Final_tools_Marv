@@ -828,6 +828,16 @@ Bullets:
             <div className="flex items-center gap-2">
               <button
                 type="button"
+                disabled={busy}
+                onClick={handleGenerate}
+                className="flex items-center gap-1.5 rounded-xl border border-[#D6CCB5] bg-[#FAF7F0] hover:bg-[#E8DFCA] hover:border-[#000000] px-3.5 py-2 text-xs font-bold text-[#000000] transition active:scale-95 shadow-2xs disabled:opacity-50"
+                title="Regenerate description with current settings"
+              >
+                <RotateCcw className={`h-3.5 w-3.5 ${busy ? "animate-spin text-[#F97316]" : ""}`} />
+                <span>{busy ? "Regenerating..." : "Regenerate"}</span>
+              </button>
+              <button
+                type="button"
                 onClick={() => copyToClipboard(fullCopyText, "all")}
                 className="flex items-center gap-1.5 rounded-xl bg-[#000000] px-4 py-2 text-xs font-bold text-[#FAF7F0] transition hover:bg-[#1A1917] active:scale-95 shadow-sm"
               >

@@ -32,6 +32,7 @@ import {
   ArrowUpRight,
   Radio,
   Zap,
+  RotateCcw,
 } from "lucide-react";
 import screen1 from "@/assets/samples/screen-1.png";
 import screen2 from "@/assets/samples/screen-2.png";
@@ -1031,6 +1032,17 @@ Instruction: [1-2 sentences of specific instructions]
 
               {/* One-Click Export Bar */}
               <div className="flex flex-wrap items-center gap-2 print:hidden">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={handleGenerate}
+                  className="flex items-center gap-1.5 rounded-lg border border-[#D6CCB5] bg-white px-3 py-1.5 text-xs font-semibold text-[#1A1917] hover:border-[#000000] hover:bg-[#FAF7F0] transition active:scale-95 shadow-xs disabled:opacity-50"
+                  title="Regenerate guide steps with AI"
+                >
+                  <RotateCcw className={`h-3.5 w-3.5 ${busy ? "animate-spin text-orange-600" : ""}`} />
+                  <span>Regenerate Guide</span>
+                </button>
+
                 <button
                   type="button"
                   onClick={exportCopyMarkdown}
