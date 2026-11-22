@@ -112,7 +112,7 @@ export const aiToolSeo: Record<string, ToolSeoData> = {
         },
         {
           title: "Preserving speaker attribution in interviews",
-          body: "Keep speaker names (`Alex:` / `Priya:`) and timestamps (`[02:14]`) in your paste so bullets distinguish who raised an objection or insight.",
+          body: "Keep speaker names (`Alex:` / `Jordan:`) and timestamps (`[02:14]`) in your paste so bullets distinguish who raised an objection or insight.",
         },
         {
           title: "Splitting 2-hour town halls cleanly",
@@ -332,13 +332,13 @@ export const aiToolSeo: Record<string, ToolSeoData> = {
           target: "Hardcoding burned-in open captions onto MP4",
           status: "No",
           detail:
-            "Outputs sidecar `.srt` and `.vtt` files rather than burning pixels into video frames.",
+            "Outputs sidecar `.srt` and `.vtt` files for YouTube, Vimeo, and web video players.",
         },
       ],
     },
     troubleshooting: {
       heading: "Troubleshooting subtitle generation",
-      intro: "Fast solutions if a clip is too large or speech isn't detected.",
+      intro: "Fast solutions if a clip is too large or speech is undetected.",
       items: [
         {
           issue: "Error: Please use a file under 24 MB",
@@ -346,11 +346,11 @@ export const aiToolSeo: Record<string, ToolSeoData> = {
         },
         {
           issue: "Error: No speech was detected in that file",
-          fix: "Ensure the file has a clear spoken track rather than music-only audio or muted screen capture.",
+          fix: "Ensure the file contains spoken audio. Background music without voice tracks will not transcribe.",
         },
         {
           issue: "Captions run slightly early after a silent intro pause",
-          fix: "Check the video player timestamp where talking actually begins, and nudge the first few numeric Start/End fields (0.1s resolution) directly inside the cue editor before saving `.srt` or `.vtt`.",
+          fix: "Check the video player timestamp where talking begins, and nudge the first few numeric Start/End fields (0.1s resolution) directly inside the cue editor before saving `.srt` or `.vtt`.",
         },
         {
           issue: "Proper product names were misspelled",
@@ -411,7 +411,7 @@ export const aiToolSeo: Record<string, ToolSeoData> = {
           title: "8 Titles Under 70 Chars",
           steps: [
             "Front-loads curiosity gaps, concrete outcomes, or contrast cleanly within desktop & mobile width.",
-            "Explore multiple angles in one pass rather than staring at a blank Studio field.",
+            "Explore multiple angles in one pass to find the highest-intent title.",
             "Re-run quickly under Curiosity vs How-to to shortlist A/B thumbnail tests.",
           ],
         },
@@ -515,7 +515,7 @@ export const aiToolSeo: Record<string, ToolSeoData> = {
           target: "Raw unlisted URL crawling",
           status: "No",
           detail:
-            "Paste your topic summary or transcript text directly rather than relying on URL scraping.",
+            "Paste your topic summary or transcript text directly into the input field.",
         },
       ],
     },
@@ -593,7 +593,7 @@ export const aiToolSeo: Record<string, ToolSeoData> = {
         {
           title: "Founder & Product Updates",
           steps: [
-            "Extracts scannable short-line LinkedIn commentary rather than a link-dump teaser.",
+            "Extracts scannable short-line LinkedIn commentary formatted for professional feeds.",
             "Breaks complex arguments into a structured 5-post X/Twitter thread where post 1 carries standalone pull.",
             "Works cleanly from shipped release notes or internal engineering post-mortems.",
           ],
@@ -691,7 +691,7 @@ export const aiToolSeo: Record<string, ToolSeoData> = {
         {
           target: "Direct URL scraping",
           status: "No",
-          detail: "Paste article body text directly cleanly in your clipboard instead of raw URLs.",
+          detail: "Paste article body text directly into the input field.",
         },
       ],
     },
@@ -876,7 +876,7 @@ export const aiToolSeo: Record<string, ToolSeoData> = {
           target: "Wholesale CSV batch sheet imports",
           status: "No",
           detail:
-            "Interactive single-SKU editor built for fast copy-paste workflow rather than bulk CSV parsing.",
+            "Interactive single-SKU editor built for fast copy editing and export.",
         },
       ],
     },
@@ -894,7 +894,7 @@ export const aiToolSeo: Record<string, ToolSeoData> = {
         },
         {
           issue: "Store platform has medical or regulatory rules",
-          fix: "Review generated Headline and bullets carefully against FDA, FTC, or marketplace compliance claims before publishing live.",
+          fix: "Review generated Headline and bullets against FDA, FTC, or marketplace compliance claims before publishing live.",
         },
         {
           issue: "Write description button stays grayed out",
@@ -976,7 +976,7 @@ export const aiToolSeo: Record<string, ToolSeoData> = {
           ],
         },
       ],
-      note: "Need interactive clickable guides instead of static text + images? Written guides work cleanly for internal Notion wikis, while customer-facing onboarding often converts far better as interactive Marvedge demos where users actually click through real UI states.",
+      note: "Need interactive clickable walkthroughs alongside static guides? Written guides work cleanly for internal Notion wikis, while customer-facing onboarding often converts far better as interactive Marvedge demos where users actually click through real UI states.",
     },
     specs: {
       heading: "Vision pipeline specs and screenshot handling",
@@ -1001,7 +1001,7 @@ export const aiToolSeo: Record<string, ToolSeoData> = {
         {
           label: "Uncertainty flag",
           value: "`(verify)` marker",
-          detail: "Highlights button labels or clicks inferred rather than clearly visible.",
+          detail: "Highlights inferred button clicks for manual verification.",
         },
         {
           label: "Per-screen notes",
@@ -1139,7 +1139,7 @@ export const aiToolSeo: Record<string, ToolSeoData> = {
           steps: [
             "Kore (Firm & clear) fits B2B product walkthroughs, onboarding tours, and executive feature updates.",
             "Charon (Informative) keeps educational tutorials, course modules, and documentation videos calm and grounded.",
-            "Pair with subtle delivery notes like 'steady instructional pace, clear enunciation'.",
+            "Pair with subtle delivery notes like 'instructional pace, clear enunciation'.",
           ],
         },
         {
@@ -1153,7 +1153,7 @@ export const aiToolSeo: Record<string, ToolSeoData> = {
         {
           title: "Uncompressed WAV Ready to Cut",
           steps: [
-            "Saves cleanly as `voiceover.wav` rather than muddy low-bitrate audio files.",
+            "Exports clean uncompressed `voiceover.wav` audio ready for editing.",
             "Drag straight into DaVinci Resolve, Premiere Pro, CapCut, iMovie, or Keynote.",
             "Zero license strings or paid voice-seat watermarks.",
           ],
@@ -1225,7 +1225,7 @@ export const aiToolSeo: Record<string, ToolSeoData> = {
         {
           target: "YouTube tutorial & SaaS help center explainers",
           status: "Yes",
-          detail: "Select Charon or Kore with a calm 'clear, friendly guide' delivery hint.",
+          detail: "Select Charon or Kore with a 'clear, friendly guide' delivery hint.",
         },
         {
           target: "Vertical Reels, TikTok & launch teasers",
@@ -1299,7 +1299,7 @@ export const aiToolSeo: Record<string, ToolSeoData> = {
       steps: [
         {
           title: "Summarize your product & core buyer workflow",
-          body: "Fill in Product name & what it does and list only the 3 to 5 key workflows buyers actually care about in Features to show (skip boring login and settings screens).",
+          body: "Fill in Product name & what it does and list only the 3 to 5 key workflows buyers care about in Features to show (skip boring login and settings screens).",
         },
         {
           title: "Set Who's watching and pick target spoken Length",
@@ -1319,7 +1319,7 @@ export const aiToolSeo: Record<string, ToolSeoData> = {
         {
           title: "60-Second Teaser Scripts",
           steps: [
-            "Starts directly with the user's core pain point rather than a 15-second company history.",
+            "Opens with the customer's primary workflow challenge.",
             "Alternates 3 high-impact UI screens tightly within ~140 spoken words.",
             "Ends on a single unmistakable Closing CTA (`Book a demo`, `Start free`, or `Try it now`).",
           ],
@@ -1337,7 +1337,7 @@ export const aiToolSeo: Record<string, ToolSeoData> = {
           steps: [
             "Copy narration straight into Voiceover Generator to audition studio audio speed.",
             "Capture real screen scenes matching numbered Scene descriptions cleanly.",
-            "Package finished screens interactively in Marvedge instead of rigid flat videos.",
+            "Package product flows as interactive walkthroughs in Marvedge.",
           ],
         },
       ],
@@ -1385,7 +1385,7 @@ export const aiToolSeo: Record<string, ToolSeoData> = {
       callouts: [
         {
           title: "Timing check: 130 to 150 spoken words per minute",
-          body: "After generating your script, read narration lines aloud once with a stopwatch. Trimming 20% of filler adjectives lets on-screen transitions breathe calmly.",
+          body: "After generating your script, read narration lines aloud once with a stopwatch. Trimming 20% of filler adjectives lets on-screen transitions breathe naturally.",
         },
         {
           title: "Writing clearly for silent & captioned viewing",
@@ -1429,7 +1429,7 @@ export const aiToolSeo: Record<string, ToolSeoData> = {
           target: "Automatic crawling of private app URLs",
           status: "No",
           detail:
-            "Describe your product behavior clearly in text fields rather than expecting automatic URL browsing.",
+            "Describe your product behavior directly in the input fields.",
         },
       ],
     },
