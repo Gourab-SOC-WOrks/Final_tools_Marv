@@ -101,7 +101,7 @@ export function SiteHeader() {
           />
           <div className="flex items-center gap-2">
             <span className="text-[17px] font-bold tracking-tight text-[#000000]">Marvedge</span>
-            <span className="rounded-md bg-[#D6CCB5]/70 px-1.5 py-0.5 text-[11px] font-semibold text-[#000000]/80">
+            <span className="rounded-md bg-[#000000] px-2 py-0.5 text-xs font-bold tracking-wide text-[#FFFFFF] shadow-xs">
               Tools
             </span>
           </div>
