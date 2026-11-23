@@ -135,9 +135,9 @@ export function SiteHeader() {
               <span>Tools</span>
               <ChevronDown
                 aria-hidden="true"
-                className={`h-3.5 w-3.5 text-black/60 transition-transform duration-200 ${
-                  open ? "rotate-180 text-black" : ""
-                }`}
+
+                className={`h-3.5 w-3.5 text-black/60 transition-transform duration-200 ${open ? "rotate-180 text-black" : ""
+                  }`}
               />
             </button>
 
