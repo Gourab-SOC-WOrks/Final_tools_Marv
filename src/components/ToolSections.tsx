@@ -268,8 +268,22 @@ export function ToolEditorialSections({
 
         <div className="mt-6 flex flex-col gap-4 rounded-2xl border border-[#D6CCB5] bg-[#FFFFFF] p-6 shadow-xs sm:p-7">
           <div className="flex items-center gap-2.5 text-sm font-semibold text-[#000000]">
-            <ShieldCheck className="h-5 w-5 text-emerald-600" aria-hidden="true" />
-            <span>Files remain strictly on your local machine</span>
+            {tool.runtime === "client" ? (
+              <>
+                <ShieldCheck className="h-5 w-5 text-emerald-600" aria-hidden="true" />
+                <span>Files remain strictly on your local machine</span>
+              </>
+            ) : tool.runtime === "ai" ? (
+              <>
+                <ShieldCheck className="h-5 w-5 text-[#537190]" aria-hidden="true" />
+                <span>Ephemeral processing with zero model training retention</span>
+              </>
+            ) : (
+              <>
+                <ShieldCheck className="h-5 w-5 text-[#537190]" aria-hidden="true" />
+                <span>Encrypted redirect storage with zero tracking cookies</span>
+              </>
+            )}
           </div>
           <div className="space-y-3 text-xs leading-relaxed text-[#4A4740] sm:text-sm">
             {seo.privacy.paragraphs.map((p, i) => (
