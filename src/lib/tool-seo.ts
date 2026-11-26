@@ -82,7 +82,7 @@ export function buildToolJsonLd(
         {
           "@type": "ListItem",
           position: 2,
-          name: tool.category === "Free utility" ? "Free utilities" : "AI tools",
+          name: tool.clusterLabel,
           item: `${SITE_URL}/#tools`,
         },
         {
@@ -100,8 +100,9 @@ export function buildToolJsonLd(
       url: pageUrl,
       description: seo.definitionLead,
       applicationCategory: seo.applicationCategory,
-      operatingSystem: "Any",
+      operatingSystem: "Web Browser",
       browserRequirements: "Requires JavaScript. Supported in modern desktop and mobile browsers.",
+      softwareVersion: "1.0.0",
       featureList: [...seo.capabilities],
       offers: {
         "@type": "Offer",

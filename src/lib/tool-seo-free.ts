@@ -674,7 +674,7 @@ export const freeToolSeo: Record<string, ToolSeoData> = {
       callouts: [
         {
           title: "Quick bitrate cheat sheet by platform",
-          body: "For Discord (10 MB free tier) or email attachments under 25 MB, pick 720p and drag Mbps until Estimated output sits 15% below the platform cap to leave headroom for audio.",
+          body: "For Discord (8 MB free tier) or email attachments under 25 MB, pick 720p and drag Mbps until Estimated output sits 15% below the platform cap to leave headroom for audio.",
         },
         {
           title: "Why 720p beats 1080p at low bitrates",

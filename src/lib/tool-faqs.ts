@@ -11,7 +11,7 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
     },
     {
       q: "What frame rate (FPS) should I select for my GIF?",
-      a: "For technical documentation, bug reports, and software UI demos, 15 to 20 FPS provides the ideal balance between smooth animation and lightweight file size. For high-speed motion, social media memes, or marketing teasers, 24 to 30 FPS gives maximum fluidity.",
+      a: "Our engine supports 5 to 25 FPS. For software UI demos and bug reports, 10 to 15 FPS provides the ideal balance of lightweight file size and smooth looping. For fast motion or social clips, 20 to 25 FPS offers maximum fluid playback.",
     },
     {
       q: "Why is the generated GIF sometimes larger in file size than the source MP4?",
@@ -156,7 +156,7 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
     },
     {
       q: "Which video containers are supported?",
-      a: "You can compress standard MP4, WebM, and MOV containers. Output is delivered in universally compatible MP4 (H.264) format.",
+      a: "You can compress standard MP4, WebM, and MOV containers. Output is delivered in universally compatible MP4 (H.264) format with WebM fallback depending on your browser's recording engine.",
     },
     {
       q: "Why does compressing large videos take several seconds?",
@@ -703,7 +703,7 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
     },
     {
       q: "What export formats are available for the completed guide?",
-      a: "You can export your completed SOP or user guide as clean GitHub Markdown (ready for Notion, GitHub, or GitBook), formatted HTML, or a clean printable PDF.",
+      a: "You can export your completed SOP or guide as clean GitHub Markdown (ready for Notion, GitHub, or GitBook), standalone formatted HTML, or rich text copied directly to your clipboard.",
     },
     {
       q: "Can I rearrange the order of screenshot steps?",
@@ -714,12 +714,12 @@ export const toolFaqs: Record<string, ToolFaq[]> = {
       a: "Yes. Operations, IT, and customer support teams use this tool daily to document internal tools, CRM processes, and product workflows in minutes.",
     },
     {
-      q: "Does it highlight or blur sensitive information in the screenshots?",
-      a: "You can use the built-in blur tool to redact sensitive user data, API keys, or private emails prior to generating and sharing the guide.",
+      q: "Can I annotate steps and highlight interface elements?",
+      a: "Yes. You can add numbered hotspot badges, focus boxes, directional arrows, and callout markers with customizable colors to direct attention to specific buttons and menus.",
     },
     {
       q: "How many screenshots can I include in a single guide?",
-      a: "You can upload between 2 and 20 screenshots per tutorial walkthrough.",
+      a: "You can upload up to 10 screenshots per tutorial walkthrough.",
     },
     {
       q: "Does it support mobile and tablet screenshots?",
