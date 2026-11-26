@@ -952,7 +952,7 @@ export function VideoSummarizer() {
         text={out}
         presetLabel={OUTPUT_PRESETS.find((p) => p.id === preset)?.label}
         onRegenerate={handleSummarize}
-        busy={busy || isTranscribing}
+        busy={busy || transcribing}
       />
     </Panel>
   );
